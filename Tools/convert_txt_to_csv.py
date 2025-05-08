@@ -1,5 +1,5 @@
 #This code converts txt files from different countries containing birth rates per year to a usable csv file
-#This data has goes further back in history then the data per month
+#This data goes further back in history then the data per month
 
 from pathlib import Path
 import os

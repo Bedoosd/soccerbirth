@@ -5,26 +5,22 @@ from pathlib import Path
 import os
 
 def convert_births_txt_to_csv(input_dir, output_file):
-    all_data = []
+    all_data = ["country,year,female,male,total"]
     txt_files = list(Path(input_dir).glob("*.txt"))
 
     if txt_files:
         for txt_file in txt_files:
             with open(txt_file, "r") as f:
-                country_line = f.readline().split(",")
-                f.readline()  # empty line
-                f.readline()  # header line
-                country = country_line[0]
-
+                country = f.readline().split(",")[0] #country is always the first text in the first line in these files
+                next(f)  # empty line
+                next(f)  # header line
                 all_data.extend(f"{country},{','.join(line.split())}" for line in f if line.strip()) #append doesnt work in a oneliner
     else:
         print(f"No txt files found in {input_dir}")
         return
 
-    with open(output_file, "w") as f:
-        f.write("country,year,female,male,total\n")
-        for row in all_data:
-            f.write(row + "\n")
+    with open(output_file, "w", encoding="utf-8", newline='') as f:
+        f.write("\n".join(all_data))
 
 if __name__ == "__main__":
     cwd = os.getcwd()

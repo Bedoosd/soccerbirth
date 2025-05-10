@@ -50,7 +50,7 @@ class MockTournament:
             "births": [1200, 1300, 1250]
             })
 
-
+#MockTournament should be replaced by Tournament if available and imported
 wc = MockTournament("World Championship")
 ec = MockTournament("European Championship")
 
@@ -100,12 +100,12 @@ def server(inputs, outputs, session):
 
         elif tournament.get_has_yearly_data(year, country):
             yearly_data = tournament.get_yearly_data(year, country)
-            return draw_chart(yearly_data, "No monthly data available<br>Yearly", "Year", "years")
+            return draw_chart(yearly_data, "Yearly", "Year", "years", show_warning_text=True)
 
         else:
             return no_data_chart()
 
-    def draw_chart(data, title_prefix, x_title, x_col):
+    def draw_chart(data, title_prefix, x_title, x_col, show_warning_text=False):
         average = data["births"].mean()
 
         fig = go.Figure()
@@ -122,17 +122,29 @@ def server(inputs, outputs, session):
             name=f"Average ({int(average)})",
             line=dict(dash="dash", color="red")
         ))
+        if show_warning_text:
+            fig.add_annotation(
+                text="No monthly data available — showing yearly data instead",
+                xref="paper", yref="paper",
+                x=0.5, y=1.15, showarrow=False,
+                font=dict(size=14, color="black"),
+                xanchor="center"
+            )
         fig.update_layout(
-            title=(
-                f"{title_prefix} Birth Statistics for {inputs['available_countries_selection']()}, "
-                f"following {inputs['tournament_selection']()} {inputs['available_years_selection']()}"
+            title=dict(
+                text=(
+                    f"{title_prefix} Birth Statistics for {inputs['available_countries_selection']()}, "
+                    f"following {inputs['tournament_selection']()} {inputs['available_years_selection']()}"
+                ),
+                x=0.5,
+                xanchor="center"
             ),
             xaxis_title=x_title,
-            yaxis_title="Number of Births"
+            yaxis_title="Number of Births",
+            margin=dict(t=90),
         )
 
         return fig
-
 
     def no_data_chart():
         fig = go.Figure()

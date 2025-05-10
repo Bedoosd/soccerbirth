@@ -41,54 +41,104 @@ def server(inputs, outputs, session):
         available_countries = tournament.get_available_countries(inputs["available_years_selection"]())
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
-    def birth_chart():
+    def birth_chart_selection():
         tournament = tournaments[inputs["tournament_selection"]()]
-        has_monthly_data = tournament.get_has_montly_data()
-        has_yearly_data = tournament.get_has_yearly_data()
+        has_monthly_data = tournament.get_has_monthly_data(
+            inputs["available_years_selection"], inputs["available_countries_selection"])
+        has_yearly_data = tournament.get_has_yearly_data(
+            inputs["available_years_selection"], inputs["available_countries_selection"])
 
         if has_monthly_data:
-            return monthly_chart()
+            monthly_data = tournament.get_monthly_data(inputs["available_years_selection"], inputs["available_countries_selection"])
+            return monthly_chart(monthly_data)
 
         elif has_yearly_data:
-            return yearly_chart()
+            yearly_data = tournament.get_yearly_data(inputs["available_years_selection"], inputs["available_countries_selection"])
+            return yearly_chart(yearly_data)
 
         else: return no_data_chart()
 
 
     @render_widget
-    def monthly_chart():
-        average = df["births"].mean()
+    def monthly_chart(monthly_data):
+
+        average = monthly_data["births"].mean()
 
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=df["month"],
-            y=df["births"],
+            x=monthly_data["month"],
+            y=monthly_data["births"],
             mode="lines+markers",
             name="Births"
         ))
         fig.add_trace(go.Scatter(
-            x=df["month"],
-            y=[average] * len(df),
+            x=monthly_data["month"],
+            y=[average] * len(monthly_data),
             mode="lines",
             name=f"Average ({int(average)})",
             line=dict(dash="dash", color="red")
         ))
         fig.update_layout(
-            title=f"Monthly Birth Statistics for {inputs['country_selection']()} following {inputs['tournament_selection']()} {inputs['year_selection']()}",
+            title=(
+                f"Monthly Birth Statistics for {inputs['available_countries_selection']()},"
+                f"following {inputs['tournament_selection']()} {inputs['available_years_selection']()}"
+            ),
             xaxis_title="Month",
             yaxis_title="Number of Births"
         )
         return fig
 
     @render_widget
-    def yearly_chart():
-        #design yearly graph when no monthly available
-        pass
+    def yearly_chart(yearly_data):
+        average = yearly_data["births"].mean()
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=yearly_data["month"],
+            y=yearly_data["births"],
+            mode="lines+markers",
+            name="Births"
+        ))
+        fig.add_trace(go.Scatter(
+            x=yearly_data["month"],
+            y=[average] * len(yearly_data),
+            mode="lines",
+            name=f"Average ({int(average)})",
+            line=dict(dash="dash", color="red")
+        ))
+        fig.update_layout(
+            title=(
+            f"No monthly data available<br>"
+            f"Yearly Birth Statistics for {inputs['available_countries_selection']()},"
+            f"following {inputs['tournament_selection']()} {inputs['available_years_selection']()}"
+            ),
+            xaxis_title="Years",
+            yaxis_title="Number of Births"
+        )
+
+        return fig
 
     @render_widget
     def no_data_chart():
-        #design an empty chart with message
-        pass
+        fig = go.Figure()
+
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            annotations=[
+                dict(
+                    text=f"No data available for folowing selection:<br>"
+                         f"{inputs['available_countries_selection']()} at "
+                         f"{inputs['tournament_selection']()}, {inputs['available_years_selection']()}",
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    font=dict(size=20)
+                    )
+                ]
+            )
+
+        return fig
 
 app = App(app_ui, server)
 

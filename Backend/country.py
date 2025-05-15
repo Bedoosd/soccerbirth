@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
-from Backend import tournament
 from Backend.tournament import Tournament, get_data
 
 
@@ -35,7 +35,10 @@ class Country:
         end_date = target + relativedelta(months=6)
         query = """ """ #om geboortedata op te halen tussen start en eind
         df = get_data(query)
-        return df
+        return pd.DataFrame({
+            "month": ["Jan", "Feb", "Mar", "Apr"],
+            "births": [100, 120, 90, 110]
+            })
 
     def get_yearly_data(self):
         selected_country = self.country
@@ -44,4 +47,7 @@ class Country:
         end_date = target + relativedelta(years=3)
         query = """ """  # om geboortedata op te halen tussen start en eind
         df = get_data(query)
-        return df
+        return pd.DataFrame({
+            "years": ["2020", "2021", "2022"],
+            "births": [1200, 1300, 1250]
+            })

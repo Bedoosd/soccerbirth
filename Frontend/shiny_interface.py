@@ -6,55 +6,6 @@ import plotly.graph_objects as go
 from Backend.country import Country
 from Backend.tournament import Tournament
 
-
-#generated some dummy data to be able to test the app without backend
-class MockTournament:
-    def __init__(self, name):
-        self.name = name
-
-    def get_available_years(self):
-        if self.name == "European Championship":
-            return ["2021", "2022", "2023"]
-        else: return ["2017","2018", "2019", "2020"]
-
-    def get_available_countries(self, year):
-        if self.name == "European Championship":
-            if year == "2021": return ["Belgium", "Bulgaria", "Croatia"]
-            if year == "2022": return ["Czech Republic", "Denmark", "Finland"]
-            if year == "2023": return ["France", "Belgium", "Italy"]
-        else:
-            if year == "2017": return ["Japan", "Germany", "France"]
-            if year == "2018": return ["Czech Republic", "Argentina", "Finland"]
-            if year == "2019": return ["France", "Germany", "China"]
-            if year == "2020": return ["Morocco", "Tunisia", "Poland"]
-
-    def get_has_monthly_data(self, year, country):
-        if self.name == "European Championship":
-            if year == "2021" and (country == "Belgium" or country == "Bulgaria"): return False
-            else: return True
-        else:
-            if year == "2017" and country == "France": return False
-            else: return True
-
-
-    def get_has_yearly_data(self, year, country):
-        if self.name == "European Championship":
-            if year == "2021" and country == "Belgium": return False
-            else: return True
-
-    def get_monthly_data(self, year, country):
-        return pd.DataFrame({
-            "month": ["Jan", "Feb", "Mar", "Apr"],
-            "births": [100, 120, 90, 110]
-            })
-
-    def get_yearly_data(self, year, country):
-        return pd.DataFrame({
-            "years": ["2020", "2021", "2022"],
-            "births": [1200, 1300, 1250]
-            })
-
-#MockTournament should be replaced by Tournament if available and imported
 wc = Tournament("World Championship")
 ec = Tournament("European Championship")
 
@@ -100,9 +51,9 @@ def server(inputs, outputs, session):
     @render_widget
     def birth_chart():
         tournament_name = tournaments[inputs["tournament_selection"]()]
-        country = inputs["available_countries_selection"]()
+        country_selected = inputs["available_countries_selection"]()
 
-        country = Country(country, tournament_name)
+        country = Country(country_selected, tournament_name)
 
         if country.has_monthly_data():
             monthly_data = country.get_monthly_data()

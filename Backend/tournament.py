@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+
 def get_data(query):
     #even toegevoegd om rode lijn weg te krijgen
     pass
@@ -6,14 +9,38 @@ class Tournament:
     def __init__(self, tournament_name, tournament_year=None):
         self.tournament_name = tournament_name
         self.tournament_year = tournament_year
+        self.tournament_date = None
+        self.target_date = None
+
+    def set_tournament_date_and_target(self):
+        tournament_name = self.tournament_name
+        tournament_year = self.tournament_year
+        query = """ """ #Welke datum?
+        date = get_data(query)  # get_data stelt de geinporteerde functie (uit backend/database) voor
+        self.tournament_date = datetime.strptime(date, '%m/%d/%Y')
+        self.target_date = datetime.strptime(date, '%m/%d/%Y') + timedelta(days=266)
+
+        return
 
     def get_available_years(self):
-        selected_tounament = self.tournament_name
+        # if self.tournament_name == "European Championship":
+        #     return ["2021", "2022", "2023"]
+        # else: return ["2017","2018", "2019", "2020"]
+        selected_tournament = self.tournament_name
         query = """ """ #query om juiste jaren binnen te halen (jaar, organiserend land?)
         df = get_data(query) #get_data stelt de geinporteerde functie (uit backend/database) voor die een df teruggeeft
         return df
 
     def get_available_countries(self):
+        # if self.name == "European Championship":
+        #     if year == "2021": return ["Belgium", "Bulgaria", "Croatia"]
+        #     if year == "2022": return ["Czech Republic", "Denmark", "Finland"]
+        #     if year == "2023": return ["France", "Belgium", "Italy"]
+        # else:
+        #     if year == "2017": return ["Japan", "Germany", "France"]
+        #     if year == "2018": return ["Czech Republic", "Argentina", "Finland"]
+        #     if year == "2019": return ["France", "Germany", "China"]
+        #     if year == "2020": return ["Morocco", "Tunisia", "Poland"]
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
         query = """ """ #query om landen binnen te halen  (land, iso, ronde gehaald)

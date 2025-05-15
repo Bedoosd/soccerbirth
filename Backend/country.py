@@ -1,23 +1,47 @@
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
+from Backend import tournament
+from Backend.tournament import Tournament, get_data
+
+
 class Country:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name, tournament : Tournament):
+        self.tournament = tournament
+        self.country = name
 
-    def has_monthly_data(self, tournament_name, tournament_year):
-        #code om te kijken of er maandelijkse data beschikbaar is voor Toernooi, jaar en land.
-        #return True/False
-        pass
 
-    def has_yearly_data(self, tournament_name, tournament_year):
-        #code om te kijken of er jaarlijkse data beschikbaar is.
-        #return True/False
-        pass
+    def has_monthly_data(self):
+        self.tournament.set_tournament_date_and_target()
+        selected_country = self.country
+        target = self.tournament.target_date
+        query = """ """ # query om te kijken of er maandelijkse data is voor het land rond de target
+        result = get_data(query)
+        check = bool #niet zeker hoe dit moet gebeuren met resultaat van query
+        return check
 
-    def get_monthly_data(self, tournament_name, tournament_year):
-        #code om de juiste data op te halen om in grafiek te steken
-        #return dataframe
-        pass
+    def has_yearly_data(self):
+        selected_country = self.country
+        target = self.tournament.target_date
+        query = """ """ #query om te kijken of er jaarlijkse data is
+        result = get_data(query)
+        check = bool
+        return check
 
-    def get_yearly_data(self, tournament_name, tournament_year):
-        #code om de juiste data op te halen om in grafiek te steken
-        #return dataframe
-        pass
+    def get_monthly_data(self):
+        selected_country = self.country
+        target = self.tournament.target_date
+        start_date = target - relativedelta(months=6)  #als nodig, hier de maand en jaar uit halen
+        end_date = target + relativedelta(months=6)
+        query = """ """ #om geboortedata op te halen tussen start en eind
+        df = get_data(query)
+        return df
+
+    def get_yearly_data(self):
+        selected_country = self.country
+        target = self.tournament.target_date
+        start_date = target - relativedelta(years=3)  # als nodig, hier het jaar uithalen
+        end_date = target + relativedelta(years=3)
+        query = """ """  # om geboortedata op te halen tussen start en eind
+        df = get_data(query)
+        return df

@@ -3,6 +3,10 @@ from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
+from Backend.country import Country
+from Backend.tournament import Tournament
+
+
 #generated some dummy data to be able to test the app without backend
 class MockTournament:
     def __init__(self, name):
@@ -51,8 +55,8 @@ class MockTournament:
             })
 
 #MockTournament should be replaced by Tournament if available and imported
-wc = MockTournament("World Championship")
-ec = MockTournament("European Championship")
+wc = Tournament("World Championship")
+ec = Tournament("European Championship")
 
 tournaments = {"World Championship": wc, "European Championship": ec}
 
@@ -95,16 +99,17 @@ def server(inputs, outputs, session):
 
     @render_widget
     def birth_chart():
-        tournament = tournaments[inputs["tournament_selection"]()]
-        year = inputs["available_years_selection"]()
+        tournament_name = tournaments[inputs["tournament_selection"]()]
         country = inputs["available_countries_selection"]()
 
-        if tournament.get_has_monthly_data(year, country):
-            monthly_data = tournament.get_monthly_data(year, country)
+        country = Country(country, tournament_name)
+
+        if country.has_monthly_data():
+            monthly_data = country.get_monthly_data()
             return draw_chart(monthly_data, "Monthly", "Month", "month")
 
-        elif tournament.get_has_yearly_data(year, country):
-            yearly_data = tournament.get_yearly_data(year, country)
+        elif country.has_yearly_data():
+            yearly_data = country.get_yearly_data()
             return draw_chart(yearly_data, "Yearly", "Year", "years", show_warning_text=True)
 
         else:

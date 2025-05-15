@@ -2,8 +2,11 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 
-from Backend.tournament import Tournament, get_data
+from Backend.tournament import Tournament, get_dataframe
 
+def get_bool(query):
+    #enkel tijdelijk tot functie is gemaakt in database backend
+    pass
 
 class Country:
     def __init__(self, name, tournament : Tournament):
@@ -16,7 +19,7 @@ class Country:
         selected_country = self.country
         target = self.tournament.target_date
         query = """ """ # query om te kijken of er maandelijkse data is voor het land rond de target
-        result = get_data(query)
+        result = get_bool(query)
         check = bool #niet zeker hoe dit moet gebeuren met resultaat van query
         return check
 
@@ -24,7 +27,7 @@ class Country:
         selected_country = self.country
         target = self.tournament.target_date
         query = """ """ #query om te kijken of er jaarlijkse data is
-        result = get_data(query)
+        result = get_bool(query)
         check = bool
         return check
 
@@ -34,11 +37,8 @@ class Country:
         start_date = target - relativedelta(months=6)  #als nodig, hier de maand en jaar uit halen
         end_date = target + relativedelta(months=6)
         query = """ """ #om geboortedata op te halen tussen start en eind
-        df = get_data(query)
-        return pd.DataFrame({
-            "month": ["Jan", "Feb", "Mar", "Apr"],
-            "births": [100, 120, 90, 110]
-            })
+        df = get_dataframe(query)
+        return df
 
     def get_yearly_data(self):
         selected_country = self.country
@@ -46,8 +46,5 @@ class Country:
         start_date = target - relativedelta(years=3)  # als nodig, hier het jaar uithalen
         end_date = target + relativedelta(years=3)
         query = """ """  # om geboortedata op te halen tussen start en eind
-        df = get_data(query)
-        return pd.DataFrame({
-            "years": ["2020", "2021", "2022"],
-            "births": [1200, 1300, 1250]
-            })
+        df = get_dataframe(query)
+        return df

@@ -77,14 +77,19 @@ def server(inputs, outputs, session):
     @render.ui
     def available_years_selection():
         tournament = tournaments[inputs["tournament_selection"]()]
-        available_years = tournament.get_available_years()
+        available_years_df = tournament.get_available_years()
+        available_years = available_years_df["year"].tolist()
         return ui.input_select("available_years_selection", "Select year:", available_years)
-
 
     @render.ui
     def available_countries_selection():
         tournament = tournaments[inputs["tournament_selection"]()]
-        available_countries = tournament.get_available_countries(inputs["available_years_selection"]())
+        selected_year = inputs["available_years_selection"]()
+        tournament.tournament_year = selected_year
+
+        available_countries_df = tournament.get_available_countries()
+        available_countries = available_countries_df["country"].tolist() # kan uitgebreid worden om bv iso codes bij te nemen
+
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
 

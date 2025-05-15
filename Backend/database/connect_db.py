@@ -1,28 +1,16 @@
-import pandas as pd
-from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
+import psycopg2
 
 load_dotenv()
 
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD")
-host = os.getenv("DB_HOST")
-port = os.getenv("DB_PORT")
-dbname = os.getenv("DB_NAME")
-
-DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
-
-engine = create_engine(DATABASE_URL)
-
-with engine.connect() as connection:
-    result = connection.execute(text("SELECT version();"))
-    for row in result:
-        print(f"Verbinding geslaagd: {row[0]}")
-
-
-# Voorbeeld: tabel 'wk_teams'
-# df = pd.read_sql("SELECT * FROM soccerbirth_staging.euro_high_level", con=engine)
-
-
-# print(df.head())
+def get_connection():
+    try:
+        return psycopg2.connect(
+            host=os.environ["DB_HOST"],
+            database=os.environ["DB_NAME"],
+            user=os.environ["DB_USER"],
+            password=os.environ["DB_PASSWORD"]
+        )
+    except KeyError as e:
+        raise RuntimeError(f"Omgevingsvariabele ontbreekt: {e}")

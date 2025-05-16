@@ -1,15 +1,18 @@
-from shiny import App, ui, render
+from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
-from Backend.country import Country
-from Backend.tournament import Tournament
+#test_env:
+from Backend.country_test_data import Country
+from Backend.tourament_test_data import Tournament
 
-wc = Tournament("World Championship")
-ec = Tournament("European Championship")
+##real_env
+# from Backend.country import Country
+# from Backend.tournament import Tournament
 
-tournaments = {"World Championship": wc, "European Championship": ec}
+
+tournaments = ["World Championship","European Championship"]
 
 custom_style = ui.tags.style(
     """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
@@ -17,7 +20,7 @@ custom_style = ui.tags.style(
 # UI layout
 app_ui = ui.page_sidebar(
     ui.sidebar(
-        ui.input_radio_buttons("tournament_selection", "Select a tournament:", list(tournaments.keys())),
+        ui.input_radio_buttons("tournament_selection", "Select a tournament:", tournaments),
         ui.output_ui("available_years_selection"),
         ui.output_ui("available_countries_selection"),
         bg="#f8f8f8"
@@ -28,17 +31,21 @@ app_ui = ui.page_sidebar(
 
 # Server logic
 def server(inputs, outputs, session):
+    @reactive.Calc
+    def selected_tournament():
+        return Tournament(inputs["tournament_selection"]())
+
     @outputs
     @render.ui
     def available_years_selection():
-        tournament = tournaments[inputs["tournament_selection"]()]
+        tournament = selected_tournament()
         available_years_df = tournament.get_available_years()
         available_years = available_years_df["year"].tolist()
         return ui.input_select("available_years_selection", "Select year:", available_years)
 
     @render.ui
     def available_countries_selection():
-        tournament = tournaments[inputs["tournament_selection"]()]
+        tournament = selected_tournament()
         selected_year = inputs["available_years_selection"]()
         tournament.tournament_year = selected_year
 
@@ -50,23 +57,24 @@ def server(inputs, outputs, session):
 
     @render_widget
     def birth_chart():
-        tournament_name = tournaments[inputs["tournament_selection"]()]
+        tournament = selected_tournament()
         country_selected = inputs["available_countries_selection"]()
 
-        country = Country(country_selected, tournament_name)
+        country = Country(country_selected, tournament)
 
         if country.has_monthly_data():
-            monthly_data = country.get_monthly_data()
-            return draw_chart(monthly_data, "Monthly", "Month", "month")
+            monthly_data, tournament_marker, target_marker = country.get_monthly_data()
+            return draw_chart(monthly_data, "Monthly", "Month","month", tournament_marker, target_marker)
 
         elif country.has_yearly_data():
-            yearly_data = country.get_yearly_data()
-            return draw_chart(yearly_data, "Yearly", "Year", "years", show_warning_text=True)
+            yearly_data, tournament_marker, target_marker = country.get_yearly_data()
+            return draw_chart(yearly_data, "Yearly", "Year",
+                              "years",tournament_marker, target_marker, show_warning_text=True)
 
         else:
             return no_data_chart()
 
-    def draw_chart(data, title_prefix, x_title, x_col, show_warning_text=False):
+    def draw_chart(data, title_prefix, x_title, x_col,tournament_marker, target_marker, show_warning_text=False):
         average = data["births"].mean()
 
         fig = go.Figure()
@@ -82,7 +90,28 @@ def server(inputs, outputs, session):
             mode="lines",
             name=f"Average ({int(average)})",
             line=dict(dash="dash", color="red")
+
         ))
+        #tournament zelf komt eigenlijk niet voor op de grafiek, start +/- 3 maanden erna pas
+
+        # fig.add_vline(
+        #     x=tournament_marker,
+        #     line_dash="dot",
+        #     line_color="green",
+        #     annotation_text="Tournament",
+        #     annotation_position="top right",
+        #     annotation_font=dict(size=12, color="green")
+        # )
+        if target_marker is not None:
+            fig.add_vline(
+                x=target_marker,
+                line_dash="dot",
+                line_color="green",
+                annotation_text="Target",
+                annotation_position="top right",
+                annotation_font=dict(size=12, color="green")
+            )
+
         if show_warning_text:
             fig.add_annotation(
                 text="No monthly data available — showing yearly data instead",
@@ -91,6 +120,8 @@ def server(inputs, outputs, session):
                 font=dict(size=14, color="black"),
                 xanchor="center"
             )
+
+
         fig.update_layout(
             title=dict(
                 text=(
@@ -126,7 +157,6 @@ def server(inputs, outputs, session):
             ]
         )
         return fig
-
 
 app = App(app_ui, server)
 

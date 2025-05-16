@@ -4,6 +4,7 @@ import pandas as pd
 
 from Backend.tournament import Tournament, get_dataframe
 
+
 def get_bool(query):
     #enkel tijdelijk tot functie is gemaakt in database backend
     pass
@@ -38,7 +39,21 @@ class Country:
         end_date = target + relativedelta(months=6)
         query = """ """ #om geboortedata op te halen tussen start en eind
         df = get_dataframe(query)
-        return df
+        tournament_month = self.tournament.tournament_month
+        target_month = self.tournament.target_month
+        #markers needed to get the index for the shiny app, doesnt work well with strings
+        try:
+            tournament_marker = df[df["month"] == tournament_month].index[0]
+        except IndexError:
+            tournament_marker = None
+
+        try:
+            target_marker = df[df["month"] == target_month].index[0]
+        except IndexError:
+            target_marker = None
+
+        return df, tournament_marker, target_marker
+
 
     def get_yearly_data(self):
         selected_country = self.country
@@ -47,4 +62,7 @@ class Country:
         end_date = target + relativedelta(years=3)
         query = """ """  # om geboortedata op te halen tussen start en eind
         df = get_dataframe(query)
-        return df
+        tournament_year = self.tournament.tournament_date.year
+        target_year = tournament_year + 1
+
+        return df, tournament_year, target_year

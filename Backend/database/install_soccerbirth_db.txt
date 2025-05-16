@@ -1,0 +1,13 @@
+How to install the soccerbirth_db:
+
+1: In PgAdmin of Dbeaver
+--> create new database soccerbirth
+
+2: in commandline (windows: cmd)
+
+-- psql -U postgres -d onze database -f locatie .sql file
+psql -U postgres -d soccerbirth -f "C:/Users/bert_/backup_soccerbirth_db.sql"
+
+-- hierna paswoord invoeren van uw eigen postgresql
+
+-- database zal ingeladen worden

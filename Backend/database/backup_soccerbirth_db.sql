@@ -5,7 +5,7 @@
 -- Dumped from database version 17.2
 -- Dumped by pg_dump version 17.2
 
--- Started on 2025-05-16 12:10:40
+-- Started on 2025-05-16 15:54:36
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,7 +21,7 @@ SET row_security = off;
 
 DROP DATABASE soccerbirth;
 --
--- TOC entry 4895 (class 1262 OID 19812)
+-- TOC entry 4900 (class 1262 OID 19812)
 -- Name: soccerbirth; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -45,8 +45,8 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 4896 (class 0 OID 0)
--- Dependencies: 4895
+-- TOC entry 4901 (class 0 OID 0)
+-- Dependencies: 4900
 -- Name: DATABASE soccerbirth; Type: COMMENT; Schema: -; Owner: postgres
 --
 
@@ -161,61 +161,6 @@ CREATE TABLE soccerbirth_staging.euro_high_level (
 ALTER TABLE soccerbirth_staging.euro_high_level OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 19944)
--- Name: wk_matches; Type: TABLE; Schema: soccerbirth_staging; Owner: postgres
---
-
-CREATE TABLE soccerbirth_staging.wk_matches (
-    home_team character varying(100),
-    away_team character varying(100),
-    home_score integer,
-    home_xg double precision,
-    home_penalty double precision,
-    away_score integer,
-    away_xg double precision,
-    away_penalty double precision,
-    home_manager character varying(100),
-    home_captain character varying(100),
-    away_manager character varying(100),
-    away_captain character varying(100),
-    attendance bigint,
-    venue character varying(150),
-    officials text,
-    round character varying(100),
-    date date,
-    score character varying(20),
-    referee character varying(100),
-    notes text,
-    host character varying(100),
-    year integer,
-    home_goal integer,
-    away_goal integer,
-    home_goal_long text,
-    away_goal_long text,
-    home_own_goal integer,
-    away_own_goal integer,
-    home_penalty_goal integer,
-    away_penalty_goal integer,
-    home_penalty_miss_long text,
-    away_penalty_miss_long text,
-    home_penalty_shootout_goal_long text,
-    away_penalty_shootout_goal_long text,
-    home_penalty_shootout_miss_long text,
-    away_penalty_shootout_miss_long text,
-    home_red_card integer,
-    away_red_card integer,
-    home_yellow_red_card text,
-    away_yellow_red_card text,
-    home_yellow_card_long text,
-    away_yellow_card_long text,
-    home_substitute_in_long text,
-    away_substitute_in_long text
-);
-
-
-ALTER TABLE soccerbirth_staging.wk_matches OWNER TO postgres;
-
---
 -- TOC entry 227 (class 1259 OID 19929)
 -- Name: world_cup_high_level; Type: TABLE; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -243,7 +188,61 @@ CREATE TABLE soccerbirth_staging.world_cup_high_level (
 ALTER TABLE soccerbirth_staging.world_cup_high_level OWNER TO postgres;
 
 --
--- TOC entry 4885 (class 0 OID 19869)
+-- TOC entry 230 (class 1259 OID 20113)
+-- Name: world_cup_matches; Type: TABLE; Schema: soccerbirth_staging; Owner: postgres
+--
+
+CREATE TABLE soccerbirth_staging.world_cup_matches (
+    id integer NOT NULL,
+    home_team character varying(100),
+    away_team character varying(100),
+    home_score integer,
+    away_score integer,
+    attendance integer,
+    round character varying(50),
+    date date,
+    host character varying(50),
+    year integer
+);
+
+
+ALTER TABLE soccerbirth_staging.world_cup_matches OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 20112)
+-- Name: world_cup_matches_id_seq; Type: SEQUENCE; Schema: soccerbirth_staging; Owner: postgres
+--
+
+CREATE SEQUENCE soccerbirth_staging.world_cup_matches_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE soccerbirth_staging.world_cup_matches_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4902 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: world_cup_matches_id_seq; Type: SEQUENCE OWNED BY; Schema: soccerbirth_staging; Owner: postgres
+--
+
+ALTER SEQUENCE soccerbirth_staging.world_cup_matches_id_seq OWNED BY soccerbirth_staging.world_cup_matches.id;
+
+
+--
+-- TOC entry 4731 (class 2604 OID 20116)
+-- Name: world_cup_matches id; Type: DEFAULT; Schema: soccerbirth_staging; Owner: postgres
+--
+
+ALTER TABLE ONLY soccerbirth_staging.world_cup_matches ALTER COLUMN id SET DEFAULT nextval('soccerbirth_staging.world_cup_matches_id_seq'::regclass);
+
+
+--
+-- TOC entry 4889 (class 0 OID 19869)
 -- Dependencies: 225
 -- Data for Name: dim_country; Type: TABLE DATA; Schema: soccerbirth_dwh; Owner: postgres
 --
@@ -342,7 +341,7 @@ COPY soccerbirth_dwh.dim_country (country_id, country_name, iso_alpha2, iso_alph
 705	Slovenia	SI	SVN
 688	Serbia	RS	SRB
 188	Costa Rica	CR	CRI
-384	cote dIvoire	CI	CIV
+384	cote d'Ivoire	CI	CIV
 156	China	CN	CHN
 084	Belize	BZ	BLZ
 862	Venezuela	VE	VEN
@@ -408,7 +407,7 @@ COPY soccerbirth_dwh.dim_country (country_id, country_name, iso_alpha2, iso_alph
 
 
 --
--- TOC entry 4883 (class 0 OID 19856)
+-- TOC entry 4887 (class 0 OID 19856)
 -- Dependencies: 223
 -- Data for Name: births_per_year; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -5374,7 +5373,7 @@ United States Of America	2023	1756223	1839794	3596017
 
 
 --
--- TOC entry 4886 (class 0 OID 19910)
+-- TOC entry 4890 (class 0 OID 19910)
 -- Dependencies: 226
 -- Data for Name: births_per_yearmonth; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62761,7 +62760,7 @@ Wallis and Futuna Islands	1973	December	333
 
 
 --
--- TOC entry 4884 (class 0 OID 19864)
+-- TOC entry 4888 (class 0 OID 19864)
 -- Dependencies: 224
 -- Data for Name: country_codes; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62817,7 +62816,7 @@ Colombia                                          	CO	COL	170
 Comoros                                           	KM	COM	174
 Congo                                             	CG	COG	178
 Costa Rica                                        	CR	CRI	188
-cote dIvoire                                     	CI	CIV	384
+cote d'Ivoire                                     	CI	CIV	384
 Croatia                                           	HR	HRV	191
 Cuba                                              	CU	CUB	192
 Cyprus                                            	CY	CYP	196
@@ -62926,7 +62925,7 @@ Zimbabwe                                          	ZW	ZWE	716
 
 
 --
--- TOC entry 4888 (class 0 OID 19937)
+-- TOC entry 4892 (class 0 OID 19937)
 -- Dependencies: 228
 -- Data for Name: euro_high_level; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62953,17 +62952,7 @@ COPY soccerbirth_staging.euro_high_level (year, winner, final, result, matches, 
 
 
 --
--- TOC entry 4889 (class 0 OID 19944)
--- Dependencies: 229
--- Data for Name: wk_matches; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
---
-
-COPY soccerbirth_staging.wk_matches (home_team, away_team, home_score, home_xg, home_penalty, away_score, away_xg, away_penalty, home_manager, home_captain, away_manager, away_captain, attendance, venue, officials, round, date, score, referee, notes, host, year, home_goal, away_goal, home_goal_long, away_goal_long, home_own_goal, away_own_goal, home_penalty_goal, away_penalty_goal, home_penalty_miss_long, away_penalty_miss_long, home_penalty_shootout_goal_long, away_penalty_shootout_goal_long, home_penalty_shootout_miss_long, away_penalty_shootout_miss_long, home_red_card, away_red_card, home_yellow_red_card, away_yellow_red_card, home_yellow_card_long, away_yellow_card_long, home_substitute_in_long, away_substitute_in_long) FROM stdin;
-\.
-
-
---
--- TOC entry 4887 (class 0 OID 19929)
+-- TOC entry 4891 (class 0 OID 19929)
 -- Dependencies: 227
 -- Data for Name: world_cup_high_level; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62995,7 +62984,990 @@ COPY soccerbirth_staging.world_cup_high_level (year, host, teams, champion, runn
 
 
 --
--- TOC entry 4735 (class 2606 OID 19877)
+-- TOC entry 4894 (class 0 OID 20113)
+-- Dependencies: 230
+-- Data for Name: world_cup_matches; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
+--
+
+COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score, away_score, attendance, round, date, host, year) FROM stdin;
+1	Argentina	France	3	3	88966	Final	2022-12-18	Qatar	2022
+2	Croatia	Morocco	2	1	44137	Third-place match	2022-12-17	Qatar	2022
+3	France	Morocco	2	0	68294	Semi-finals	2022-12-14	Qatar	2022
+4	Argentina	Croatia	3	0	88966	Semi-finals	2022-12-13	Qatar	2022
+5	Morocco	Portugal	1	0	44198	Quarter-finals	2022-12-10	Qatar	2022
+6	England	France	1	2	68895	Quarter-finals	2022-12-10	Qatar	2022
+7	Croatia	Brazil	1	1	43893	Quarter-finals	2022-12-09	Qatar	2022
+8	Netherlands	Argentina	2	2	88235	Quarter-finals	2022-12-09	Qatar	2022
+9	Morocco	Spain	0	0	44667	Round of 16	2022-12-06	Qatar	2022
+10	Portugal	Switzerland	6	1	83720	Round of 16	2022-12-06	Qatar	2022
+11	Japan	Croatia	1	1	42523	Round of 16	2022-12-05	Qatar	2022
+12	Brazil	Korea Republic	4	1	43847	Round of 16	2022-12-05	Qatar	2022
+13	France	Poland	3	1	40989	Round of 16	2022-12-04	Qatar	2022
+14	England	Senegal	3	0	65985	Round of 16	2022-12-04	Qatar	2022
+15	Netherlands	United States	3	1	44846	Round of 16	2022-12-03	Qatar	2022
+16	Argentina	Australia	2	1	45032	Round of 16	2022-12-03	Qatar	2022
+17	Korea Republic	Portugal	2	1	44097	Group stage	2022-12-02	Qatar	2022
+18	Ghana	Uruguay	0	2	43443	Group stage	2022-12-02	Qatar	2022
+19	Cameroon	Brazil	1	0	85986	Group stage	2022-12-02	Qatar	2022
+20	Serbia	Switzerland	2	3	41378	Group stage	2022-12-02	Qatar	2022
+21	Canada	Morocco	1	2	43102	Group stage	2022-12-01	Qatar	2022
+22	Croatia	Belgium	0	0	43984	Group stage	2022-12-01	Qatar	2022
+23	Costa Rica	Germany	2	4	67054	Group stage	2022-12-01	Qatar	2022
+24	Japan	Spain	2	1	44851	Group stage	2022-12-01	Qatar	2022
+25	Australia	Denmark	1	0	41232	Group stage	2022-11-30	Qatar	2022
+26	Tunisia	France	1	0	43627	Group stage	2022-11-30	Qatar	2022
+27	Saudi Arabia	Mexico	1	2	84985	Group stage	2022-11-30	Qatar	2022
+28	Poland	Argentina	0	2	44089	Group stage	2022-11-30	Qatar	2022
+29	Ecuador	Senegal	1	2	44569	Group stage	2022-11-29	Qatar	2022
+30	Netherlands	Qatar	2	0	66784	Group stage	2022-11-29	Qatar	2022
+31	IR Iran	United States	0	1	42127	Group stage	2022-11-29	Qatar	2022
+32	Wales	England	0	3	44297	Group stage	2022-11-29	Qatar	2022
+33	Cameroon	Serbia	3	3	39789	Group stage	2022-11-28	Qatar	2022
+34	Korea Republic	Ghana	2	3	43983	Group stage	2022-11-28	Qatar	2022
+35	Brazil	Switzerland	1	0	43649	Group stage	2022-11-28	Qatar	2022
+36	Portugal	Uruguay	2	0	88668	Group stage	2022-11-28	Qatar	2022
+37	Japan	Costa Rica	0	1	41479	Group stage	2022-11-27	Qatar	2022
+38	Belgium	Morocco	0	2	43738	Group stage	2022-11-27	Qatar	2022
+39	Croatia	Canada	4	1	44374	Group stage	2022-11-27	Qatar	2022
+40	Spain	Germany	1	1	68895	Group stage	2022-11-27	Qatar	2022
+41	Tunisia	Australia	0	1	41823	Group stage	2022-11-26	Qatar	2022
+42	Poland	Saudi Arabia	2	0	44259	Group stage	2022-11-26	Qatar	2022
+43	France	Denmark	2	1	42860	Group stage	2022-11-26	Qatar	2022
+44	Argentina	Mexico	2	0	88966	Group stage	2022-11-26	Qatar	2022
+45	Wales	IR Iran	0	2	40875	Group stage	2022-11-25	Qatar	2022
+46	Qatar	Senegal	1	3	41797	Group stage	2022-11-25	Qatar	2022
+47	Netherlands	Ecuador	1	1	44833	Group stage	2022-11-25	Qatar	2022
+48	England	United States	0	0	68463	Group stage	2022-11-25	Qatar	2022
+49	Switzerland	Cameroon	1	0	39089	Group stage	2022-11-24	Qatar	2022
+50	Uruguay	Korea Republic	0	0	41663	Group stage	2022-11-24	Qatar	2022
+51	Portugal	Ghana	3	2	42662	Group stage	2022-11-24	Qatar	2022
+52	Brazil	Serbia	2	0	88103	Group stage	2022-11-24	Qatar	2022
+53	Morocco	Croatia	0	0	59407	Group stage	2022-11-23	Qatar	2022
+54	Germany	Japan	1	2	42608	Group stage	2022-11-23	Qatar	2022
+55	Spain	Costa Rica	7	0	40013	Group stage	2022-11-23	Qatar	2022
+56	Belgium	Canada	1	0	40432	Group stage	2022-11-23	Qatar	2022
+57	Argentina	Saudi Arabia	1	2	88012	Group stage	2022-11-22	Qatar	2022
+58	Denmark	Tunisia	0	0	42925	Group stage	2022-11-22	Qatar	2022
+59	Mexico	Poland	0	0	39369	Group stage	2022-11-22	Qatar	2022
+60	France	Australia	4	1	40875	Group stage	2022-11-22	Qatar	2022
+61	England	IR Iran	6	2	45334	Group stage	2022-11-21	Qatar	2022
+62	Senegal	Netherlands	0	2	41721	Group stage	2022-11-21	Qatar	2022
+63	United States	Wales	1	1	43418	Group stage	2022-11-21	Qatar	2022
+64	Qatar	Ecuador	0	2	67372	Group stage	2022-11-20	Qatar	2022
+65	France	Croatia	4	2	78011	Final	2018-07-15	Russia	2018
+66	Belgium	England	2	0	64406	Third-place match	2018-07-14	Russia	2018
+67	Croatia	England	2	1	78011	Semi-finals	2018-07-11	Russia	2018
+68	France	Belgium	1	0	64286	Semi-finals	2018-07-10	Russia	2018
+69	Sweden	England	0	2	39991	Quarter-finals	2018-07-07	Russia	2018
+70	Russia	Croatia	2	2	44287	Quarter-finals	2018-07-07	Russia	2018
+71	Uruguay	France	0	2	43319	Quarter-finals	2018-07-06	Russia	2018
+72	Brazil	Belgium	1	2	42873	Quarter-finals	2018-07-06	Russia	2018
+73	Sweden	Switzerland	1	0	64042	Round of 16	2018-07-03	Russia	2018
+74	Colombia	England	1	1	44190	Round of 16	2018-07-03	Russia	2018
+75	Brazil	Mexico	2	0	41970	Round of 16	2018-07-02	Russia	2018
+76	Belgium	Japan	3	2	41466	Round of 16	2018-07-02	Russia	2018
+77	Spain	Russia	1	1	78011	Round of 16	2018-07-01	Russia	2018
+78	Croatia	Denmark	1	1	40851	Round of 16	2018-07-01	Russia	2018
+79	France	Argentina	4	3	42873	Round of 16	2018-06-30	Russia	2018
+80	Uruguay	Portugal	2	1	44287	Round of 16	2018-06-30	Russia	2018
+81	Japan	Poland	0	1	42189	Group stage	2018-06-28	Russia	2018
+82	Senegal	Colombia	0	1	41970	Group stage	2018-06-28	Russia	2018
+83	England	Belgium	0	1	33973	Group stage	2018-06-28	Russia	2018
+84	Panama	Tunisia	1	2	37168	Group stage	2018-06-28	Russia	2018
+85	Korea Republic	Germany	2	0	41835	Group stage	2018-06-27	Russia	2018
+86	Mexico	Sweden	0	3	33061	Group stage	2018-06-27	Russia	2018
+87	Switzerland	Costa Rica	2	2	43319	Group stage	2018-06-27	Russia	2018
+88	Serbia	Brazil	0	2	44190	Group stage	2018-06-27	Russia	2018
+89	Australia	Peru	0	2	44073	Group stage	2018-06-26	Russia	2018
+90	Denmark	France	0	0	78011	Group stage	2018-06-26	Russia	2018
+91	Iceland	Croatia	1	2	43472	Group stage	2018-06-26	Russia	2018
+92	Nigeria	Argentina	1	2	64468	Group stage	2018-06-26	Russia	2018
+93	Saudi Arabia	Egypt	2	1	36823	Group stage	2018-06-25	Russia	2018
+94	Uruguay	Russia	3	0	41970	Group stage	2018-06-25	Russia	2018
+95	Spain	Morocco	2	2	33973	Group stage	2018-06-25	Russia	2018
+96	IR Iran	Portugal	1	1	41685	Group stage	2018-06-25	Russia	2018
+97	England	Panama	6	1	43319	Group stage	2018-06-24	Russia	2018
+98	Japan	Senegal	2	2	32572	Group stage	2018-06-24	Russia	2018
+99	Poland	Colombia	0	3	42873	Group stage	2018-06-24	Russia	2018
+100	Belgium	Tunisia	5	2	44190	Group stage	2018-06-23	Russia	2018
+101	Korea Republic	Mexico	1	2	43472	Group stage	2018-06-23	Russia	2018
+102	Germany	Sweden	2	1	44287	Group stage	2018-06-23	Russia	2018
+103	Brazil	Costa Rica	2	0	64468	Group stage	2018-06-22	Russia	2018
+104	Nigeria	Iceland	2	0	40904	Group stage	2018-06-22	Russia	2018
+105	Serbia	Switzerland	1	2	33167	Group stage	2018-06-22	Russia	2018
+106	Denmark	Australia	1	1	40727	Group stage	2018-06-21	Russia	2018
+107	France	Peru	1	0	32789	Group stage	2018-06-21	Russia	2018
+108	Argentina	Croatia	0	3	43319	Group stage	2018-06-21	Russia	2018
+109	Portugal	Morocco	1	0	78011	Group stage	2018-06-20	Russia	2018
+110	Uruguay	Saudi Arabia	1	0	42678	Group stage	2018-06-20	Russia	2018
+111	IR Iran	Spain	0	1	42718	Group stage	2018-06-20	Russia	2018
+112	Colombia	Japan	1	2	40842	Group stage	2018-06-19	Russia	2018
+113	Poland	Senegal	1	2	44190	Group stage	2018-06-19	Russia	2018
+114	Russia	Egypt	3	1	64468	Group stage	2018-06-19	Russia	2018
+115	Sweden	Korea Republic	1	0	42300	Group stage	2018-06-18	Russia	2018
+116	Belgium	Panama	3	0	43257	Group stage	2018-06-18	Russia	2018
+117	Tunisia	England	1	2	41064	Group stage	2018-06-18	Russia	2018
+118	Costa Rica	Serbia	0	1	41432	Group stage	2018-06-17	Russia	2018
+119	Germany	Mexico	0	1	78011	Group stage	2018-06-17	Russia	2018
+120	Brazil	Switzerland	1	1	43109	Group stage	2018-06-17	Russia	2018
+121	France	Australia	2	1	41279	Group stage	2018-06-16	Russia	2018
+122	Argentina	Iceland	1	1	44190	Group stage	2018-06-16	Russia	2018
+123	Peru	Denmark	0	1	40502	Group stage	2018-06-16	Russia	2018
+124	Croatia	Nigeria	2	0	31136	Group stage	2018-06-16	Russia	2018
+125	Egypt	Uruguay	0	1	27015	Group stage	2018-06-15	Russia	2018
+126	Morocco	IR Iran	0	1	62548	Group stage	2018-06-15	Russia	2018
+127	Portugal	Spain	3	3	43866	Group stage	2018-06-15	Russia	2018
+128	Russia	Saudi Arabia	5	0	78011	Group stage	2018-06-14	Russia	2018
+129	Germany	Argentina	1	0	74738	Final	2014-07-13	Brazil	2014
+130	Brazil	Netherlands	0	3	68034	Third-place match	2014-07-12	Brazil	2014
+131	Netherlands	Argentina	0	0	63267	Semi-finals	2014-07-09	Brazil	2014
+132	Brazil	Germany	1	7	58141	Semi-finals	2014-07-08	Brazil	2014
+133	Argentina	Belgium	1	0	68551	Quarter-finals	2014-07-05	Brazil	2014
+134	Netherlands	Costa Rica	0	0	51179	Quarter-finals	2014-07-05	Brazil	2014
+135	France	Germany	0	1	74240	Quarter-finals	2014-07-04	Brazil	2014
+136	Brazil	Colombia	2	1	60342	Quarter-finals	2014-07-04	Brazil	2014
+137	Argentina	Switzerland	1	0	63255	Round of 16	2014-07-01	Brazil	2014
+138	Belgium	United States	2	1	51227	Round of 16	2014-07-01	Brazil	2014
+139	France	Nigeria	2	0	67882	Round of 16	2014-06-30	Brazil	2014
+140	Germany	Algeria	2	1	43063	Round of 16	2014-06-30	Brazil	2014
+141	Netherlands	Mexico	2	1	58817	Round of 16	2014-06-29	Brazil	2014
+142	Costa Rica	Greece	1	1	41242	Round of 16	2014-06-29	Brazil	2014
+143	Brazil	Chile	1	1	57714	Round of 16	2014-06-28	Brazil	2014
+144	Colombia	Uruguay	2	0	73804	Round of 16	2014-06-28	Brazil	2014
+145	United States	Germany	0	1	41876	Group stage	2014-06-26	Brazil	2014
+146	Portugal	Ghana	2	1	67540	Group stage	2014-06-26	Brazil	2014
+147	Korea Republic	Belgium	0	1	61397	Group stage	2014-06-26	Brazil	2014
+148	Algeria	Russia	1	1	39311	Group stage	2014-06-26	Brazil	2014
+149	Bosnia and Herzegovina	IR Iran	3	1	48011	Group stage	2014-06-25	Brazil	2014
+150	Nigeria	Argentina	2	3	43285	Group stage	2014-06-25	Brazil	2014
+151	Honduras	Switzerland	0	3	40322	Group stage	2014-06-25	Brazil	2014
+152	Ecuador	France	0	0	73749	Group stage	2014-06-25	Brazil	2014
+153	Costa Rica	England	0	0	57823	Group stage	2014-06-24	Brazil	2014
+154	Italy	Uruguay	0	1	39706	Group stage	2014-06-24	Brazil	2014
+155	Japan	Colombia	1	4	40340	Group stage	2014-06-24	Brazil	2014
+156	Greece	Côte d'Ivoire	2	1	59095	Group stage	2014-06-24	Brazil	2014
+157	Australia	Spain	0	3	39375	Group stage	2014-06-23	Brazil	2014
+158	Netherlands	Chile	2	0	62996	Group stage	2014-06-23	Brazil	2014
+159	Croatia	Mexico	1	3	41212	Group stage	2014-06-23	Brazil	2014
+160	Cameroon	Brazil	1	4	69112	Group stage	2014-06-23	Brazil	2014
+161	Belgium	Russia	1	0	73819	Group stage	2014-06-22	Brazil	2014
+162	Korea Republic	Algeria	2	4	42732	Group stage	2014-06-22	Brazil	2014
+163	United States	Portugal	2	2	40123	Group stage	2014-06-22	Brazil	2014
+164	Argentina	IR Iran	1	0	57698	Group stage	2014-06-21	Brazil	2014
+165	Germany	Ghana	2	2	59621	Group stage	2014-06-21	Brazil	2014
+166	Nigeria	Bosnia and Herzegovina	1	0	40499	Group stage	2014-06-21	Brazil	2014
+167	Italy	Costa Rica	0	1	40285	Group stage	2014-06-20	Brazil	2014
+168	Switzerland	France	2	5	51003	Group stage	2014-06-20	Brazil	2014
+169	Honduras	Ecuador	1	2	39224	Group stage	2014-06-20	Brazil	2014
+170	Colombia	Côte d'Ivoire	2	1	68748	Group stage	2014-06-19	Brazil	2014
+171	Uruguay	England	2	1	62575	Group stage	2014-06-19	Brazil	2014
+172	Japan	Greece	0	0	39485	Group stage	2014-06-19	Brazil	2014
+173	Australia	Netherlands	2	3	42877	Group stage	2014-06-18	Brazil	2014
+174	Spain	Chile	0	2	74101	Group stage	2014-06-18	Brazil	2014
+175	Cameroon	Croatia	0	4	39982	Group stage	2014-06-18	Brazil	2014
+176	Belgium	Algeria	2	1	56800	Group stage	2014-06-17	Brazil	2014
+177	Brazil	Mexico	0	0	60342	Group stage	2014-06-17	Brazil	2014
+178	Russia	Korea Republic	1	1	37603	Group stage	2014-06-17	Brazil	2014
+179	Germany	Portugal	4	0	51081	Group stage	2014-06-16	Brazil	2014
+180	IR Iran	Nigeria	0	0	39081	Group stage	2014-06-16	Brazil	2014
+181	Ghana	United States	1	2	39760	Group stage	2014-06-16	Brazil	2014
+182	Switzerland	Ecuador	2	1	68351	Group stage	2014-06-15	Brazil	2014
+183	France	Honduras	3	0	43012	Group stage	2014-06-15	Brazil	2014
+184	Argentina	Bosnia and Herzegovina	2	1	74738	Group stage	2014-06-15	Brazil	2014
+185	Colombia	Greece	3	0	57174	Group stage	2014-06-14	Brazil	2014
+186	Uruguay	Costa Rica	1	3	58679	Group stage	2014-06-14	Brazil	2014
+187	England	Italy	1	2	39800	Group stage	2014-06-14	Brazil	2014
+188	Côte d'Ivoire	Japan	2	1	40267	Group stage	2014-06-14	Brazil	2014
+189	Mexico	Cameroon	1	0	39216	Group stage	2014-06-13	Brazil	2014
+190	Spain	Netherlands	1	5	48173	Group stage	2014-06-13	Brazil	2014
+191	Chile	Australia	3	1	40275	Group stage	2014-06-13	Brazil	2014
+192	Brazil	Croatia	3	1	62103	Group stage	2014-06-12	Brazil	2014
+193	Netherlands	Spain	0	1	84490	Final	2010-07-11	South Africa	2010
+194	Uruguay	Germany	2	3	36254	Third-place match	2010-07-10	South Africa	2010
+195	Germany	Spain	0	1	60960	Semi-finals	2010-07-07	South Africa	2010
+196	Uruguay	Netherlands	2	3	62479	Semi-finals	2010-07-06	South Africa	2010
+197	Argentina	Germany	0	4	64100	Quarter-finals	2010-07-03	South Africa	2010
+198	Paraguay	Spain	0	1	55359	Quarter-finals	2010-07-03	South Africa	2010
+199	Netherlands	Brazil	2	1	40186	Quarter-finals	2010-07-02	South Africa	2010
+200	Uruguay	Ghana	1	1	84017	Quarter-finals	2010-07-02	South Africa	2010
+201	Paraguay	Japan	0	0	36742	Round of 16	2010-06-29	South Africa	2010
+202	Spain	Portugal	1	0	62955	Round of 16	2010-06-29	South Africa	2010
+203	Netherlands	Slovakia	2	1	61962	Round of 16	2010-06-28	South Africa	2010
+204	Brazil	Chile	3	0	54096	Round of 16	2010-06-28	South Africa	2010
+205	Germany	England	4	1	40510	Round of 16	2010-06-27	South Africa	2010
+206	Argentina	Mexico	3	1	84377	Round of 16	2010-06-27	South Africa	2010
+207	Uruguay	Korea Republic	2	1	30597	Round of 16	2010-06-26	South Africa	2010
+208	United States	Ghana	1	2	34976	Round of 16	2010-06-26	South Africa	2010
+209	Portugal	Brazil	0	0	62712	Group stage	2010-06-25	South Africa	2010
+210	Korea DPR	Côte d'Ivoire	0	3	34763	Group stage	2010-06-25	South Africa	2010
+211	Chile	Spain	1	2	41958	Group stage	2010-06-25	South Africa	2010
+212	Switzerland	Honduras	0	0	28042	Group stage	2010-06-25	South Africa	2010
+213	Paraguay	New Zealand	0	0	34850	Group stage	2010-06-24	South Africa	2010
+214	Slovakia	Italy	3	2	53412	Group stage	2010-06-24	South Africa	2010
+215	Denmark	Japan	1	3	27967	Group stage	2010-06-24	South Africa	2010
+216	Cameroon	Netherlands	1	2	63093	Group stage	2010-06-24	South Africa	2010
+217	Slovenia	England	0	1	36893	Group stage	2010-06-23	South Africa	2010
+218	United States	Algeria	1	0	35827	Group stage	2010-06-23	South Africa	2010
+219	Ghana	Germany	0	1	83391	Group stage	2010-06-23	South Africa	2010
+220	Australia	Serbia	2	1	37836	Group stage	2010-06-23	South Africa	2010
+221	Mexico	Uruguay	0	1	33425	Group stage	2010-06-22	South Africa	2010
+222	France	South Africa	1	2	39415	Group stage	2010-06-22	South Africa	2010
+223	Nigeria	Korea Republic	2	2	61874	Group stage	2010-06-22	South Africa	2010
+224	Greece	Argentina	0	2	38891	Group stage	2010-06-22	South Africa	2010
+225	Portugal	Korea DPR	7	0	63644	Group stage	2010-06-21	South Africa	2010
+226	Chile	Switzerland	1	0	34872	Group stage	2010-06-21	South Africa	2010
+227	Spain	Honduras	2	0	54386	Group stage	2010-06-21	South Africa	2010
+228	Slovakia	Paraguay	0	2	26643	Group stage	2010-06-20	South Africa	2010
+229	Italy	New Zealand	1	1	38229	Group stage	2010-06-20	South Africa	2010
+230	Brazil	Côte d'Ivoire	3	1	84455	Group stage	2010-06-20	South Africa	2010
+231	Netherlands	Japan	1	0	62010	Group stage	2010-06-19	South Africa	2010
+232	Ghana	Australia	1	1	34812	Group stage	2010-06-19	South Africa	2010
+233	Cameroon	Denmark	1	2	38074	Group stage	2010-06-19	South Africa	2010
+234	Germany	Serbia	0	1	38294	Group stage	2010-06-18	South Africa	2010
+235	Slovenia	United States	2	2	45573	Group stage	2010-06-18	South Africa	2010
+236	England	Algeria	0	0	64100	Group stage	2010-06-18	South Africa	2010
+237	Argentina	Korea Republic	4	1	82174	Group stage	2010-06-17	South Africa	2010
+238	Greece	Nigeria	2	1	31593	Group stage	2010-06-17	South Africa	2010
+239	France	Mexico	0	2	35370	Group stage	2010-06-17	South Africa	2010
+240	Honduras	Chile	0	1	32664	Group stage	2010-06-16	South Africa	2010
+241	Spain	Switzerland	0	1	62453	Group stage	2010-06-16	South Africa	2010
+242	South Africa	Uruguay	0	3	42658	Group stage	2010-06-16	South Africa	2010
+243	New Zealand	Slovakia	1	1	23871	Group stage	2010-06-15	South Africa	2010
+244	Côte d'Ivoire	Portugal	0	0	37034	Group stage	2010-06-15	South Africa	2010
+245	Brazil	Korea DPR	2	1	54331	Group stage	2010-06-15	South Africa	2010
+246	Netherlands	Denmark	2	0	83465	Group stage	2010-06-14	South Africa	2010
+247	Japan	Cameroon	1	0	30620	Group stage	2010-06-14	South Africa	2010
+248	Italy	Paraguay	1	1	62869	Group stage	2010-06-14	South Africa	2010
+249	Algeria	Slovenia	0	1	30325	Group stage	2010-06-13	South Africa	2010
+250	Serbia	Ghana	0	1	38833	Group stage	2010-06-13	South Africa	2010
+251	Germany	Australia	4	0	62660	Group stage	2010-06-13	South Africa	2010
+252	Korea Republic	Greece	2	0	31513	Group stage	2010-06-12	South Africa	2010
+253	Argentina	Nigeria	1	0	55686	Group stage	2010-06-12	South Africa	2010
+254	England	United States	1	1	38646	Group stage	2010-06-12	South Africa	2010
+255	South Africa	Mexico	1	1	84490	Group stage	2010-06-11	South Africa	2010
+256	Uruguay	France	0	0	64100	Group stage	2010-06-11	South Africa	2010
+257	Italy	France	1	1	69000	Final	2006-07-09	Germany	2006
+258	Germany	Portugal	3	1	52000	Third-place match	2006-07-08	Germany	2006
+259	Portugal	France	0	1	66000	Semi-finals	2006-07-05	Germany	2006
+260	Germany	Italy	0	2	65000	Semi-finals	2006-07-04	Germany	2006
+261	England	Portugal	0	0	52000	Quarter-finals	2006-07-01	Germany	2006
+262	Brazil	France	0	1	48000	Quarter-finals	2006-07-01	Germany	2006
+263	Germany	Argentina	1	1	72000	Quarter-finals	2006-06-30	Germany	2006
+264	Italy	Ukraine	3	0	50000	Quarter-finals	2006-06-30	Germany	2006
+265	Brazil	Ghana	3	0	65000	Round of 16	2006-06-27	Germany	2006
+266	Spain	France	1	3	43000	Round of 16	2006-06-27	Germany	2006
+267	Italy	Australia	1	0	46000	Round of 16	2006-06-26	Germany	2006
+268	Switzerland	Ukraine	0	0	45000	Round of 16	2006-06-26	Germany	2006
+269	England	Ecuador	1	0	52000	Round of 16	2006-06-25	Germany	2006
+270	Portugal	Netherlands	1	0	41000	Round of 16	2006-06-25	Germany	2006
+271	Germany	Sweden	2	0	66000	Round of 16	2006-06-24	Germany	2006
+272	Argentina	Mexico	2	1	43000	Round of 16	2006-06-24	Germany	2006
+273	Saudi Arabia	Spain	0	1	46000	Group stage	2006-06-23	Germany	2006
+274	Ukraine	Tunisia	1	0	72000	Group stage	2006-06-23	Germany	2006
+275	Togo	France	0	2	45000	Group stage	2006-06-23	Germany	2006
+276	Switzerland	Korea Republic	2	0	43000	Group stage	2006-06-23	Germany	2006
+277	Ghana	United States	2	1	41000	Group stage	2006-06-22	Germany	2006
+278	Czech Republic	Italy	0	2	50000	Group stage	2006-06-22	Germany	2006
+279	Japan	Brazil	1	4	65000	Group stage	2006-06-22	Germany	2006
+280	Croatia	Australia	2	2	52000	Group stage	2006-06-22	Germany	2006
+281	Portugal	Mexico	2	1	52000	Group stage	2006-06-21	Germany	2006
+282	IR Iran	Angola	1	1	38000	Group stage	2006-06-21	Germany	2006
+283	Côte d'Ivoire	Serbia and Montenegro	3	2	66000	Group stage	2006-06-21	Germany	2006
+284	Netherlands	Argentina	0	0	48000	Group stage	2006-06-21	Germany	2006
+285	Costa Rica	Poland	1	2	43000	Group stage	2006-06-20	Germany	2006
+286	Ecuador	Germany	0	3	72000	Group stage	2006-06-20	Germany	2006
+287	Paraguay	Trinidad and Tobago	2	0	46000	Group stage	2006-06-20	Germany	2006
+288	Sweden	England	2	2	45000	Group stage	2006-06-20	Germany	2006
+289	Togo	Switzerland	0	2	65000	Group stage	2006-06-19	Germany	2006
+290	Saudi Arabia	Ukraine	0	4	50000	Group stage	2006-06-19	Germany	2006
+291	Spain	Tunisia	3	1	52000	Group stage	2006-06-19	Germany	2006
+292	Japan	Croatia	0	0	41000	Group stage	2006-06-18	Germany	2006
+293	Brazil	Australia	2	0	66000	Group stage	2006-06-18	Germany	2006
+294	France	Korea Republic	1	1	43000	Group stage	2006-06-18	Germany	2006
+295	Portugal	IR Iran	2	0	48000	Group stage	2006-06-17	Germany	2006
+296	Czech Republic	Ghana	0	2	45000	Group stage	2006-06-17	Germany	2006
+297	Italy	United States	1	1	46000	Group stage	2006-06-17	Germany	2006
+298	Argentina	Serbia and Montenegro	6	0	52000	Group stage	2006-06-16	Germany	2006
+299	Netherlands	Côte d'Ivoire	2	1	52000	Group stage	2006-06-16	Germany	2006
+300	Mexico	Angola	0	0	43000	Group stage	2006-06-16	Germany	2006
+301	Ecuador	Costa Rica	3	0	50000	Group stage	2006-06-15	Germany	2006
+302	England	Trinidad and Tobago	2	0	41000	Group stage	2006-06-15	Germany	2006
+303	Sweden	Paraguay	1	0	72000	Group stage	2006-06-15	Germany	2006
+304	Spain	Ukraine	4	0	43000	Group stage	2006-06-14	Germany	2006
+305	Tunisia	Saudi Arabia	2	2	66000	Group stage	2006-06-14	Germany	2006
+306	Germany	Poland	1	0	65000	Group stage	2006-06-14	Germany	2006
+307	Korea Republic	Togo	2	1	48000	Group stage	2006-06-13	Germany	2006
+308	France	Switzerland	0	0	52000	Group stage	2006-06-13	Germany	2006
+309	Brazil	Croatia	1	0	72000	Group stage	2006-06-13	Germany	2006
+310	Australia	Japan	3	1	46000	Group stage	2006-06-12	Germany	2006
+311	United States	Czech Republic	0	3	52000	Group stage	2006-06-12	Germany	2006
+312	Italy	Ghana	2	0	43000	Group stage	2006-06-12	Germany	2006
+313	Serbia and Montenegro	Netherlands	0	1	37216	Group stage	2006-06-11	Germany	2006
+314	Mexico	IR Iran	3	1	41000	Group stage	2006-06-11	Germany	2006
+315	Angola	Portugal	0	1	45000	Group stage	2006-06-11	Germany	2006
+316	England	Paraguay	1	0	48000	Group stage	2006-06-10	Germany	2006
+317	Trinidad and Tobago	Sweden	0	0	62959	Group stage	2006-06-10	Germany	2006
+318	Argentina	Côte d'Ivoire	2	1	49480	Group stage	2006-06-10	Germany	2006
+319	Germany	Costa Rica	4	2	64950	Group stage	2006-06-09	Germany	2006
+320	Poland	Ecuador	0	2	52000	Group stage	2006-06-09	Germany	2006
+321	Germany	Brazil	0	2	69029	Final	2002-06-30	Korea Republic, Japan	2002
+322	Korea Republic	Türkiye	2	3	63483	Third-place match	2002-06-29	Korea Republic, Japan	2002
+323	Brazil	Türkiye	1	0	61058	Semi-finals	2002-06-26	Korea Republic, Japan	2002
+324	Germany	Korea Republic	1	0	65625	Semi-finals	2002-06-25	Korea Republic, Japan	2002
+325	Spain	Korea Republic	0	0	42114	Quarter-finals	2002-06-22	Korea Republic, Japan	2002
+326	Senegal	Türkiye	0	1	44233	Quarter-finals	2002-06-22	Korea Republic, Japan	2002
+327	England	Brazil	1	2	47436	Quarter-finals	2002-06-21	Korea Republic, Japan	2002
+328	Germany	United States	1	0	37337	Quarter-finals	2002-06-21	Korea Republic, Japan	2002
+329	Japan	Türkiye	0	1	45666	Round of 16	2002-06-18	Korea Republic, Japan	2002
+330	Korea Republic	Italy	2	1	38588	Round of 16	2002-06-18	Korea Republic, Japan	2002
+331	Mexico	United States	0	2	36380	Round of 16	2002-06-17	Korea Republic, Japan	2002
+332	Brazil	Belgium	2	0	40440	Round of 16	2002-06-17	Korea Republic, Japan	2002
+333	Sweden	Senegal	1	2	39747	Round of 16	2002-06-16	Korea Republic, Japan	2002
+334	Spain	Republic of Ireland	1	1	38926	Round of 16	2002-06-16	Korea Republic, Japan	2002
+335	Germany	Paraguay	1	0	25176	Round of 16	2002-06-15	Korea Republic, Japan	2002
+336	Denmark	England	0	3	40582	Round of 16	2002-06-15	Korea Republic, Japan	2002
+337	Tunisia	Japan	0	2	45213	Group stage	2002-06-14	Korea Republic, Japan	2002
+338	Belgium	Russia	3	2	46640	Group stage	2002-06-14	Korea Republic, Japan	2002
+339	Portugal	Korea Republic	0	1	50239	Group stage	2002-06-14	Korea Republic, Japan	2002
+340	Poland	United States	3	1	26482	Group stage	2002-06-14	Korea Republic, Japan	2002
+341	Costa Rica	Brazil	2	5	38524	Group stage	2002-06-13	Korea Republic, Japan	2002
+342	Türkiye	China PR	3	0	43605	Group stage	2002-06-13	Korea Republic, Japan	2002
+343	Mexico	Italy	1	1	39291	Group stage	2002-06-13	Korea Republic, Japan	2002
+344	Ecuador	Croatia	1	0	65862	Group stage	2002-06-13	Korea Republic, Japan	2002
+345	Sweden	Argentina	1	1	45777	Group stage	2002-06-12	Korea Republic, Japan	2002
+346	Nigeria	England	0	0	44864	Group stage	2002-06-12	Korea Republic, Japan	2002
+347	South Africa	Spain	2	3	31024	Group stage	2002-06-12	Korea Republic, Japan	2002
+348	Slovenia	Paraguay	1	3	30176	Group stage	2002-06-12	Korea Republic, Japan	2002
+349	Denmark	France	2	0	48100	Group stage	2002-06-11	Korea Republic, Japan	2002
+350	Senegal	Uruguay	3	3	33681	Group stage	2002-06-11	Korea Republic, Japan	2002
+351	Saudi Arabia	Republic of Ireland	0	3	65320	Group stage	2002-06-11	Korea Republic, Japan	2002
+352	Cameroon	Germany	0	2	47085	Group stage	2002-06-11	Korea Republic, Japan	2002
+353	Korea Republic	United States	1	1	60778	Group stage	2002-06-10	Korea Republic, Japan	2002
+354	Tunisia	Belgium	1	1	39700	Group stage	2002-06-10	Korea Republic, Japan	2002
+355	Portugal	Poland	4	0	31000	Group stage	2002-06-10	Korea Republic, Japan	2002
+356	Mexico	Ecuador	2	1	45610	Group stage	2002-06-09	Korea Republic, Japan	2002
+357	Costa Rica	Türkiye	1	1	42299	Group stage	2002-06-09	Korea Republic, Japan	2002
+358	Japan	Russia	1	0	66108	Group stage	2002-06-09	Korea Republic, Japan	2002
+359	South Africa	Slovenia	1	0	47226	Group stage	2002-06-08	Korea Republic, Japan	2002
+360	Italy	Croatia	1	2	36472	Group stage	2002-06-08	Korea Republic, Japan	2002
+361	Brazil	China PR	4	0	36750	Group stage	2002-06-08	Korea Republic, Japan	2002
+362	Sweden	Nigeria	2	1	36194	Group stage	2002-06-07	Korea Republic, Japan	2002
+363	Spain	Paraguay	3	1	24000	Group stage	2002-06-07	Korea Republic, Japan	2002
+364	Argentina	England	0	1	35927	Group stage	2002-06-07	Korea Republic, Japan	2002
+365	Denmark	Senegal	1	1	43500	Group stage	2002-06-06	Korea Republic, Japan	2002
+366	Cameroon	Saudi Arabia	1	0	52328	Group stage	2002-06-06	Korea Republic, Japan	2002
+367	France	Uruguay	0	0	38070	Group stage	2002-06-06	Korea Republic, Japan	2002
+368	Russia	Tunisia	2	0	30957	Group stage	2002-06-05	Korea Republic, Japan	2002
+369	United States	Portugal	3	2	37306	Group stage	2002-06-05	Korea Republic, Japan	2002
+370	Germany	Republic of Ireland	1	1	35854	Group stage	2002-06-05	Korea Republic, Japan	2002
+371	China PR	Costa Rica	0	2	27217	Group stage	2002-06-04	Korea Republic, Japan	2002
+372	Japan	Belgium	2	2	55256	Group stage	2002-06-04	Korea Republic, Japan	2002
+373	Korea Republic	Poland	2	0	48760	Group stage	2002-06-04	Korea Republic, Japan	2002
+374	Croatia	Mexico	0	1	32239	Group stage	2002-06-03	Korea Republic, Japan	2002
+375	Brazil	Türkiye	2	1	33842	Group stage	2002-06-03	Korea Republic, Japan	2002
+376	Italy	Ecuador	2	0	31081	Group stage	2002-06-03	Korea Republic, Japan	2002
+377	Argentina	Nigeria	1	0	34050	Group stage	2002-06-02	Korea Republic, Japan	2002
+378	Paraguay	South Africa	2	2	25186	Group stage	2002-06-02	Korea Republic, Japan	2002
+379	England	Sweden	1	1	52721	Group stage	2002-06-02	Korea Republic, Japan	2002
+380	Spain	Slovenia	3	1	28588	Group stage	2002-06-02	Korea Republic, Japan	2002
+381	Republic of Ireland	Cameroon	1	1	33679	Group stage	2002-06-01	Korea Republic, Japan	2002
+382	Uruguay	Denmark	1	2	30157	Group stage	2002-06-01	Korea Republic, Japan	2002
+383	Germany	Saudi Arabia	8	0	32218	Group stage	2002-06-01	Korea Republic, Japan	2002
+384	France	Senegal	0	1	62561	Group stage	2002-05-31	Korea Republic, Japan	2002
+385	Brazil	France	0	3	80000	Final	1998-07-12	France	1998
+386	Netherlands	Croatia	1	2	44000	Third-place match	1998-07-11	France	1998
+387	France	Croatia	2	1	80000	Semi-finals	1998-07-08	France	1998
+388	Brazil	Netherlands	1	1	60000	Semi-finals	1998-07-07	France	1998
+389	Netherlands	Argentina	2	1	60000	Quarter-finals	1998-07-04	France	1998
+390	Germany	Croatia	0	3	43300	Quarter-finals	1998-07-04	France	1998
+391	Italy	France	0	0	80000	Quarter-finals	1998-07-03	France	1998
+392	Brazil	Denmark	3	2	49500	Quarter-finals	1998-07-03	France	1998
+393	Romania	Croatia	0	1	31800	Round of 16	1998-06-30	France	1998
+394	Argentina	England	2	2	30600	Round of 16	1998-06-30	France	1998
+395	Germany	Mexico	2	1	29800	Round of 16	1998-06-29	France	1998
+396	Netherlands	FR Yugoslavia	2	1	33000	Round of 16	1998-06-29	France	1998
+397	France	Paraguay	1	0	31800	Round of 16	1998-06-28	France	1998
+398	Nigeria	Denmark	1	4	77000	Round of 16	1998-06-28	France	1998
+399	Italy	Norway	1	0	55000	Round of 16	1998-06-27	France	1998
+400	Brazil	Chile	4	1	45500	Round of 16	1998-06-27	France	1998
+401	Argentina	Croatia	1	0	31800	Group stage	1998-06-26	France	1998
+402	Japan	Jamaica	1	2	39100	Group stage	1998-06-26	France	1998
+403	Romania	Tunisia	1	1	80000	Group stage	1998-06-26	France	1998
+404	Colombia	England	0	2	42000	Group stage	1998-06-26	France	1998
+405	Netherlands	Mexico	2	2	30600	Group stage	1998-06-25	France	1998
+406	Belgium	Korea Republic	1	1	45500	Group stage	1998-06-25	France	1998
+407	United States	FR Yugoslavia	0	1	38500	Group stage	1998-06-25	France	1998
+408	Germany	IR Iran	2	0	35500	Group stage	1998-06-25	France	1998
+409	South Africa	Saudi Arabia	2	2	31800	Group stage	1998-06-24	France	1998
+410	France	Denmark	2	1	39100	Group stage	1998-06-24	France	1998
+411	Spain	Bulgaria	6	1	41275	Group stage	1998-06-24	France	1998
+412	Nigeria	Paraguay	1	3	33400	Group stage	1998-06-24	France	1998
+413	Italy	Austria	2	1	80000	Group stage	1998-06-23	France	1998
+414	Chile	Cameroon	1	1	39500	Group stage	1998-06-23	France	1998
+415	Brazil	Norway	1	2	57000	Group stage	1998-06-23	France	1998
+416	Scotland	Morocco	0	3	36000	Group stage	1998-06-23	France	1998
+417	Colombia	Tunisia	1	0	35500	Group stage	1998-06-22	France	1998
+418	Romania	England	2	1	33140	Group stage	1998-06-22	France	1998
+419	Germany	FR Yugoslavia	2	2	41275	Group stage	1998-06-21	France	1998
+420	Argentina	Jamaica	5	0	45500	Group stage	1998-06-21	France	1998
+421	United States	IR Iran	1	2	43300	Group stage	1998-06-21	France	1998
+422	Japan	Croatia	0	1	35500	Group stage	1998-06-20	France	1998
+423	Belgium	Mexico	2	2	31800	Group stage	1998-06-20	France	1998
+424	Netherlands	Korea Republic	5	0	55000	Group stage	1998-06-20	France	1998
+425	Nigeria	Bulgaria	1	0	48000	Group stage	1998-06-19	France	1998
+426	Spain	Paraguay	0	0	36000	Group stage	1998-06-19	France	1998
+427	South Africa	Denmark	1	1	33500	Group stage	1998-06-18	France	1998
+428	France	Saudi Arabia	4	0	80000	Group stage	1998-06-18	France	1998
+429	Chile	Austria	1	1	36000	Group stage	1998-06-17	France	1998
+430	Italy	Cameroon	3	0	35500	Group stage	1998-06-17	France	1998
+431	Scotland	Norway	1	1	31800	Group stage	1998-06-16	France	1998
+432	Brazil	Morocco	3	0	38500	Group stage	1998-06-16	France	1998
+433	England	Tunisia	2	0	54587	Group stage	1998-06-15	France	1998
+434	Romania	Colombia	1	0	43300	Group stage	1998-06-15	France	1998
+435	Germany	United States	2	0	49000	Group stage	1998-06-15	France	1998
+436	Argentina	Japan	1	0	33500	Group stage	1998-06-14	France	1998
+437	FR Yugoslavia	IR Iran	1	0	36000	Group stage	1998-06-14	France	1998
+438	Jamaica	Croatia	1	3	38100	Group stage	1998-06-14	France	1998
+439	Spain	Nigeria	2	3	38000	Group stage	1998-06-13	France	1998
+440	Korea Republic	Mexico	1	3	39100	Group stage	1998-06-13	France	1998
+441	Netherlands	Belgium	0	0	77000	Group stage	1998-06-13	France	1998
+442	Paraguay	Bulgaria	0	0	27650	Group stage	1998-06-12	France	1998
+443	Saudi Arabia	Denmark	0	1	38100	Group stage	1998-06-12	France	1998
+444	France	South Africa	3	0	55000	Group stage	1998-06-12	France	1998
+445	Italy	Chile	2	2	35200	Group stage	1998-06-11	France	1998
+446	Cameroon	Austria	1	1	36500	Group stage	1998-06-11	France	1998
+447	Brazil	Scotland	2	1	80000	Group stage	1998-06-10	France	1998
+448	Morocco	Norway	2	2	29750	Group stage	1998-06-10	France	1998
+449	Brazil	Italy	0	0	94194	Final	1994-07-17	United States	1994
+450	Sweden	Bulgaria	4	0	91500	Third-place match	1994-07-16	United States	1994
+451	Bulgaria	Italy	1	2	74110	Semi-finals	1994-07-13	United States	1994
+452	Sweden	Brazil	0	1	91856	Semi-finals	1994-07-13	United States	1994
+453	Bulgaria	Germany	2	1	72000	Quarter-finals	1994-07-10	United States	1994
+454	Romania	Sweden	2	2	83500	Quarter-finals	1994-07-10	United States	1994
+455	Italy	Spain	2	1	53400	Quarter-finals	1994-07-09	United States	1994
+456	Netherlands	Brazil	2	3	63500	Quarter-finals	1994-07-09	United States	1994
+457	Nigeria	Italy	1	2	54367	Round of 16	1994-07-05	United States	1994
+458	Mexico	Bulgaria	1	1	71030	Round of 16	1994-07-05	United States	1994
+459	Netherlands	Republic of Ireland	2	0	61355	Round of 16	1994-07-04	United States	1994
+460	Brazil	United States	1	0	84147	Round of 16	1994-07-04	United States	1994
+461	Saudi Arabia	Sweden	1	3	60277	Round of 16	1994-07-03	United States	1994
+462	Romania	Argentina	3	2	90469	Round of 16	1994-07-03	United States	1994
+463	Germany	Belgium	3	2	60246	Round of 16	1994-07-02	United States	1994
+464	Spain	Switzerland	3	0	53121	Round of 16	1994-07-02	United States	1994
+465	Greece	Nigeria	0	2	53001	Group stage	1994-06-30	United States	1994
+466	Argentina	Bulgaria	0	2	63998	Group stage	1994-06-30	United States	1994
+467	Morocco	Netherlands	1	2	60578	Group stage	1994-06-29	United States	1994
+468	Belgium	Saudi Arabia	0	1	52959	Group stage	1994-06-29	United States	1994
+469	Italy	Mexico	1	1	52535	Group stage	1994-06-28	United States	1994
+470	Republic of Ireland	Norway	0	0	72404	Group stage	1994-06-28	United States	1994
+471	Russia	Cameroon	6	1	74914	Group stage	1994-06-28	United States	1994
+472	Brazil	Sweden	1	1	77217	Group stage	1994-06-28	United States	1994
+473	Germany	Korea Republic	3	2	63998	Group stage	1994-06-27	United States	1994
+474	Bolivia	Spain	1	3	63089	Group stage	1994-06-27	United States	1994
+475	Bulgaria	Greece	4	0	63160	Group stage	1994-06-26	United States	1994
+476	United States	Romania	0	1	93869	Group stage	1994-06-26	United States	1994
+477	Switzerland	Colombia	0	2	83401	Group stage	1994-06-26	United States	1994
+478	Belgium	Netherlands	1	0	62387	Group stage	1994-06-25	United States	1994
+479	Saudi Arabia	Morocco	2	1	76322	Group stage	1994-06-25	United States	1994
+480	Argentina	Nigeria	2	1	54453	Group stage	1994-06-25	United States	1994
+481	Mexico	Republic of Ireland	2	1	60790	Group stage	1994-06-24	United States	1994
+482	Brazil	Cameroon	3	0	83401	Group stage	1994-06-24	United States	1994
+483	Sweden	Russia	3	1	71528	Group stage	1994-06-24	United States	1994
+484	Italy	Norway	1	0	74624	Group stage	1994-06-23	United States	1994
+485	Korea Republic	Bolivia	0	0	54453	Group stage	1994-06-23	United States	1994
+486	Romania	Switzerland	1	4	61428	Group stage	1994-06-22	United States	1994
+487	United States	Colombia	2	1	93869	Group stage	1994-06-22	United States	1994
+488	Argentina	Greece	4	0	54456	Group stage	1994-06-21	United States	1994
+489	Germany	Spain	1	1	63113	Group stage	1994-06-21	United States	1994
+490	Nigeria	Bulgaria	3	0	44132	Group stage	1994-06-21	United States	1994
+491	Brazil	Russia	2	0	81061	Group stage	1994-06-20	United States	1994
+492	Netherlands	Saudi Arabia	2	1	50535	Group stage	1994-06-20	United States	1994
+493	Belgium	Morocco	1	0	61219	Group stage	1994-06-19	United States	1994
+494	Norway	Mexico	1	0	52395	Group stage	1994-06-19	United States	1994
+495	Cameroon	Sweden	2	2	93194	Group stage	1994-06-19	United States	1994
+496	United States	Switzerland	1	1	73425	Group stage	1994-06-18	United States	1994
+497	Italy	Republic of Ireland	0	1	75338	Group stage	1994-06-18	United States	1994
+498	Colombia	Romania	1	3	91856	Group stage	1994-06-18	United States	1994
+499	Germany	Bolivia	1	0	63117	Group stage	1994-06-17	United States	1994
+500	Spain	Korea Republic	2	2	56247	Group stage	1994-06-17	United States	1994
+501	West Germany	Argentina	1	0	73603	Final	1990-07-08	Italy	1990
+502	Italy	England	2	1	51426	Third-place match	1990-07-07	Italy	1990
+503	West Germany	England	1	1	62628	Semi-finals	1990-07-04	Italy	1990
+504	Italy	Argentina	1	1	59978	Semi-finals	1990-07-03	Italy	1990
+505	West Germany	Czechoslovakia	1	0	73347	Quarter-finals	1990-07-01	Italy	1990
+506	England	Cameroon	3	2	55205	Quarter-finals	1990-07-01	Italy	1990
+507	Yugoslavia	Argentina	0	0	38971	Quarter-finals	1990-06-30	Italy	1990
+508	Italy	Republic of Ireland	1	0	73303	Quarter-finals	1990-06-30	Italy	1990
+509	Spain	Yugoslavia	1	2	35500	Round of 16	1990-06-26	Italy	1990
+510	England	Belgium	1	0	34520	Round of 16	1990-06-26	Italy	1990
+511	Republic of Ireland	Romania	0	0	31818	Round of 16	1990-06-25	Italy	1990
+512	Italy	Uruguay	2	0	73303	Round of 16	1990-06-25	Italy	1990
+513	Brazil	Argentina	0	1	61381	Round of 16	1990-06-24	Italy	1990
+514	West Germany	Netherlands	2	1	74559	Round of 16	1990-06-24	Italy	1990
+515	Cameroon	Colombia	2	1	50026	Round of 16	1990-06-23	Italy	1990
+516	Czechoslovakia	Costa Rica	4	1	47673	Round of 16	1990-06-23	Italy	1990
+517	Belgium	Spain	1	2	35950	Group stage	1990-06-21	Italy	1990
+518	Korea Republic	Uruguay	0	1	29039	Group stage	1990-06-21	Italy	1990
+519	Republic of Ireland	Netherlands	1	1	33288	Group stage	1990-06-21	Italy	1990
+520	England	Egypt	1	0	34959	Group stage	1990-06-21	Italy	1990
+521	Sweden	Costa Rica	1	2	30223	Group stage	1990-06-20	Italy	1990
+522	Brazil	Scotland	1	0	62502	Group stage	1990-06-20	Italy	1990
+523	West Germany	Colombia	1	1	72510	Group stage	1990-06-19	Italy	1990
+524	Yugoslavia	United Arab Emirates	4	1	27833	Group stage	1990-06-19	Italy	1990
+525	Austria	United States	2	1	34857	Group stage	1990-06-19	Italy	1990
+526	Italy	Czechoslovakia	2	0	73303	Group stage	1990-06-19	Italy	1990
+527	Argentina	Romania	1	1	52733	Group stage	1990-06-18	Italy	1990
+528	Cameroon	Soviet Union	0	4	37307	Group stage	1990-06-18	Italy	1990
+529	Republic of Ireland	Egypt	0	0	33288	Group stage	1990-06-17	Italy	1990
+530	Belgium	Uruguay	3	1	33759	Group stage	1990-06-17	Italy	1990
+531	Korea Republic	Spain	1	3	32733	Group stage	1990-06-17	Italy	1990
+532	Brazil	Costa Rica	1	0	58007	Group stage	1990-06-16	Italy	1990
+533	England	Netherlands	0	0	35267	Group stage	1990-06-16	Italy	1990
+534	Sweden	Scotland	1	2	31823	Group stage	1990-06-16	Italy	1990
+535	Austria	Czechoslovakia	0	1	38962	Group stage	1990-06-15	Italy	1990
+536	West Germany	United Arab Emirates	5	1	71169	Group stage	1990-06-15	Italy	1990
+537	Yugoslavia	Colombia	1	0	32257	Group stage	1990-06-14	Italy	1990
+538	Cameroon	Romania	2	1	38687	Group stage	1990-06-14	Italy	1990
+539	Italy	United States	1	0	73423	Group stage	1990-06-14	Italy	1990
+540	Uruguay	Spain	0	0	35713	Group stage	1990-06-13	Italy	1990
+541	Argentina	Soviet Union	2	0	55759	Group stage	1990-06-13	Italy	1990
+542	Belgium	Korea Republic	2	0	32790	Group stage	1990-06-12	Italy	1990
+543	Netherlands	Egypt	1	1	33288	Group stage	1990-06-12	Italy	1990
+544	Costa Rica	Scotland	1	0	30867	Group stage	1990-06-11	Italy	1990
+545	England	Republic of Ireland	1	1	35238	Group stage	1990-06-11	Italy	1990
+546	United States	Czechoslovakia	1	5	33266	Group stage	1990-06-10	Italy	1990
+547	West Germany	Yugoslavia	4	1	74765	Group stage	1990-06-10	Italy	1990
+548	Brazil	Sweden	2	1	62628	Group stage	1990-06-10	Italy	1990
+549	United Arab Emirates	Colombia	0	2	30791	Group stage	1990-06-09	Italy	1990
+550	Soviet Union	Romania	0	2	42907	Group stage	1990-06-09	Italy	1990
+551	Italy	Austria	1	0	73303	Group stage	1990-06-09	Italy	1990
+552	Argentina	Cameroon	0	1	73780	Group stage	1990-06-08	Italy	1990
+553	Argentina	West Germany	3	2	114600	Final	1986-06-29	Mexico	1986
+554	France	Belgium	4	2	21000	Third-place match	1986-06-28	Mexico	1986
+555	France	West Germany	0	2	45000	Semi-finals	1986-06-25	Mexico	1986
+556	Argentina	Belgium	2	0	114500	Semi-finals	1986-06-25	Mexico	1986
+557	Argentina	England	2	1	114580	Quarter-finals	1986-06-22	Mexico	1986
+558	Spain	Belgium	1	1	45000	Quarter-finals	1986-06-22	Mexico	1986
+559	Brazil	France	1	1	65000	Quarter-finals	1986-06-21	Mexico	1986
+560	West Germany	Mexico	0	0	41700	Quarter-finals	1986-06-21	Mexico	1986
+561	England	Paraguay	3	0	98728	Round of 16	1986-06-18	Mexico	1986
+562	Denmark	Spain	1	5	38500	Round of 16	1986-06-18	Mexico	1986
+563	Italy	France	0	2	70000	Round of 16	1986-06-17	Mexico	1986
+564	Morocco	West Germany	0	1	19800	Round of 16	1986-06-17	Mexico	1986
+565	Brazil	Poland	4	0	45000	Round of 16	1986-06-16	Mexico	1986
+566	Argentina	Uruguay	1	0	26000	Round of 16	1986-06-16	Mexico	1986
+567	Mexico	Bulgaria	2	0	114580	Round of 16	1986-06-15	Mexico	1986
+568	Soviet Union	Belgium	3	4	32277	Round of 16	1986-06-15	Mexico	1986
+569	Scotland	Uruguay	0	0	20000	Group stage	1986-06-13	Mexico	1986
+570	Denmark	West Germany	2	0	36000	Group stage	1986-06-13	Mexico	1986
+571	Algeria	Spain	0	3	23980	Group stage	1986-06-12	Mexico	1986
+572	Northern Ireland	Brazil	0	3	51000	Group stage	1986-06-12	Mexico	1986
+573	Paraguay	Belgium	2	2	16000	Group stage	1986-06-11	Mexico	1986
+574	Iraq	Mexico	0	1	103763	Group stage	1986-06-11	Mexico	1986
+575	England	Poland	3	0	22700	Group stage	1986-06-11	Mexico	1986
+576	Portugal	Morocco	1	3	28000	Group stage	1986-06-11	Mexico	1986
+577	Argentina	Bulgaria	2	0	65000	Group stage	1986-06-10	Mexico	1986
+578	Korea Republic	Italy	2	3	20000	Group stage	1986-06-10	Mexico	1986
+579	Soviet Union	Canada	2	0	14200	Group stage	1986-06-09	Mexico	1986
+580	Hungary	France	0	3	31420	Group stage	1986-06-09	Mexico	1986
+581	West Germany	Scotland	2	1	30000	Group stage	1986-06-08	Mexico	1986
+582	Iraq	Belgium	1	2	20000	Group stage	1986-06-08	Mexico	1986
+583	Denmark	Uruguay	6	1	26500	Group stage	1986-06-08	Mexico	1986
+584	Mexico	Paraguay	1	1	114600	Group stage	1986-06-07	Mexico	1986
+585	Northern Ireland	Spain	1	2	28000	Group stage	1986-06-07	Mexico	1986
+586	Poland	Portugal	1	0	19915	Group stage	1986-06-07	Mexico	1986
+587	Brazil	Algeria	1	0	48000	Group stage	1986-06-06	Mexico	1986
+588	Hungary	Canada	2	0	13800	Group stage	1986-06-06	Mexico	1986
+589	England	Morocco	0	0	20200	Group stage	1986-06-06	Mexico	1986
+590	Italy	Argentina	1	1	32000	Group stage	1986-06-05	Mexico	1986
+591	France	Soviet Union	1	1	36540	Group stage	1986-06-05	Mexico	1986
+592	Korea Republic	Bulgaria	1	1	45000	Group stage	1986-06-05	Mexico	1986
+593	Paraguay	Iraq	1	0	24000	Group stage	1986-06-04	Mexico	1986
+594	Uruguay	West Germany	1	1	30500	Group stage	1986-06-04	Mexico	1986
+595	Scotland	Denmark	0	1	18000	Group stage	1986-06-04	Mexico	1986
+596	Belgium	Mexico	1	2	110000	Group stage	1986-06-03	Mexico	1986
+597	Algeria	Northern Ireland	1	1	22000	Group stage	1986-06-03	Mexico	1986
+598	Portugal	England	1	0	23000	Group stage	1986-06-03	Mexico	1986
+599	Soviet Union	Hungary	6	0	16500	Group stage	1986-06-02	Mexico	1986
+600	Argentina	Korea Republic	3	1	60000	Group stage	1986-06-02	Mexico	1986
+601	Morocco	Poland	0	0	19900	Group stage	1986-06-02	Mexico	1986
+602	Spain	Brazil	0	1	35748	Group stage	1986-06-01	Mexico	1986
+603	Canada	France	0	1	65500	Group stage	1986-06-01	Mexico	1986
+604	Bulgaria	Italy	1	1	96000	Group stage	1986-05-31	Mexico	1986
+605	Italy	West Germany	3	1	90000	Final	1982-07-11	Spain	1982
+606	Poland	France	3	2	28000	Third-place match	1982-07-10	Spain	1982
+607	Poland	Italy	0	2	50000	Semi-finals	1982-07-08	Spain	1982
+608	West Germany	France	3	3	70000	Semi-finals	1982-07-08	Spain	1982
+609	Italy	Brazil	3	2	44000	Second group stage	1982-07-05	Spain	1982
+610	Spain	England	0	0	75000	Second group stage	1982-07-05	Spain	1982
+611	France	Northern Ireland	4	1	37000	Second group stage	1982-07-04	Spain	1982
+612	Poland	Soviet Union	0	0	65000	Second group stage	1982-07-04	Spain	1982
+613	Argentina	Brazil	1	3	44000	Second group stage	1982-07-02	Spain	1982
+614	West Germany	Spain	2	1	90089	Second group stage	1982-07-02	Spain	1982
+615	Austria	Northern Ireland	2	2	20000	Second group stage	1982-07-01	Spain	1982
+616	Belgium	Soviet Union	0	1	45000	Second group stage	1982-07-01	Spain	1982
+617	Italy	Argentina	2	1	43000	Second group stage	1982-06-29	Spain	1982
+618	West Germany	England	0	0	75000	Second group stage	1982-06-29	Spain	1982
+619	Austria	France	0	1	37000	Second group stage	1982-06-28	Spain	1982
+620	Poland	Belgium	3	0	65000	Second group stage	1982-06-28	Spain	1982
+621	England	Kuwait	1	0	39700	First group stage	1982-06-25	Spain	1982
+622	West Germany	Austria	1	0	41000	First group stage	1982-06-25	Spain	1982
+623	Northern Ireland	Spain	1	0	49562	First group stage	1982-06-25	Spain	1982
+624	France	Czechoslovakia	1	1	28000	First group stage	1982-06-24	Spain	1982
+625	Algeria	Chile	3	2	16000	First group stage	1982-06-24	Spain	1982
+626	Honduras	Yugoslavia	0	1	25000	First group stage	1982-06-24	Spain	1982
+627	Italy	Cameroon	1	1	20000	First group stage	1982-06-23	Spain	1982
+628	Argentina	El Salvador	2	0	32500	First group stage	1982-06-23	Spain	1982
+629	Brazil	New Zealand	4	0	43000	First group stage	1982-06-23	Spain	1982
+630	Poland	Peru	5	1	25000	First group stage	1982-06-22	Spain	1982
+631	Belgium	Hungary	1	1	37000	First group stage	1982-06-22	Spain	1982
+632	Soviet Union	Scotland	2	2	45000	First group stage	1982-06-22	Spain	1982
+633	Algeria	Austria	0	2	22000	First group stage	1982-06-21	Spain	1982
+634	France	Kuwait	4	1	30043	First group stage	1982-06-21	Spain	1982
+635	Honduras	Northern Ireland	1	1	15000	First group stage	1982-06-21	Spain	1982
+636	West Germany	Chile	4	1	42000	First group stage	1982-06-20	Spain	1982
+637	England	Czechoslovakia	2	0	41123	First group stage	1982-06-20	Spain	1982
+638	Spain	Yugoslavia	2	1	48000	First group stage	1982-06-20	Spain	1982
+639	Poland	Cameroon	0	0	19000	First group stage	1982-06-19	Spain	1982
+640	Soviet Union	New Zealand	3	0	19000	First group stage	1982-06-19	Spain	1982
+641	Belgium	El Salvador	1	0	15000	First group stage	1982-06-19	Spain	1982
+642	Italy	Peru	1	1	25000	First group stage	1982-06-18	Spain	1982
+643	Brazil	Scotland	4	1	47379	First group stage	1982-06-18	Spain	1982
+644	Argentina	Hungary	4	1	32093	First group stage	1982-06-18	Spain	1982
+645	Chile	Austria	0	1	22500	First group stage	1982-06-17	Spain	1982
+646	Czechoslovakia	Kuwait	1	1	25000	First group stage	1982-06-17	Spain	1982
+647	Yugoslavia	Northern Ireland	0	0	25000	First group stage	1982-06-17	Spain	1982
+648	England	France	3	1	44172	First group stage	1982-06-16	Spain	1982
+649	West Germany	Algeria	1	2	42000	First group stage	1982-06-16	Spain	1982
+650	Spain	Honduras	1	1	49562	First group stage	1982-06-16	Spain	1982
+651	Peru	Cameroon	0	0	11000	First group stage	1982-06-15	Spain	1982
+652	Hungary	El Salvador	10	1	23000	First group stage	1982-06-15	Spain	1982
+653	Scotland	New Zealand	5	2	36000	First group stage	1982-06-15	Spain	1982
+654	Italy	Poland	0	0	33000	First group stage	1982-06-14	Spain	1982
+655	Brazil	Soviet Union	2	1	68000	First group stage	1982-06-14	Spain	1982
+656	Argentina	Belgium	0	1	95000	First group stage	1982-06-13	Spain	1982
+657	Argentina	Netherlands	3	1	71483	Final	1978-06-25	Argentina	1978
+658	Brazil	Italy	2	1	69659	Third-place match	1978-06-24	Argentina	1978
+659	Netherlands	Italy	2	1	67433	Second round	1978-06-21	Argentina	1978
+660	Austria	West Germany	3	2	38318	Second round	1978-06-21	Argentina	1978
+661	Brazil	Poland	3	1	39586	Second round	1978-06-21	Argentina	1978
+662	Argentina	Peru	6	0	37315	Second round	1978-06-21	Argentina	1978
+663	Poland	Peru	1	0	35288	Second round	1978-06-18	Argentina	1978
+664	West Germany	Netherlands	2	2	40750	Second round	1978-06-18	Argentina	1978
+665	Italy	Austria	1	0	66695	Second round	1978-06-18	Argentina	1978
+666	Argentina	Brazil	0	0	37326	Second round	1978-06-18	Argentina	1978
+667	Netherlands	Austria	5	1	25050	Second round	1978-06-14	Argentina	1978
+668	West Germany	Italy	0	0	67547	Second round	1978-06-14	Argentina	1978
+669	Brazil	Peru	3	0	31278	Second round	1978-06-14	Argentina	1978
+670	Argentina	Poland	2	0	37091	Second round	1978-06-14	Argentina	1978
+671	Brazil	Austria	1	0	35221	First round	1978-06-11	Argentina	1978
+672	Spain	Sweden	1	0	42132	First round	1978-06-11	Argentina	1978
+673	Peru	IR Iran	4	1	21262	First round	1978-06-11	Argentina	1978
+674	Scotland	Netherlands	3	2	35130	First round	1978-06-11	Argentina	1978
+675	France	Hungary	3	1	23127	First round	1978-06-10	Argentina	1978
+676	Poland	Mexico	3	1	22651	First round	1978-06-10	Argentina	1978
+677	West Germany	Tunisia	0	0	30667	First round	1978-06-10	Argentina	1978
+678	Italy	Argentina	1	0	71712	First round	1978-06-10	Argentina	1978
+679	Austria	Sweden	1	0	41424	First round	1978-06-07	Argentina	1978
+680	Brazil	Spain	0	0	34771	First round	1978-06-07	Argentina	1978
+681	Netherlands	Peru	0	0	28125	First round	1978-06-07	Argentina	1978
+682	Scotland	IR Iran	1	1	7938	First round	1978-06-07	Argentina	1978
+683	Italy	Hungary	3	1	26533	First round	1978-06-06	Argentina	1978
+684	West Germany	Mexico	6	0	35258	First round	1978-06-06	Argentina	1978
+685	Poland	Tunisia	1	0	9624	First round	1978-06-06	Argentina	1978
+686	Argentina	France	2	1	71666	First round	1978-06-06	Argentina	1978
+687	Sweden	Brazil	1	1	32569	First round	1978-06-03	Argentina	1978
+688	Austria	Spain	2	1	40841	First round	1978-06-03	Argentina	1978
+689	Peru	Scotland	3	1	37927	First round	1978-06-03	Argentina	1978
+690	Netherlands	IR Iran	3	0	33431	First round	1978-06-03	Argentina	1978
+691	Italy	France	2	1	42373	First round	1978-06-02	Argentina	1978
+692	Tunisia	Mexico	3	1	17396	First round	1978-06-02	Argentina	1978
+693	Argentina	Hungary	2	1	71615	First round	1978-06-02	Argentina	1978
+694	West Germany	Poland	0	0	67579	First round	1978-06-01	Argentina	1978
+695	Netherlands	West Germany	1	2	78200	Final	1974-07-07	Germany	1974
+696	Brazil	Poland	0	1	77100	Third-place match	1974-07-06	Germany	1974
+697	Poland	West Germany	0	1	62000	Second round	1974-07-03	Germany	1974
+698	Netherlands	Brazil	2	0	53700	Second round	1974-07-03	Germany	1974
+699	Argentina	Germany DR	1	1	54254	Second round	1974-07-03	Germany	1974
+700	Sweden	Yugoslavia	2	1	41300	Second round	1974-07-03	Germany	1974
+701	Poland	Yugoslavia	2	1	58000	Second round	1974-06-30	Germany	1974
+702	Argentina	Brazil	1	2	39400	Second round	1974-06-30	Germany	1974
+703	Germany DR	Netherlands	0	2	68348	Second round	1974-06-30	Germany	1974
+704	West Germany	Sweden	4	2	67800	Second round	1974-06-30	Germany	1974
+705	Yugoslavia	West Germany	0	2	67385	Second round	1974-06-26	Germany	1974
+706	Brazil	Germany DR	1	0	59863	Second round	1974-06-26	Germany	1974
+707	Sweden	Poland	0	1	44955	Second round	1974-06-26	Germany	1974
+708	Netherlands	Argentina	4	0	56548	Second round	1974-06-26	Germany	1974
+709	Bulgaria	Netherlands	1	4	53300	First round	1974-06-23	Germany	1974
+710	Poland	Italy	2	1	70100	First round	1974-06-23	Germany	1974
+711	Sweden	Uruguay	3	0	28300	First round	1974-06-23	Germany	1974
+712	Argentina	Haiti	4	1	25900	First round	1974-06-23	Germany	1974
+713	Scotland	Yugoslavia	1	1	56000	First round	1974-06-22	Germany	1974
+714	Australia	Chile	0	0	17400	First round	1974-06-22	Germany	1974
+715	Zaire	Brazil	0	3	36200	First round	1974-06-22	Germany	1974
+716	Germany DR	West Germany	1	0	60200	First round	1974-06-22	Germany	1974
+717	Haiti	Poland	0	7	25300	First round	1974-06-19	Germany	1974
+718	Bulgaria	Uruguay	1	1	13400	First round	1974-06-19	Germany	1974
+719	Netherlands	Sweden	0	0	53700	First round	1974-06-19	Germany	1974
+720	Argentina	Italy	1	1	70100	First round	1974-06-19	Germany	1974
+721	Australia	West Germany	0	3	53300	First round	1974-06-18	Germany	1974
+722	Yugoslavia	Zaire	9	0	31700	First round	1974-06-18	Germany	1974
+723	Chile	Germany DR	1	1	28300	First round	1974-06-18	Germany	1974
+724	Scotland	Brazil	0	0	62000	First round	1974-06-18	Germany	1974
+725	Uruguay	Netherlands	0	2	55100	First round	1974-06-15	Germany	1974
+726	Sweden	Bulgaria	0	0	23800	First round	1974-06-15	Germany	1974
+727	Italy	Haiti	3	1	53000	First round	1974-06-15	Germany	1974
+728	Poland	Argentina	3	2	32700	First round	1974-06-15	Germany	1974
+729	West Germany	Chile	1	0	81100	First round	1974-06-14	Germany	1974
+730	Germany DR	Australia	2	0	17000	First round	1974-06-14	Germany	1974
+731	Zaire	Scotland	0	2	27000	First round	1974-06-14	Germany	1974
+732	Brazil	Yugoslavia	0	0	62000	First round	1974-06-13	Germany	1974
+733	Brazil	Italy	4	1	107412	Final	1970-06-21	Mexico	1970
+734	West Germany	Uruguay	1	0	104403	Third-place match	1970-06-20	Mexico	1970
+735	Italy	West Germany	4	3	102444	Semi-finals	1970-06-17	Mexico	1970
+736	Brazil	Uruguay	3	1	51261	Semi-finals	1970-06-17	Mexico	1970
+737	Brazil	Peru	4	2	54233	Quarter-finals	1970-06-14	Mexico	1970
+738	Italy	Mexico	4	1	26851	Quarter-finals	1970-06-14	Mexico	1970
+739	Uruguay	Soviet Union	1	0	26085	Quarter-finals	1970-06-14	Mexico	1970
+740	West Germany	England	3	2	23357	Quarter-finals	1970-06-14	Mexico	1970
+741	Mexico	Belgium	1	0	108192	Group stage	1970-06-11	Mexico	1970
+742	Italy	Israel	0	0	9890	Group stage	1970-06-11	Mexico	1970
+743	Bulgaria	Morocco	1	1	12299	Group stage	1970-06-11	Mexico	1970
+744	England	Czechoslovakia	1	0	49292	Group stage	1970-06-11	Mexico	1970
+745	West Germany	Peru	3	1	17875	Group stage	1970-06-10	Mexico	1970
+746	Brazil	Romania	3	2	50804	Group stage	1970-06-10	Mexico	1970
+747	Sweden	Uruguay	1	0	18163	Group stage	1970-06-10	Mexico	1970
+748	Soviet Union	El Salvador	2	0	89979	Group stage	1970-06-10	Mexico	1970
+749	Mexico	El Salvador	4	0	103058	Group stage	1970-06-07	Mexico	1970
+750	Brazil	England	1	0	66843	Group stage	1970-06-07	Mexico	1970
+751	West Germany	Bulgaria	5	2	12710	Group stage	1970-06-07	Mexico	1970
+752	Sweden	Israel	1	1	9624	Group stage	1970-06-07	Mexico	1970
+753	Romania	Czechoslovakia	2	1	56818	Group stage	1970-06-06	Mexico	1970
+754	Uruguay	Italy	0	0	29968	Group stage	1970-06-06	Mexico	1970
+755	Soviet Union	Belgium	4	1	95261	Group stage	1970-06-06	Mexico	1970
+756	Peru	Morocco	3	0	13537	Group stage	1970-06-06	Mexico	1970
+757	Belgium	El Salvador	3	0	92205	Group stage	1970-06-03	Mexico	1970
+758	Brazil	Czechoslovakia	4	1	52897	Group stage	1970-06-03	Mexico	1970
+759	Italy	Sweden	1	0	13433	Group stage	1970-06-03	Mexico	1970
+760	West Germany	Morocco	2	1	12942	Group stage	1970-06-03	Mexico	1970
+761	England	Romania	1	0	50560	Group stage	1970-06-02	Mexico	1970
+762	Peru	Bulgaria	3	2	13765	Group stage	1970-06-02	Mexico	1970
+763	Uruguay	Israel	2	0	20654	Group stage	1970-06-02	Mexico	1970
+764	Mexico	Soviet Union	0	0	107160	Group stage	1970-05-31	Mexico	1970
+765	England	West Germany	4	2	96924	Final	1966-07-30	England	1966
+766	Portugal	Soviet Union	2	1	87696	Third-place match	1966-07-28	England	1966
+767	England	Portugal	2	1	94493	Semi-finals	1966-07-26	England	1966
+768	West Germany	Soviet Union	2	1	38273	Semi-finals	1966-07-25	England	1966
+769	Portugal	Korea DPR	5	3	40248	Quarter-finals	1966-07-23	England	1966
+770	England	Argentina	1	0	90584	Quarter-finals	1966-07-23	England	1966
+771	Soviet Union	Hungary	2	1	26844	Quarter-finals	1966-07-23	England	1966
+772	West Germany	Uruguay	4	0	40007	Quarter-finals	1966-07-23	England	1966
+773	England	France	2	0	98270	Group stage	1966-07-20	England	1966
+774	Hungary	Bulgaria	3	1	24129	Group stage	1966-07-20	England	1966
+775	West Germany	Spain	2	1	42187	Group stage	1966-07-20	England	1966
+776	Soviet Union	Chile	2	1	16027	Group stage	1966-07-20	England	1966
+777	Uruguay	Mexico	0	0	61112	Group stage	1966-07-19	England	1966
+778	Argentina	Switzerland	2	0	32127	Group stage	1966-07-19	England	1966
+779	Portugal	Brazil	3	1	58479	Group stage	1966-07-19	England	1966
+780	Korea DPR	Italy	1	0	17829	Group stage	1966-07-19	England	1966
+781	West Germany	Argentina	0	0	46587	Group stage	1966-07-16	England	1966
+782	Soviet Union	Italy	1	0	27793	Group stage	1966-07-16	England	1966
+783	Portugal	Bulgaria	3	0	25438	Group stage	1966-07-16	England	1966
+784	England	Mexico	2	0	92570	Group stage	1966-07-16	England	1966
+785	Spain	Switzerland	2	1	32028	Group stage	1966-07-15	England	1966
+786	Uruguay	France	2	1	45662	Group stage	1966-07-15	England	1966
+787	Hungary	Brazil	3	1	51387	Group stage	1966-07-15	England	1966
+788	Korea DPR	Chile	1	1	13792	Group stage	1966-07-15	England	1966
+789	Argentina	Spain	2	1	42738	Group stage	1966-07-13	England	1966
+790	France	Mexico	1	1	69237	Group stage	1966-07-13	England	1966
+791	Italy	Chile	2	0	27199	Group stage	1966-07-13	England	1966
+792	Portugal	Hungary	3	1	29886	Group stage	1966-07-13	England	1966
+793	Brazil	Bulgaria	2	0	47308	Group stage	1966-07-12	England	1966
+794	Soviet Union	Korea DPR	3	0	23006	Group stage	1966-07-12	England	1966
+795	West Germany	Switzerland	5	0	36127	Group stage	1966-07-12	England	1966
+796	England	Uruguay	0	0	87148	Group stage	1966-07-11	England	1966
+797	Brazil	Czechoslovakia	3	1	68679	Final	1962-06-17	Chile	1962
+798	Chile	Yugoslavia	1	0	66697	Third-place match	1962-06-16	Chile	1962
+799	Brazil	Chile	4	2	76594	Semi-finals	1962-06-13	Chile	1962
+800	Czechoslovakia	Yugoslavia	3	1	5890	Semi-finals	1962-06-13	Chile	1962
+801	Chile	Soviet Union	2	1	17268	Quarter-finals	1962-06-10	Chile	1962
+802	Brazil	England	3	1	17736	Quarter-finals	1962-06-10	Chile	1962
+803	Czechoslovakia	Hungary	1	0	11690	Quarter-finals	1962-06-10	Chile	1962
+804	Yugoslavia	West Germany	1	0	63324	Quarter-finals	1962-06-10	Chile	1962
+805	England	Bulgaria	0	0	5700	Group stage	1962-06-07	Chile	1962
+806	Mexico	Czechoslovakia	3	1	10648	Group stage	1962-06-07	Chile	1962
+807	Italy	Switzerland	3	0	59828	Group stage	1962-06-07	Chile	1962
+808	Yugoslavia	Colombia	5	0	7167	Group stage	1962-06-07	Chile	1962
+809	West Germany	Chile	2	0	67224	Group stage	1962-06-06	Chile	1962
+810	Soviet Union	Uruguay	2	1	9973	Group stage	1962-06-06	Chile	1962
+811	Hungary	Argentina	0	0	7945	Group stage	1962-06-06	Chile	1962
+812	Brazil	Spain	2	1	18715	Group stage	1962-06-06	Chile	1962
+813	Spain	Mexico	1	0	11875	Group stage	1962-06-03	Chile	1962
+814	Soviet Union	Colombia	4	4	8040	Group stage	1962-06-03	Chile	1962
+815	Hungary	Bulgaria	6	1	7442	Group stage	1962-06-03	Chile	1962
+816	West Germany	Switzerland	2	1	64922	Group stage	1962-06-03	Chile	1962
+817	Chile	Italy	2	0	66057	Group stage	1962-06-02	Chile	1962
+818	Brazil	Czechoslovakia	0	0	14903	Group stage	1962-06-02	Chile	1962
+819	England	Argentina	3	1	9794	Group stage	1962-06-02	Chile	1962
+820	Yugoslavia	Uruguay	3	1	8829	Group stage	1962-06-02	Chile	1962
+821	West Germany	Italy	0	0	65440	Group stage	1962-05-31	Chile	1962
+822	Hungary	England	2	1	7938	Group stage	1962-05-31	Chile	1962
+823	Czechoslovakia	Spain	1	0	12700	Group stage	1962-05-31	Chile	1962
+824	Soviet Union	Yugoslavia	2	0	9622	Group stage	1962-05-31	Chile	1962
+825	Chile	Switzerland	3	1	65006	Group stage	1962-05-30	Chile	1962
+826	Uruguay	Colombia	2	1	7908	Group stage	1962-05-30	Chile	1962
+827	Brazil	Mexico	2	0	10484	Group stage	1962-05-30	Chile	1962
+828	Argentina	Bulgaria	1	0	7134	Group stage	1962-05-30	Chile	1962
+829	Brazil	Sweden	5	2	49737	Final	1958-06-29	Sweden	1958
+830	France	West Germany	6	3	32483	Third-place match	1958-06-28	Sweden	1958
+831	Sweden	West Germany	3	1	49471	Semi-finals	1958-06-24	Sweden	1958
+832	Brazil	France	5	2	27100	Semi-finals	1958-06-24	Sweden	1958
+833	France	Northern Ireland	4	0	11800	Quarter-finals	1958-06-19	Sweden	1958
+834	West Germany	Yugoslavia	1	0	20055	Quarter-finals	1958-06-19	Sweden	1958
+835	Brazil	Wales	1	0	25923	Quarter-finals	1958-06-19	Sweden	1958
+836	Sweden	Soviet Union	2	0	31900	Quarter-finals	1958-06-19	Sweden	1958
+837	Northern Ireland	Czechoslovakia	2	1	6196	Group stage play-off	1958-06-17	Sweden	1958
+838	Wales	Hungary	2	1	2823	Group stage play-off	1958-06-17	Sweden	1958
+839	Soviet Union	England	1	0	23182	Group stage play-off	1958-06-17	Sweden	1958
+840	Sweden	Wales	0	0	30287	Group stage	1958-06-15	Sweden	1958
+841	Paraguay	Yugoslavia	3	3	13103	Group stage	1958-06-15	Sweden	1958
+842	West Germany	Northern Ireland	2	2	21990	Group stage	1958-06-15	Sweden	1958
+843	Czechoslovakia	Argentina	6	1	16418	Group stage	1958-06-15	Sweden	1958
+844	England	Austria	2	2	15872	Group stage	1958-06-15	Sweden	1958
+845	Brazil	Soviet Union	2	0	50928	Group stage	1958-06-15	Sweden	1958
+846	Hungary	Mexico	4	0	13300	Group stage	1958-06-15	Sweden	1958
+847	France	Scotland	2	1	13554	Group stage	1958-06-15	Sweden	1958
+848	Sweden	Hungary	2	1	38850	Group stage	1958-06-12	Sweden	1958
+849	Soviet Union	Austria	2	0	21239	Group stage	1958-06-11	Sweden	1958
+850	West Germany	Czechoslovakia	2	2	25000	Group stage	1958-06-11	Sweden	1958
+851	Argentina	Northern Ireland	3	1	14174	Group stage	1958-06-11	Sweden	1958
+852	Yugoslavia	France	3	2	12217	Group stage	1958-06-11	Sweden	1958
+853	Paraguay	Scotland	3	2	11665	Group stage	1958-06-11	Sweden	1958
+854	Brazil	England	0	0	40895	Group stage	1958-06-11	Sweden	1958
+855	Mexico	Wales	1	1	15150	Group stage	1958-06-11	Sweden	1958
+856	Sweden	Mexico	3	0	34107	Group stage	1958-06-08	Sweden	1958
+857	Northern Ireland	Czechoslovakia	1	0	10647	Group stage	1958-06-08	Sweden	1958
+858	Hungary	Wales	1	1	15343	Group stage	1958-06-08	Sweden	1958
+859	Yugoslavia	Scotland	1	1	9591	Group stage	1958-06-08	Sweden	1958
+860	Brazil	Austria	3	0	17788	Group stage	1958-06-08	Sweden	1958
+861	Soviet Union	England	2	2	49348	Group stage	1958-06-08	Sweden	1958
+862	France	Paraguay	7	3	16518	Group stage	1958-06-08	Sweden	1958
+863	Argentina	West Germany	1	3	31156	Group stage	1958-06-08	Sweden	1958
+864	Germany	Hungary	3	2	62500	Final	1954-07-04	Switzerland	1954
+865	Austria	Uruguay	3	1	32000	Third-place match	1954-07-03	Switzerland	1954
+866	Hungary	Uruguay	4	2	45000	Semi-finals	1954-06-30	Switzerland	1954
+867	Germany	Austria	6	1	58000	Semi-finals	1954-06-30	Switzerland	1954
+868	Germany	Yugoslavia	2	0	17000	Quarter-finals	1954-06-27	Switzerland	1954
+869	Hungary	Brazil	4	2	40000	Quarter-finals	1954-06-27	Switzerland	1954
+870	Uruguay	England	4	2	28000	Quarter-finals	1954-06-26	Switzerland	1954
+871	Switzerland	Austria	5	7	35000	Quarter-finals	1954-06-26	Switzerland	1954
+872	Germany	Türkiye	7	2	17000	Group stage play-off	1954-06-23	Switzerland	1954
+873	Switzerland	Italy	4	1	30000	Group stage play-off	1954-06-23	Switzerland	1954
+874	Hungary	Germany	8	3	56000	Group stage	1954-06-20	Switzerland	1954
+875	Türkiye	Korea Republic	7	0	4000	Group stage	1954-06-20	Switzerland	1954
+876	Italy	Belgium	4	1	24000	Group stage	1954-06-20	Switzerland	1954
+877	Switzerland	England	0	2	43500	Group stage	1954-06-20	Switzerland	1954
+878	Uruguay	Scotland	7	0	34000	Group stage	1954-06-19	Switzerland	1954
+879	Brazil	Yugoslavia	1	1	24637	Group stage	1954-06-19	Switzerland	1954
+880	Austria	Czechoslovakia	5	0	26000	Group stage	1954-06-19	Switzerland	1954
+881	France	Mexico	3	2	19000	Group stage	1954-06-19	Switzerland	1954
+882	Switzerland	Italy	2	1	43000	Group stage	1954-06-17	Switzerland	1954
+883	Hungary	Korea Republic	9	0	13000	Group stage	1954-06-17	Switzerland	1954
+884	Germany	Türkiye	4	1	28000	Group stage	1954-06-17	Switzerland	1954
+885	England	Belgium	4	4	14000	Group stage	1954-06-17	Switzerland	1954
+886	Uruguay	Czechoslovakia	2	0	20500	Group stage	1954-06-16	Switzerland	1954
+887	Yugoslavia	France	1	0	16000	Group stage	1954-06-16	Switzerland	1954
+888	Brazil	Mexico	5	0	13470	Group stage	1954-06-16	Switzerland	1954
+889	Austria	Scotland	1	0	25000	Group stage	1954-06-16	Switzerland	1954
+890	Sweden	Spain	3	1	11227	Final stage	1950-07-16	Brazil	1950
+891	Uruguay	Brazil	2	1	173850	Final stage	1950-07-16	Brazil	1950
+892	Brazil	Spain	6	1	152772	Final stage	1950-07-13	Brazil	1950
+893	Uruguay	Sweden	3	2	7987	Final stage	1950-07-13	Brazil	1950
+894	Brazil	Sweden	7	1	138886	Final stage	1950-07-09	Brazil	1950
+895	Uruguay	Spain	2	2	44802	Final stage	1950-07-09	Brazil	1950
+896	Chile	United States	5	2	8501	Group stage	1950-07-02	Brazil	1950
+897	Italy	Paraguay	2	0	25811	Group stage	1950-07-02	Brazil	1950
+898	Uruguay	Bolivia	8	0	5284	Group stage	1950-07-02	Brazil	1950
+899	Spain	England	1	0	74462	Group stage	1950-07-02	Brazil	1950
+900	Switzerland	Mexico	2	1	3580	Group stage	1950-07-02	Brazil	1950
+901	Brazil	Yugoslavia	2	0	142429	Group stage	1950-07-01	Brazil	1950
+902	Spain	Chile	2	0	19790	Group stage	1950-06-29	Brazil	1950
+903	United States	England	1	0	10151	Group stage	1950-06-29	Brazil	1950
+904	Sweden	Paraguay	2	2	7903	Group stage	1950-06-29	Brazil	1950
+905	Brazil	Switzerland	2	2	42032	Group stage	1950-06-28	Brazil	1950
+906	Yugoslavia	Mexico	4	1	11078	Group stage	1950-06-28	Brazil	1950
+907	Sweden	Italy	3	2	36502	Group stage	1950-06-25	Brazil	1950
+908	England	Chile	2	0	29703	Group stage	1950-06-25	Brazil	1950
+909	Spain	United States	3	1	9511	Group stage	1950-06-25	Brazil	1950
+910	Yugoslavia	Switzerland	3	0	7336	Group stage	1950-06-25	Brazil	1950
+911	Brazil	Mexico	4	0	81649	Group stage	1950-06-24	Brazil	1950
+912	Brazil	Sweden	4	2	12000	Third-place match	1938-06-19	France	1938
+913	Italy	Hungary	4	2	45000	Final	1938-06-19	France	1938
+914	Hungary	Sweden	5	1	20000	Semi-finals	1938-06-16	France	1938
+915	Italy	Brazil	2	1	33000	Semi-finals	1938-06-16	France	1938
+916	Brazil	Czechoslovakia	2	1	18141	Quarter-finals	1938-06-14	France	1938
+917	Sweden	Cuba	8	0	7000	Quarter-finals	1938-06-12	France	1938
+918	Brazil	Czechoslovakia	1	1	22021	Quarter-finals	1938-06-12	France	1938
+919	Hungary	Switzerland	2	0	15000	Quarter-finals	1938-06-12	France	1938
+920	Italy	France	3	1	58455	Quarter-finals	1938-06-12	France	1938
+921	Switzerland	Germany	4	2	20025	Round of 16	1938-06-09	France	1938
+922	Cuba	Romania	2	1	8000	Round of 16	1938-06-09	France	1938
+923	Italy	Norway	2	1	19000	Round of 16	1938-06-05	France	1938
+924	Cuba	Romania	3	3	7000	Round of 16	1938-06-05	France	1938
+925	Hungary	Dutch East Indies	6	0	9000	Round of 16	1938-06-05	France	1938
+926	France	Belgium	3	1	30454	Round of 16	1938-06-05	France	1938
+927	Brazil	Poland	6	5	13452	Round of 16	1938-06-05	France	1938
+928	Czechoslovakia	Netherlands	3	0	11000	Round of 16	1938-06-05	France	1938
+929	Switzerland	Germany	1	1	27152	Round of 16	1938-06-04	France	1938
+930	Italy	Czechoslovakia	2	1	55000	Final	1934-06-10	Italy	1934
+931	Germany	Austria	3	2	7000	Third-place match	1934-06-07	Italy	1934
+932	Czechoslovakia	Germany	3	1	15000	Semi-finals	1934-06-03	Italy	1934
+933	Italy	Austria	1	0	35000	Semi-finals	1934-06-03	Italy	1934
+934	Italy	Spain	1	0	43000	Quarter-finals	1934-06-01	Italy	1934
+935	Austria	Hungary	2	1	23000	Quarter-finals	1934-05-31	Italy	1934
+936	Czechoslovakia	Switzerland	3	2	12000	Quarter-finals	1934-05-31	Italy	1934
+937	Italy	Spain	1	1	35000	Quarter-finals	1934-05-31	Italy	1934
+938	Germany	Sweden	2	1	3000	Quarter-finals	1934-05-31	Italy	1934
+939	Czechoslovakia	Romania	2	1	9000	Round of 16	1934-05-27	Italy	1934
+940	Hungary	Egypt	4	2	9000	Round of 16	1934-05-27	Italy	1934
+941	Austria	France	3	2	16000	Round of 16	1934-05-27	Italy	1934
+942	Switzerland	Netherlands	3	2	33000	Round of 16	1934-05-27	Italy	1934
+943	Sweden	Argentina	3	2	14000	Round of 16	1934-05-27	Italy	1934
+944	Spain	Brazil	3	1	21000	Round of 16	1934-05-27	Italy	1934
+945	Germany	Belgium	5	2	8000	Round of 16	1934-05-27	Italy	1934
+946	Italy	United States	7	1	25000	Round of 16	1934-05-27	Italy	1934
+947	Uruguay	Argentina	4	2	68346	Final	1930-07-30	Uruguay	1930
+948	Uruguay	Yugoslavia	6	1	79867	Semi-finals	1930-07-27	Uruguay	1930
+949	Argentina	United States	6	1	72886	Semi-finals	1930-07-26	Uruguay	1930
+950	Argentina	Chile	3	1	41459	Group stage	1930-07-22	Uruguay	1930
+951	Uruguay	Romania	4	0	70022	Group stage	1930-07-21	Uruguay	1930
+952	Brazil	Bolivia	4	0	25466	Group stage	1930-07-20	Uruguay	1930
+953	Paraguay	Belgium	1	0	12000	Group stage	1930-07-20	Uruguay	1930
+954	Chile	France	1	0	2000	Group stage	1930-07-19	Uruguay	1930
+955	Argentina	Mexico	6	3	42100	Group stage	1930-07-19	Uruguay	1930
+956	Uruguay	Peru	1	0	57735	Group stage	1930-07-18	Uruguay	1930
+957	Yugoslavia	Bolivia	4	0	18306	Group stage	1930-07-17	Uruguay	1930
+958	United States	Paraguay	3	0	18306	Group stage	1930-07-17	Uruguay	1930
+959	Chile	Mexico	3	0	9249	Group stage	1930-07-16	Uruguay	1930
+960	Argentina	France	1	0	23409	Group stage	1930-07-15	Uruguay	1930
+961	Yugoslavia	Brazil	2	1	24059	Group stage	1930-07-14	Uruguay	1930
+962	Romania	Peru	3	1	2549	Group stage	1930-07-14	Uruguay	1930
+963	United States	Belgium	3	0	18346	Group stage	1930-07-13	Uruguay	1930
+964	France	Mexico	4	1	4444	Group stage	1930-07-13	Uruguay	1930
+\.
+
+
+--
+-- TOC entry 4903 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: world_cup_matches_id_seq; Type: SEQUENCE SET; Schema: soccerbirth_staging; Owner: postgres
+--
+
+SELECT pg_catalog.setval('soccerbirth_staging.world_cup_matches_id_seq', 964, true);
+
+
+--
+-- TOC entry 4737 (class 2606 OID 19877)
 -- Name: dim_country dim_country_country_name_key; Type: CONSTRAINT; Schema: soccerbirth_dwh; Owner: postgres
 --
 
@@ -63004,7 +63976,7 @@ ALTER TABLE ONLY soccerbirth_dwh.dim_country
 
 
 --
--- TOC entry 4737 (class 2606 OID 19875)
+-- TOC entry 4739 (class 2606 OID 19875)
 -- Name: dim_country dim_country_pkey; Type: CONSTRAINT; Schema: soccerbirth_dwh; Owner: postgres
 --
 
@@ -63013,7 +63985,7 @@ ALTER TABLE ONLY soccerbirth_dwh.dim_country
 
 
 --
--- TOC entry 4731 (class 2606 OID 19862)
+-- TOC entry 4733 (class 2606 OID 19862)
 -- Name: births_per_year births_per_year_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -63022,7 +63994,7 @@ ALTER TABLE ONLY soccerbirth_staging.births_per_year
 
 
 --
--- TOC entry 4733 (class 2606 OID 19868)
+-- TOC entry 4735 (class 2606 OID 19868)
 -- Name: country_codes country_codes_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -63030,7 +64002,16 @@ ALTER TABLE ONLY soccerbirth_staging.country_codes
     ADD CONSTRAINT country_codes_pkey PRIMARY KEY (country);
 
 
--- Completed on 2025-05-16 12:10:40
+--
+-- TOC entry 4741 (class 2606 OID 20118)
+-- Name: world_cup_matches world_cup_matches_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
+--
+
+ALTER TABLE ONLY soccerbirth_staging.world_cup_matches
+    ADD CONSTRAINT world_cup_matches_pkey PRIMARY KEY (id);
+
+
+-- Completed on 2025-05-16 15:54:36
 
 --
 -- PostgreSQL database dump complete

@@ -24,9 +24,9 @@ class Tournament:
             date = datetime(tournament_year, 6, 15)
 
         elif tournament_name == "World Championship":
-            # query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
-            # date = self.db.get_date(query)
-            date = datetime(tournament_year, 6, 15)
+            query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
+            date = self.db.get_date(query)
+
         else:
             raise ValueError(f"Unsupported tournament: {tournament_name}")
 
@@ -49,6 +49,7 @@ class Tournament:
         return df
 
     def get_available_countries(self):
+
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
         if selected_tournament == "European Championship":

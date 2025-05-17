@@ -23,8 +23,10 @@ app_ui = ui.page_sidebar(
         ui.input_radio_buttons("tournament_selection", "Select a tournament:", tournaments),
         ui.output_ui("available_years_selection"),
         ui.output_ui("available_countries_selection"),
+
         bg="#f8f8f8"
     ),
+ui.input_action_button("generate_chart", "Show new graph"),
     output_widget("birth_chart"),
     custom_style
 )
@@ -65,6 +67,7 @@ def server(inputs, outputs, session):
 
 
     @render_widget
+    @reactive.event(inputs.generate_chart)
     def birth_chart():
         country_selected = inputs["available_countries_selection"]()
         year = inputs["available_years_selection"]()

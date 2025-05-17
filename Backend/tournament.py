@@ -1,12 +1,8 @@
 from datetime import datetime, timedelta
 import pandas as pd
 
-def get_dataframe(query):
-    #even toegevoegd om rode lijn weg te krijgen
-    pass
-def get_date(query):
-    #same
-    pass
+from Backend.database.database_methods import Database
+
 
 class Tournament:
     def __init__(self, tournament_name, tournament_year=None):
@@ -21,7 +17,8 @@ class Tournament:
         tournament_name = self.tournament_name
         tournament_year = self.tournament_year
         query = """ """ #finale datum
-        date = get_date(query)  # get_data stelt de geinporteerde functie (uit backend/database) voor
+        data = Database()
+        date = data.get_date(query)
         self.tournament_date = datetime.strptime(date, '%m/%d/%Y')
         self.target_date = datetime.strptime(date, '%m/%d/%Y') + timedelta(days=266)
         self.tournament_month = self.tournament_date.strftime('%B') #geeft meteen de benaming van de maand door
@@ -30,8 +27,12 @@ class Tournament:
 
     def get_available_years(self):
         selected_tournament = self.tournament_name
-        query = """ """ #query om juiste jaren binnen te halen (jaar, organiserend land?)
-        df = get_dataframe(query) #get_data stelt de geinporteerde functie (uit backend/database) voor die een df teruggeeft
+        if selected_tournament == "European Championship":
+            query = "select year from euro_high_level"
+        elif selected_tournament == "World Championship":
+            query = "select year from world_cup_high_level"
+        data =  Database()
+        df = data.get_df(query)
         return df
 
     def get_available_countries(self):

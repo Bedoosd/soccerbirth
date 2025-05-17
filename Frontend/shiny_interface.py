@@ -41,25 +41,40 @@ def server(inputs, outputs, session):
         tournament = selected_tournament()
         available_years_df = tournament.get_available_years()
         available_years = available_years_df["year"].tolist()
+
+        if not available_years:
+            return ui.div("No available years")
+
         return ui.input_select("available_years_selection", "Select year:", available_years)
+
 
     @render.ui
     def available_countries_selection():
         tournament = selected_tournament()
         selected_year = inputs["available_years_selection"]()
+        if not selected_year:
+            return ui.div("Select a year first")
         tournament.tournament_year = selected_year
-
         available_countries_df = tournament.get_available_countries()
-        available_countries = available_countries_df["country"].tolist() # kan uitgebreid worden om bv iso codes bij te nemen
+        available_countries = available_countries_df["country"].tolist()
+
+        if not available_countries:
+            return ui.div("No countries available")
 
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
 
     @render_widget
     def birth_chart():
-        tournament = selected_tournament()
         country_selected = inputs["available_countries_selection"]()
+        year = inputs["available_years_selection"]()
+        country_name = inputs["available_countries_selection"]()
 
+        if not year or not country_name:
+            return go.Figure()
+
+        tournament = selected_tournament()
+        tournament.tournament_year = year
         country = Country(country_selected, tournament)
 
         if country.has_monthly_data():

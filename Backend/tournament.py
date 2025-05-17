@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import pandas as pd
+from psycopg2.extras import wait_select
 
 from Backend.database.database_methods import Database
 
@@ -15,16 +16,17 @@ class Tournament:
         self.db = Database()
 
     def set_tournament_date_and_target(self):
-        date = datetime.today()
         tournament_name = self.tournament_name
         tournament_year = int(self.tournament_year)
+
         if tournament_name == "European Championship":
             #data van finale nog niet beschikbaar in databank
             date = datetime(tournament_year, 6, 15)
 
         elif tournament_name == "World Championship":
-            query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
-            date = self.db.get_date(query)
+            # query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
+            # date = self.db.get_date(query)
+            date = datetime(tournament_year, 6, 15)
         else:
             raise ValueError(f"Unsupported tournament: {tournament_name}")
 

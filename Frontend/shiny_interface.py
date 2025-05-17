@@ -5,11 +5,11 @@ import plotly.graph_objects as go
 
 #test_env:
 from Backend.country_test_data import Country
-from Backend.tourament_test_data import Tournament
+#from Backend.tourament_test_data import Tournament
 
 ##real_env
 # from Backend.country import Country
-# from Backend.tournament import Tournament
+from Backend.tournament import Tournament
 
 
 tournaments = ["World Championship","European Championship"]

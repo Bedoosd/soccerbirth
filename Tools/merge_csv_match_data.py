@@ -10,7 +10,7 @@ def merge_csv_files(input_dir, output_file):
 
     columns_needed = [
         "id_match", "home_team", "away_team", "home_score", "away_score",
-        "year", "date", "round", "match_attendance"
+        "year", "date", "round", "match_attendance","winner", "home_score_total", "away_score_total"
     ]
 
     valid_csv = []

@@ -19,8 +19,8 @@ def merge_csv_files(input_dir, output_file):
         if f.stem.isdigit() and len(f.stem) == 4:
             try:
                 valid_csv.append(pd.read_csv(f, usecols=columns_needed))
-            except ValueError as e:
-                print(f"file skipped (wrong columns): {f.name} – {e}")
+            except ValueError as g:
+                print(f"file skipped (wrong columns): {f.name} – {g}")
         else:
             print(f"file skipped (invalid filename): {f.name} – not a 4-digit year")
 

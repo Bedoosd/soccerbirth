@@ -20,7 +20,6 @@ class Country:
         print("check")
         self.tournament.set_tournament_date_and_target()
         selected_country = self.country
-        target = self.tournament.target_date
         query = f"""select exists (select 1 from births_per_yearmonth 
                     where country = '{selected_country}' 
                     and year = '{self.tournament.target_year}' 
@@ -29,11 +28,11 @@ class Country:
 
     def has_yearly_data(self):
         selected_country = self.country
-        target = self.tournament.target_date
-        query = """ """ #query om te kijken of er jaarlijkse data is
-        result = get_bool(query)
-        check = bool
-        return check
+        target_year = self.tournament.target_year
+        query = f"""select exists (
+                    select 1 from births_per_year 
+                    where country = '{selected_country}' and year = '{target_year}')"""
+        return self.db.get_bool(query)
 
     def get_monthly_data(self):
         selected_country = self.country

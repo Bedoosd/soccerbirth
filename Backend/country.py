@@ -10,7 +10,6 @@ class Country:
         self.country = name
 
     def has_monthly_data(self):
-        print("check")
         self.tournament.set_tournament_date_and_target()
         selected_country = self.country
         query = f"""select exists (select 1 from births_per_yearmonth 

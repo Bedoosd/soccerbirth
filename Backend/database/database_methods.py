@@ -34,7 +34,6 @@ class Database:
         try:
             cursor.execute(query)
             result = cursor.fetchone()[0] #fetchone geeft steeds een tuple terug, steeds eerste resultaat er uit halen
-            print (f"result_getbool = {result}")
             if isinstance(result, bool): return result
             else: raise TypeError (f"expected a boolean, got result: {result} : {type(result)}")
 

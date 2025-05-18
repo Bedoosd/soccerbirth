@@ -42,7 +42,7 @@ def server(inputs, outputs, session):
     def available_years_selection():
         tournament = selected_tournament()
         available_years_df = tournament.get_available_years()
-        available_years = available_years_df["year"].tolist()
+        available_years = sorted(available_years_df["year"].tolist())
 
         if not available_years:
             return ui.div("No available years")

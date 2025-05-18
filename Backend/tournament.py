@@ -55,12 +55,20 @@ class Tournament:
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
         if selected_tournament == "European Championship":
-            query = f"select winner as country from soccerbirth_staging.euro_high_level where year = {selected_year}"
+            query = f"""SELECT home_team AS country
+                        FROM euro_matches WHERE year = '{selected_year}'
+                        UNION
+                        SELECT away_team AS country
+                        FROM euro_matches WHERE year = '{selected_year}';
+                        """
         elif selected_tournament == "World Championship":
-            query = f"select home_team as country from soccerbirth_staging.world_cup_matches where year = {selected_year}"
+            query = f"""SELECT home_team AS country
+                        FROM world_cup_matches WHERE year = '{selected_year}'
+                        UNION
+                        SELECT away_team AS country
+                        FROM world_cup_matches WHERE year = '{selected_year}';
+                        """
         else:
             raise ValueError(f"Unsupported tournament: {selected_tournament}")
-            query = "select country, host from world_cup_countries"
 
-        df = self.db.get_df(query)
-        return df
+        return self.db.get_df(query)

@@ -5,7 +5,7 @@
 -- Dumped from database version 17.2
 -- Dumped by pg_dump version 17.2
 
--- Started on 2025-05-16 15:54:36
+-- Started on 2025-05-17 12:07:46
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,7 +21,7 @@ SET row_security = off;
 
 DROP DATABASE soccerbirth;
 --
--- TOC entry 4900 (class 1262 OID 19812)
+-- TOC entry 4913 (class 1262 OID 19812)
 -- Name: soccerbirth; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -45,8 +45,8 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 4901 (class 0 OID 0)
--- Dependencies: 4900
+-- TOC entry 4914 (class 0 OID 0)
+-- Dependencies: 4913
 -- Name: DATABASE soccerbirth; Type: COMMENT; Schema: -; Owner: postgres
 --
 
@@ -161,6 +161,26 @@ CREATE TABLE soccerbirth_staging.euro_high_level (
 ALTER TABLE soccerbirth_staging.euro_high_level OWNER TO postgres;
 
 --
+-- TOC entry 233 (class 1259 OID 20129)
+-- Name: euro_matches; Type: TABLE; Schema: soccerbirth_staging; Owner: postgres
+--
+
+CREATE TABLE soccerbirth_staging.euro_matches (
+    id_match integer NOT NULL,
+    home_team character varying(100),
+    away_team character varying(100),
+    home_score integer,
+    away_score integer,
+    year integer,
+    date date,
+    round character varying(50),
+    match_attendance integer
+);
+
+
+ALTER TABLE soccerbirth_staging.euro_matches OWNER TO postgres;
+
+--
 -- TOC entry 227 (class 1259 OID 19929)
 -- Name: world_cup_high_level; Type: TABLE; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -225,7 +245,7 @@ CREATE SEQUENCE soccerbirth_staging.world_cup_matches_id_seq
 ALTER SEQUENCE soccerbirth_staging.world_cup_matches_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4902 (class 0 OID 0)
+-- TOC entry 4915 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: world_cup_matches_id_seq; Type: SEQUENCE OWNED BY; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -234,7 +254,7 @@ ALTER SEQUENCE soccerbirth_staging.world_cup_matches_id_seq OWNED BY soccerbirth
 
 
 --
--- TOC entry 4731 (class 2604 OID 20116)
+-- TOC entry 4741 (class 2604 OID 20116)
 -- Name: world_cup_matches id; Type: DEFAULT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -242,7 +262,7 @@ ALTER TABLE ONLY soccerbirth_staging.world_cup_matches ALTER COLUMN id SET DEFAU
 
 
 --
--- TOC entry 4889 (class 0 OID 19869)
+-- TOC entry 4901 (class 0 OID 19869)
 -- Dependencies: 225
 -- Data for Name: dim_country; Type: TABLE DATA; Schema: soccerbirth_dwh; Owner: postgres
 --
@@ -341,7 +361,7 @@ COPY soccerbirth_dwh.dim_country (country_id, country_name, iso_alpha2, iso_alph
 705	Slovenia	SI	SVN
 688	Serbia	RS	SRB
 188	Costa Rica	CR	CRI
-384	cote d'Ivoire	CI	CIV
+384	cote d Ivoire	CI	CIV
 156	China	CN	CHN
 084	Belize	BZ	BLZ
 862	Venezuela	VE	VEN
@@ -407,7 +427,7 @@ COPY soccerbirth_dwh.dim_country (country_id, country_name, iso_alpha2, iso_alph
 
 
 --
--- TOC entry 4887 (class 0 OID 19856)
+-- TOC entry 4899 (class 0 OID 19856)
 -- Dependencies: 223
 -- Data for Name: births_per_year; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -5373,7 +5393,7 @@ United States Of America	2023	1756223	1839794	3596017
 
 
 --
--- TOC entry 4890 (class 0 OID 19910)
+-- TOC entry 4902 (class 0 OID 19910)
 -- Dependencies: 226
 -- Data for Name: births_per_yearmonth; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62760,7 +62780,7 @@ Wallis and Futuna Islands	1973	December	333
 
 
 --
--- TOC entry 4888 (class 0 OID 19864)
+-- TOC entry 4900 (class 0 OID 19864)
 -- Dependencies: 224
 -- Data for Name: country_codes; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62816,7 +62836,7 @@ Colombia                                          	CO	COL	170
 Comoros                                           	KM	COM	174
 Congo                                             	CG	COG	178
 Costa Rica                                        	CR	CRI	188
-cote d'Ivoire                                     	CI	CIV	384
+cote d Ivoire                                     	CI	CIV	384
 Croatia                                           	HR	HRV	191
 Cuba                                              	CU	CUB	192
 Cyprus                                            	CY	CYP	196
@@ -62925,7 +62945,7 @@ Zimbabwe                                          	ZW	ZWE	716
 
 
 --
--- TOC entry 4892 (class 0 OID 19937)
+-- TOC entry 4904 (class 0 OID 19937)
 -- Dependencies: 228
 -- Data for Name: euro_high_level; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62952,7 +62972,405 @@ COPY soccerbirth_staging.euro_high_level (year, winner, final, result, matches, 
 
 
 --
--- TOC entry 4891 (class 0 OID 19929)
+-- TOC entry 4907 (class 0 OID 20129)
+-- Dependencies: 233
+-- Data for Name: euro_matches; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
+--
+
+COPY soccerbirth_staging.euro_matches (id_match, home_team, away_team, home_score, away_score, year, date, round, match_attendance) FROM stdin;
+4025	USSR	Yugoslavia	1	1	1960	1960-07-10	FINAL	17966
+4024	Czechoslovakia	France	2	0	1960	1960-07-09	THIRD_PLAY_OFF	9438
+4023	Czechoslovakia	USSR	0	3	1960	1960-07-06	SEMIFINAL	25184
+4022	France	Yugoslavia	4	5	1960	1960-07-06	SEMIFINAL	26370
+3996	Spain	USSR	2	1	1964	1964-06-21	FINAL	79115
+3995	Hungary	Denmark	1	1	1964	1964-06-20	THIRD_PLAY_OFF	3869
+3994	Denmark	USSR	0	3	1964	1964-06-17	SEMIFINAL	38556
+3993	Spain	Hungary	1	1	1964	1964-06-17	SEMIFINAL	34713
+73911	Italy	Yugoslavia	2	0	1968	1968-06-10	FINAL	32886
+73910	Italy	Yugoslavia	1	1	1968	1968-06-08	FINAL	68817
+3939	England	USSR	2	0	1968	1968-06-08	THIRD_PLAY_OFF	68817
+3937	Yugoslavia	England	1	0	1968	1968-06-05	SEMIFINAL	21834
+3938	Italy	USSR	0	0	1968	1968-06-05	SEMIFINAL	68582
+3838	West Germany	USSR	3	0	1972	1972-06-18	FINAL	43066
+3837	Hungary	Belgium	1	2	1972	1972-06-17	THIRD_PLAY_OFF	6184
+3836	Belgium	West Germany	1	2	1972	1972-06-14	SEMIFINAL	55601
+3835	Hungary	USSR	0	1	1972	1972-06-14	SEMIFINAL	1659
+3693	Czechoslovakia	West Germany	2	2	1976	1976-06-20	FINAL	30790
+3692	Netherlands	Yugoslavia	2	2	1976	1976-06-19	THIRD_PLAY_OFF	6766
+3691	Yugoslavia	West Germany	2	2	1976	1976-06-17	SEMIFINAL	50652
+3690	Czechoslovakia	Netherlands	1	1	1976	1976-06-16	SEMIFINAL	17879
+3585	Belgium	West Germany	1	2	1980	1980-06-22	FINAL	47860
+3584	Czechoslovakia	Italy	1	1	1980	1980-06-21	THIRD_PLAY_OFF	24652
+3583	Italy	Belgium	0	0	1980	1980-06-18	GROUP_STANDINGS	42318
+3582	Spain	England	1	2	1980	1980-06-18	GROUP_STANDINGS	14440
+3577	Greece	West Germany	0	0	1980	1980-06-17	GROUP_STANDINGS	13901
+3576	Netherlands	Czechoslovakia	1	1	1980	1980-06-17	GROUP_STANDINGS	11889
+3581	England	Italy	0	1	1980	1980-06-15	GROUP_STANDINGS	59649
+3580	Belgium	Spain	2	1	1980	1980-06-15	GROUP_STANDINGS	11430
+3575	Greece	Czechoslovakia	1	3	1980	1980-06-14	GROUP_STANDINGS	7614
+3574	West Germany	Netherlands	3	2	1980	1980-06-14	GROUP_STANDINGS	29889
+3579	Spain	Italy	0	0	1980	1980-06-12	GROUP_STANDINGS	46337
+3578	Belgium	England	1	1	1980	1980-06-12	GROUP_STANDINGS	15186
+3573	Netherlands	Greece	1	0	1980	1980-06-11	GROUP_STANDINGS	14990
+3572	Czechoslovakia	West Germany	0	1	1980	1980-06-11	GROUP_STANDINGS	10500
+3463	France	Spain	2	0	1984	1984-06-27	FINAL	47368
+3462	Denmark	Spain	0	0	1984	1984-06-24	SEMIFINAL	47843
+3461	France	Portugal	1	1	1984	1984-06-23	SEMIFINAL	54848
+3460	Portugal	Romania	1	0	1984	1984-06-20	GROUP_STANDINGS	24464
+3459	West Germany	Spain	0	1	1984	1984-06-20	GROUP_STANDINGS	47691
+3454	Denmark	Belgium	3	2	1984	1984-06-19	GROUP_STANDINGS	36911
+3453	France	Yugoslavia	3	2	1984	1984-06-19	GROUP_STANDINGS	47510
+3458	Portugal	Spain	1	1	1984	1984-06-17	GROUP_STANDINGS	24364
+3457	West Germany	Romania	2	1	1984	1984-06-17	GROUP_STANDINGS	31787
+3452	Denmark	Yugoslavia	5	0	1984	1984-06-16	GROUP_STANDINGS	34736
+3451	France	Belgium	5	0	1984	1984-06-16	GROUP_STANDINGS	51359
+3456	Romania	Spain	1	1	1984	1984-06-14	GROUP_STANDINGS	16972
+3455	West Germany	Portugal	0	0	1984	1984-06-14	GROUP_STANDINGS	44707
+3450	Belgium	Yugoslavia	2	0	1984	1984-06-13	GROUP_STANDINGS	41525
+3449	France	Denmark	1	0	1984	1984-06-12	GROUP_STANDINGS	47570
+22	USSR	Netherlands	0	2	1988	1988-06-25	FINAL	62770
+21	USSR	Italy	2	0	1988	1988-06-22	SEMIFINAL	61606
+20	West Germany	Netherlands	1	2	1988	1988-06-21	SEMIFINAL	56115
+18	Republic of Ireland	Netherlands	0	1	1988	1988-06-18	GROUP_STANDINGS	64731
+17	England	USSR	1	3	1988	1988-06-18	GROUP_STANDINGS	48335
+9	West Germany	Spain	2	0	1988	1988-06-17	GROUP_STANDINGS	63802
+10	Italy	Denmark	2	0	1988	1988-06-17	GROUP_STANDINGS	53951
+16	Republic of Ireland	USSR	1	1	1988	1988-06-15	GROUP_STANDINGS	38308
+15	England	Netherlands	1	3	1988	1988-06-15	GROUP_STANDINGS	63940
+8	Italy	Spain	1	0	1988	1988-06-14	GROUP_STANDINGS	47506
+7	West Germany	Denmark	2	0	1988	1988-06-14	GROUP_STANDINGS	64812
+14	Netherlands	USSR	0	1	1988	1988-06-12	GROUP_STANDINGS	54336
+13	England	Republic of Ireland	0	1	1988	1988-06-12	GROUP_STANDINGS	51373
+6	Denmark	Spain	2	3	1988	1988-06-11	GROUP_STANDINGS	55707
+5	West Germany	Italy	1	1	1988	1988-06-10	GROUP_STANDINGS	62552
+6098	Denmark	Germany	2	0	1992	1992-06-26	FINAL	37800
+6097	Netherlands	Denmark	2	2	1992	1992-06-22	SEMIFINAL	37450
+6096	Sweden	Germany	2	3	1992	1992-06-21	SEMIFINAL	27827
+5098	Scotland	Commonwealth of Independent States	3	0	1992	1992-06-18	GROUP_STANDINGS	14660
+5097	Netherlands	Germany	3	1	1992	1992-06-18	GROUP_STANDINGS	37725
+5092	France	Denmark	1	2	1992	1992-06-17	GROUP_STANDINGS	25763
+5091	Sweden	England	2	1	1992	1992-06-17	GROUP_STANDINGS	30126
+5096	Netherlands	Commonwealth of Independent States	0	0	1992	1992-06-15	GROUP_STANDINGS	34440
+5095	Scotland	Germany	0	2	1992	1992-06-15	GROUP_STANDINGS	17800
+5090	Sweden	Denmark	1	0	1992	1992-06-14	GROUP_STANDINGS	29902
+5089	France	England	0	0	1992	1992-06-14	GROUP_STANDINGS	26535
+5094	Commonwealth of Independent States	Germany	1	1	1992	1992-06-12	GROUP_STANDINGS	17700
+5093	Netherlands	Scotland	1	0	1992	1992-06-12	GROUP_STANDINGS	35720
+5108	Denmark	England	0	0	1992	1992-06-11	GROUP_STANDINGS	26385
+5099	Sweden	France	1	1	1992	1992-06-10	GROUP_STANDINGS	30000
+52917	Czechia	Germany	1	1	1996	1996-06-30	FINAL	73611
+52916	Germany	England	1	1	1996	1996-06-26	SEMIFINAL	75862
+52915	France	Czechia	0	0	1996	1996-06-26	SEMIFINAL	43877
+52914	Czechia	Portugal	1	0	1996	1996-06-23	QUARTER_FINALS	26832
+52913	Germany	Croatia	2	1	1996	1996-06-23	QUARTER_FINALS	43412
+52912	France	Netherlands	0	0	1996	1996-06-22	QUARTER_FINALS	37465
+52911	Spain	England	0	0	1996	1996-06-22	QUARTER_FINALS	75440
+52511	Italy	Germany	0	0	1996	1996-06-19	GROUP_STANDINGS	53740
+52510	Russia	Czechia	3	3	1996	1996-06-19	GROUP_STANDINGS	21128
+52517	Türkiye	Denmark	0	3	1996	1996-06-19	GROUP_STANDINGS	28951
+52516	Croatia	Portugal	0	3	1996	1996-06-19	GROUP_STANDINGS	20484
+52487	Netherlands	England	1	4	1996	1996-06-18	GROUP_STANDINGS	76798
+52486	Scotland	Switzerland	1	0	1996	1996-06-18	GROUP_STANDINGS	34926
+52505	Romania	Spain	1	2	1996	1996-06-18	GROUP_STANDINGS	32719
+52504	France	Bulgaria	3	1	1996	1996-06-18	GROUP_STANDINGS	26976
+52515	Croatia	Denmark	3	0	1996	1996-06-16	GROUP_STANDINGS	33671
+52509	Russia	Germany	0	3	1996	1996-06-16	GROUP_STANDINGS	50760
+52503	France	Spain	1	1	1996	1996-06-15	GROUP_STANDINGS	35626
+52485	Scotland	England	0	2	1996	1996-06-15	GROUP_STANDINGS	76864
+52508	Czechia	Italy	2	1	1996	1996-06-14	GROUP_STANDINGS	37320
+52514	Portugal	Türkiye	1	0	1996	1996-06-14	GROUP_STANDINGS	22670
+52484	Switzerland	Netherlands	0	2	1996	1996-06-13	GROUP_STANDINGS	36800
+52502	Bulgaria	Romania	1	0	1996	1996-06-13	GROUP_STANDINGS	19107
+52513	Türkiye	Croatia	0	1	1996	1996-06-11	GROUP_STANDINGS	22460
+52507	Italy	Russia	2	1	1996	1996-06-11	GROUP_STANDINGS	35120
+52501	Romania	France	0	1	1996	1996-06-10	GROUP_STANDINGS	26323
+52483	Netherlands	Scotland	0	0	1996	1996-06-10	GROUP_STANDINGS	34363
+52512	Denmark	Portugal	1	1	1996	1996-06-09	GROUP_STANDINGS	34993
+52506	Germany	Czechia	2	0	1996	1996-06-09	GROUP_STANDINGS	37300
+52500	Spain	Bulgaria	1	1	1996	1996-06-09	GROUP_STANDINGS	24006
+52482	England	Switzerland	1	1	1996	1996-06-08	GROUP_STANDINGS	76567
+65299	France	Italy	1	1	2000	2000-07-02	FINAL	50000
+65184	Italy	Netherlands	0	0	2000	2000-06-29	SEMIFINAL	50000
+65183	France	Portugal	1	1	2000	2000-06-28	SEMIFINAL	48000
+65182	Spain	France	1	2	2000	2000-06-25	QUARTER_FINALS	26614
+65181	Netherlands	Yugoslavia	6	1	2000	2000-06-25	QUARTER_FINALS	44000
+65180	Italy	Romania	2	0	2000	2000-06-24	QUARTER_FINALS	41000
+65179	Türkiye	Portugal	0	2	2000	2000-06-24	QUARTER_FINALS	42000
+64868	France	Netherlands	2	3	2000	2000-06-21	GROUP_STANDINGS	50000
+64867	Denmark	Czechia	0	2	2000	2000-06-21	GROUP_STANDINGS	20000
+64862	Slovenia	Norway	0	0	2000	2000-06-21	GROUP_STANDINGS	21000
+64861	Yugoslavia	Spain	3	4	2000	2000-06-21	GROUP_STANDINGS	26611
+64850	Portugal	Germany	3	0	2000	2000-06-20	GROUP_STANDINGS	44000
+64849	England	Romania	2	3	2000	2000-06-20	GROUP_STANDINGS	30000
+64856	Italy	Sweden	2	1	2000	2000-06-19	GROUP_STANDINGS	30000
+64855	Türkiye	Belgium	2	0	2000	2000-06-19	GROUP_STANDINGS	48000
+64859	Norway	Yugoslavia	0	1	2000	2000-06-18	GROUP_STANDINGS	28750
+64860	Slovenia	Spain	1	2	2000	2000-06-18	GROUP_STANDINGS	51300
+64847	England	Germany	1	0	2000	2000-06-17	GROUP_STANDINGS	29000
+64848	Romania	Portugal	0	1	2000	2000-06-17	GROUP_STANDINGS	28400
+64866	Denmark	Netherlands	0	3	2000	2000-06-16	GROUP_STANDINGS	51425
+64865	Czechia	France	1	2	2000	2000-06-16	GROUP_STANDINGS	27243
+64854	Sweden	Türkiye	0	0	2000	2000-06-15	GROUP_STANDINGS	27000
+64853	Italy	Belgium	2	0	2000	2000-06-14	GROUP_STANDINGS	44500
+64857	Yugoslavia	Slovenia	3	3	2000	2000-06-13	GROUP_STANDINGS	18500
+64858	Spain	Norway	0	1	2000	2000-06-13	GROUP_STANDINGS	41000
+64846	Portugal	England	3	2	2000	2000-06-12	GROUP_STANDINGS	31500
+64845	Germany	Romania	1	1	2000	2000-06-12	GROUP_STANDINGS	28500
+64864	Netherlands	Czechia	1	0	2000	2000-06-11	GROUP_STANDINGS	50800
+64863	France	Denmark	3	0	2000	2000-06-11	GROUP_STANDINGS	28100
+64852	Türkiye	Italy	1	2	2000	2000-06-11	GROUP_STANDINGS	22500
+64851	Belgium	Sweden	2	1	2000	2000-06-10	GROUP_STANDINGS	46700
+79185	Portugal	Greece	0	1	2004	2004-07-04	FINAL	62865
+79108	Greece	Czechia	0	0	2004	2004-07-01	SEMIFINAL	42449
+79107	Portugal	Netherlands	2	1	2004	2004-06-30	SEMIFINAL	46679
+79000	Czechia	Denmark	3	0	2004	2004-06-27	QUARTER_FINALS	41092
+78999	Sweden	Netherlands	0	0	2004	2004-06-26	QUARTER_FINALS	27762
+78989	France	Greece	0	1	2004	2004-06-25	QUARTER_FINALS	45390
+78988	Portugal	England	1	1	2004	2004-06-24	QUARTER_FINALS	62564
+73759	Germany	Czechia	1	2	2004	2004-06-23	GROUP_STANDINGS	46849
+73758	Netherlands	Latvia	3	0	2004	2004-06-23	GROUP_STANDINGS	27904
+73753	Denmark	Sweden	2	2	2004	2004-06-22	GROUP_STANDINGS	26115
+73752	Italy	Bulgaria	2	1	2004	2004-06-22	GROUP_STANDINGS	16002
+73917	Croatia	England	2	4	2004	2004-06-21	GROUP_STANDINGS	57047
+73916	Switzerland	France	1	3	2004	2004-06-21	GROUP_STANDINGS	28111
+73741	Russia	Greece	2	1	2004	2004-06-20	GROUP_STANDINGS	24347
+73740	Spain	Portugal	0	1	2004	2004-06-20	GROUP_STANDINGS	47491
+73757	Netherlands	Czechia	2	3	2004	2004-06-19	GROUP_STANDINGS	29935
+73756	Latvia	Germany	0	0	2004	2004-06-19	GROUP_STANDINGS	22344
+73751	Italy	Sweden	1	1	2004	2004-06-18	GROUP_STANDINGS	44926
+73750	Bulgaria	Denmark	0	2	2004	2004-06-18	GROUP_STANDINGS	24131
+73745	Croatia	France	2	2	2004	2004-06-17	GROUP_STANDINGS	29160
+73744	England	Switzerland	3	0	2004	2004-06-17	GROUP_STANDINGS	28214
+73739	Russia	Portugal	0	2	2004	2004-06-16	GROUP_STANDINGS	59273
+73738	Greece	Spain	1	1	2004	2004-06-16	GROUP_STANDINGS	25444
+73755	Germany	Netherlands	1	1	2004	2004-06-15	GROUP_STANDINGS	48197
+73754	Czechia	Latvia	2	1	2004	2004-06-15	GROUP_STANDINGS	21744
+73749	Sweden	Bulgaria	5	0	2004	2004-06-14	GROUP_STANDINGS	31652
+73748	Denmark	Italy	0	0	2004	2004-06-14	GROUP_STANDINGS	19595
+73743	France	England	2	1	2004	2004-06-13	GROUP_STANDINGS	62487
+73742	Switzerland	Croatia	0	0	2004	2004-06-13	GROUP_STANDINGS	24090
+73737	Spain	Russia	1	0	2004	2004-06-12	GROUP_STANDINGS	28182
+73736	Portugal	Greece	1	2	2004	2004-06-12	GROUP_STANDINGS	48761
+301696	Germany	Spain	0	1	2008	2008-06-29	FINAL	51428
+301698	Russia	Spain	0	3	2008	2008-06-26	SEMIFINAL	51428
+301697	Germany	Türkiye	3	2	2008	2008-06-25	SEMIFINAL	39374
+301702	Spain	Italy	0	0	2008	2008-06-22	QUARTER_FINALS	51178
+301701	Netherlands	Russia	1	1	2008	2008-06-21	QUARTER_FINALS	38374
+301700	Croatia	Türkiye	0	0	2008	2008-06-20	QUARTER_FINALS	51428
+301699	Portugal	Germany	2	3	2008	2008-06-19	QUARTER_FINALS	39374
+300705	Russia	Sweden	2	0	2008	2008-06-18	GROUP_STANDINGS	30772
+300704	Greece	Spain	1	2	2008	2008-06-18	GROUP_STANDINGS	30883
+300703	France	Italy	0	2	2008	2008-06-17	GROUP_STANDINGS	30585
+300702	Netherlands	Romania	2	0	2008	2008-06-17	GROUP_STANDINGS	30777
+300700	Austria	Germany	0	1	2008	2008-06-16	GROUP_STANDINGS	51428
+300701	Poland	Croatia	0	1	2008	2008-06-16	GROUP_STANDINGS	30461
+300699	Türkiye	Czechia	3	2	2008	2008-06-15	GROUP_STANDINGS	29016
+300698	Switzerland	Portugal	2	0	2008	2008-06-15	GROUP_STANDINGS	39730
+300696	Greece	Russia	0	1	2008	2008-06-14	GROUP_STANDINGS	31063
+300697	Sweden	Spain	1	2	2008	2008-06-14	GROUP_STANDINGS	30772
+300694	Netherlands	France	4	1	2008	2008-06-13	GROUP_STANDINGS	30777
+300695	Italy	Romania	1	1	2008	2008-06-13	GROUP_STANDINGS	30585
+300692	Austria	Poland	1	1	2008	2008-06-12	GROUP_STANDINGS	51428
+300693	Croatia	Germany	2	1	2008	2008-06-12	GROUP_STANDINGS	30461
+300690	Switzerland	Türkiye	1	2	2008	2008-06-11	GROUP_STANDINGS	39730
+300691	Czechia	Portugal	1	3	2008	2008-06-11	GROUP_STANDINGS	29016
+300688	Greece	Sweden	0	2	2008	2008-06-10	GROUP_STANDINGS	31063
+300689	Spain	Russia	4	1	2008	2008-06-10	GROUP_STANDINGS	30772
+300686	Netherlands	Italy	3	0	2008	2008-06-09	GROUP_STANDINGS	30777
+300687	Romania	France	0	0	2008	2008-06-09	GROUP_STANDINGS	30585
+300685	Germany	Poland	2	0	2008	2008-06-08	GROUP_STANDINGS	30000
+300684	Austria	Croatia	0	1	2008	2008-06-08	GROUP_STANDINGS	51428
+300683	Portugal	Türkiye	2	0	2008	2008-06-07	GROUP_STANDINGS	29106
+300682	Switzerland	Czechia	0	1	2008	2008-06-07	GROUP_STANDINGS	39730
+2003351	Spain	Italy	4	0	2012	2012-07-01	FINAL	63170
+2003379	Germany	Italy	1	2	2012	2012-06-28	SEMIFINAL	55540
+2003378	Portugal	Spain	0	0	2012	2012-06-27	SEMIFINAL	48000
+2003346	England	Italy	0	0	2012	2012-06-24	QUARTER_FINALS	64340
+2003345	Spain	France	2	0	2012	2012-06-23	QUARTER_FINALS	47000
+2003344	Germany	Greece	4	2	2012	2012-06-22	QUARTER_FINALS	38751
+2003343	Czechia	Portugal	0	1	2012	2012-06-21	QUARTER_FINALS	55590
+2003341	Sweden	France	2	0	2012	2012-06-19	GROUP_STANDINGS	63010
+2003342	England	Ukraine	1	0	2012	2012-06-19	GROUP_STANDINGS	48700
+2003340	Italy	Republic of Ireland	2	0	2012	2012-06-18	GROUP_STANDINGS	38794
+2003339	Croatia	Spain	0	1	2012	2012-06-18	GROUP_STANDINGS	39076
+2003338	Denmark	Germany	1	2	2012	2012-06-17	GROUP_STANDINGS	32990
+2003337	Portugal	Netherlands	2	1	2012	2012-06-17	GROUP_STANDINGS	37445
+2003335	Greece	Russia	1	0	2012	2012-06-16	GROUP_STANDINGS	55614
+2003336	Czechia	Poland	1	0	2012	2012-06-16	GROUP_STANDINGS	41000
+2003333	Sweden	England	2	3	2012	2012-06-15	GROUP_STANDINGS	64640
+2003334	Ukraine	France	0	2	2012	2012-06-15	GROUP_STANDINGS	48000
+2003332	Spain	Republic of Ireland	4	0	2012	2012-06-14	GROUP_STANDINGS	39150
+2003331	Italy	Croatia	1	1	2012	2012-06-14	GROUP_STANDINGS	37096
+2003329	Netherlands	Germany	1	2	2012	2012-06-13	GROUP_STANDINGS	37750
+2003330	Denmark	Portugal	2	3	2012	2012-06-13	GROUP_STANDINGS	31840
+2003327	Poland	Russia	1	1	2012	2012-06-12	GROUP_STANDINGS	55920
+2003328	Greece	Czechia	1	2	2012	2012-06-12	GROUP_STANDINGS	41105
+2003325	Ukraine	Sweden	2	1	2012	2012-06-11	GROUP_STANDINGS	64290
+2003326	France	England	1	1	2012	2012-06-11	GROUP_STANDINGS	47400
+2003324	Republic of Ireland	Croatia	1	3	2012	2012-06-10	GROUP_STANDINGS	39550
+2003323	Spain	Italy	1	1	2012	2012-06-10	GROUP_STANDINGS	38869
+2003322	Germany	Portugal	1	0	2012	2012-06-09	GROUP_STANDINGS	32990
+2003321	Netherlands	Denmark	0	1	2012	2012-06-09	GROUP_STANDINGS	35923
+2003320	Russia	Czechia	4	1	2012	2012-06-08	GROUP_STANDINGS	41000
+2003319	Poland	Greece	1	1	2012	2012-06-08	GROUP_STANDINGS	56070
+2017907	Portugal	France	0	0	2016	2016-07-10	FINAL	75868
+2017906	Germany	France	0	2	2016	2016-07-07	SEMIFINAL	64078
+2017905	Portugal	Wales	2	0	2016	2016-07-06	SEMIFINAL	55679
+2017904	France	Iceland	5	2	2016	2016-07-03	QUARTER_FINALS	76833
+2017903	Germany	Italy	1	1	2016	2016-07-02	QUARTER_FINALS	38764
+2017902	Wales	Belgium	3	1	2016	2016-07-01	QUARTER_FINALS	45936
+2017901	Poland	Portugal	1	1	2016	2016-06-30	QUARTER_FINALS	62940
+2018003	England	Iceland	1	2	2016	2016-06-27	ROUND_OF_16	33901
+2018002	Italy	Spain	2	0	2016	2016-06-27	ROUND_OF_16	76165
+2018001	Hungary	Belgium	0	4	2016	2016-06-26	ROUND_OF_16	28921
+2018000	Germany	Slovakia	3	0	2016	2016-06-26	ROUND_OF_16	44312
+2017999	France	Republic of Ireland	2	1	2016	2016-06-26	ROUND_OF_16	56279
+2017998	Croatia	Portugal	0	0	2016	2016-06-25	ROUND_OF_16	33523
+2017997	Wales	Northern Ireland	1	0	2016	2016-06-25	ROUND_OF_16	44342
+2017996	Switzerland	Poland	1	1	2016	2016-06-25	ROUND_OF_16	38842
+2017957	Sweden	Belgium	0	1	2016	2016-06-22	GROUP_STANDINGS	34011
+2017958	Italy	Republic of Ireland	0	1	2016	2016-06-22	GROUP_STANDINGS	44268
+2017964	Hungary	Portugal	3	3	2016	2016-06-22	GROUP_STANDINGS	55514
+2017963	Iceland	Austria	2	1	2016	2016-06-22	GROUP_STANDINGS	68714
+2017899	Croatia	Spain	2	1	2016	2016-06-21	GROUP_STANDINGS	37245
+2017900	Czechia	Türkiye	0	2	2016	2016-06-21	GROUP_STANDINGS	32836
+2017897	Northern Ireland	Germany	0	1	2016	2016-06-21	GROUP_STANDINGS	44125
+2017898	Ukraine	Poland	0	1	2016	2016-06-21	GROUP_STANDINGS	58874
+2017895	Slovakia	England	0	0	2016	2016-06-20	GROUP_STANDINGS	39051
+2017896	Russia	Wales	0	3	2016	2016-06-20	GROUP_STANDINGS	28840
+2017893	Switzerland	France	0	0	2016	2016-06-19	GROUP_STANDINGS	45616
+2017894	Romania	Albania	0	1	2016	2016-06-19	GROUP_STANDINGS	49752
+2017961	Portugal	Austria	0	0	2016	2016-06-18	GROUP_STANDINGS	44291
+2017962	Iceland	Hungary	1	1	2016	2016-06-18	GROUP_STANDINGS	60842
+2017955	Belgium	Republic of Ireland	3	0	2016	2016-06-18	GROUP_STANDINGS	39493
+2017891	Spain	Türkiye	3	0	2016	2016-06-17	GROUP_STANDINGS	33409
+2017892	Czechia	Croatia	2	2	2016	2016-06-17	GROUP_STANDINGS	38376
+2017956	Italy	Sweden	1	0	2016	2016-06-17	GROUP_STANDINGS	29600
+2017889	Germany	Poland	0	0	2016	2016-06-16	GROUP_STANDINGS	73648
+2017890	Ukraine	Northern Ireland	0	2	2016	2016-06-16	GROUP_STANDINGS	51043
+2017887	England	Wales	2	1	2016	2016-06-16	GROUP_STANDINGS	34033
+2017885	France	Albania	2	0	2016	2016-06-15	GROUP_STANDINGS	63670
+2017886	Romania	Switzerland	1	1	2016	2016-06-15	GROUP_STANDINGS	43576
+2017888	Russia	Slovakia	1	2	2016	2016-06-15	GROUP_STANDINGS	38989
+2017959	Portugal	Iceland	1	1	2016	2016-06-14	GROUP_STANDINGS	38742
+2017960	Austria	Hungary	0	2	2016	2016-06-14	GROUP_STANDINGS	34424
+2017953	Belgium	Italy	0	2	2016	2016-06-13	GROUP_STANDINGS	55408
+2017954	Republic of Ireland	Sweden	1	1	2016	2016-06-13	GROUP_STANDINGS	73419
+2017883	Spain	Czechia	1	0	2016	2016-06-13	GROUP_STANDINGS	29400
+2017881	Germany	Ukraine	2	0	2016	2016-06-12	GROUP_STANDINGS	43035
+2017882	Poland	Northern Ireland	1	0	2016	2016-06-12	GROUP_STANDINGS	33742
+2017884	Türkiye	Croatia	0	1	2016	2016-06-12	GROUP_STANDINGS	43842
+2017879	England	Russia	1	1	2016	2016-06-11	GROUP_STANDINGS	62343
+2017880	Wales	Slovakia	2	1	2016	2016-06-11	GROUP_STANDINGS	37831
+2017878	Albania	Switzerland	0	1	2016	2016-06-11	GROUP_STANDINGS	33805
+2017877	France	Romania	2	1	2016	2016-06-10	GROUP_STANDINGS	75113
+2024491	Italy	England	1	1	2020	2021-07-11	FINAL	67173
+2024490	England	Denmark	1	1	2020	2021-07-07	SEMIFINAL	64950
+2024489	Italy	Spain	1	1	2020	2021-07-06	SEMIFINAL	57811
+2024487	Ukraine	England	0	4	2020	2021-07-03	QUARTER_FINALS	11880
+2024488	Czechia	Denmark	1	2	2020	2021-07-03	QUARTER_FINALS	16306
+2024486	Belgium	Italy	1	2	2020	2021-07-02	QUARTER_FINALS	12984
+2024485	Switzerland	Spain	1	1	2020	2021-07-02	QUARTER_FINALS	24764
+2024483	Sweden	Ukraine	1	1	2020	2021-06-29	ROUND_OF_16	9221
+2024484	England	Germany	2	0	2020	2021-06-29	ROUND_OF_16	41973
+2024481	France	Switzerland	3	3	2020	2021-06-28	ROUND_OF_16	22642
+2024482	Croatia	Spain	3	3	2020	2021-06-28	ROUND_OF_16	22771
+2024479	Belgium	Portugal	1	0	2020	2021-06-27	ROUND_OF_16	11504
+2024480	Netherlands	Czechia	0	2	2020	2021-06-27	ROUND_OF_16	52834
+2024477	Italy	Austria	0	0	2020	2021-06-26	ROUND_OF_16	18910
+2024478	Wales	Denmark	0	4	2020	2021-06-26	ROUND_OF_16	14645
+2024475	Germany	Hungary	2	2	2020	2021-06-23	GROUP_STANDINGS	12413
+2024476	Portugal	France	2	2	2020	2021-06-23	GROUP_STANDINGS	55886
+2024474	Sweden	Poland	3	2	2020	2021-06-23	GROUP_STANDINGS	14252
+2024473	Slovakia	Spain	0	5	2020	2021-06-23	GROUP_STANDINGS	11204
+2024471	Czechia	England	0	1	2020	2021-06-22	GROUP_STANDINGS	19104
+2024472	Croatia	Scotland	3	1	2020	2021-06-22	GROUP_STANDINGS	9896
+2024470	Finland	Belgium	0	2	2020	2021-06-21	GROUP_STANDINGS	18545
+2024469	Russia	Denmark	1	4	2020	2021-06-21	GROUP_STANDINGS	23644
+2024446	Ukraine	Austria	0	1	2020	2021-06-21	GROUP_STANDINGS	10472
+2024445	North Macedonia	Netherlands	0	3	2020	2021-06-21	GROUP_STANDINGS	15227
+2024468	Italy	Wales	1	0	2020	2021-06-20	GROUP_STANDINGS	11541
+2024467	Switzerland	Türkiye	3	1	2020	2021-06-20	GROUP_STANDINGS	17138
+2024463	Spain	Poland	1	1	2020	2021-06-19	GROUP_STANDINGS	11742
+2024466	Portugal	Germany	2	4	2020	2021-06-19	GROUP_STANDINGS	12926
+2024465	Hungary	France	1	1	2020	2021-06-19	GROUP_STANDINGS	55998
+2024461	England	Scotland	0	0	2020	2021-06-18	GROUP_STANDINGS	20306
+2024462	Croatia	Czechia	1	1	2020	2021-06-18	GROUP_STANDINGS	5607
+2024464	Sweden	Slovakia	1	0	2020	2021-06-18	GROUP_STANDINGS	11525
+2024443	Netherlands	Austria	2	0	2020	2021-06-17	GROUP_STANDINGS	15243
+2024459	Denmark	Belgium	1	2	2020	2021-06-17	GROUP_STANDINGS	23395
+2024444	Ukraine	North Macedonia	2	1	2020	2021-06-17	GROUP_STANDINGS	10001
+2024458	Italy	Switzerland	3	0	2020	2021-06-16	GROUP_STANDINGS	12445
+2024457	Türkiye	Wales	0	2	2020	2021-06-16	GROUP_STANDINGS	19762
+2024460	Finland	Russia	0	1	2020	2021-06-16	GROUP_STANDINGS	24540
+2024456	France	Germany	1	0	2020	2021-06-15	GROUP_STANDINGS	13000
+2024455	Hungary	Portugal	0	3	2020	2021-06-15	GROUP_STANDINGS	55662
+2024453	Spain	Sweden	0	0	2020	2021-06-14	GROUP_STANDINGS	10559
+2024454	Poland	Slovakia	1	2	2020	2021-06-14	GROUP_STANDINGS	12862
+2024452	Scotland	Czechia	0	2	2020	2021-06-14	GROUP_STANDINGS	9847
+2024441	Netherlands	Ukraine	3	2	2020	2021-06-13	GROUP_STANDINGS	15837
+2024442	Austria	North Macedonia	3	1	2020	2021-06-13	GROUP_STANDINGS	9082
+2024451	England	Croatia	1	0	2020	2021-06-13	GROUP_STANDINGS	18497
+2024450	Belgium	Russia	3	0	2020	2021-06-12	GROUP_STANDINGS	26264
+2024449	Denmark	Finland	0	1	2020	2021-06-12	GROUP_STANDINGS	13790
+2024448	Wales	Switzerland	1	1	2020	2021-06-12	GROUP_STANDINGS	8782
+2024447	Türkiye	Italy	0	3	2020	2021-06-11	GROUP_STANDINGS	12916
+2036211	Spain	England	2	1	2024	2024-07-14	FINAL	65600
+2036210	Netherlands	England	1	2	2024	2024-07-10	SEMIFINAL	60926
+2036209	Spain	France	2	1	2024	2024-07-09	SEMIFINAL	62042
+2036207	Netherlands	Türkiye	2	1	2024	2024-07-06	QUARTER_FINALS	70091
+2036208	England	Switzerland	1	1	2024	2024-07-06	QUARTER_FINALS	46907
+2036206	Portugal	France	0	0	2024	2024-07-05	QUARTER_FINALS	47789
+2036205	Spain	Germany	1	1	2024	2024-07-05	QUARTER_FINALS	54000
+2036204	Austria	Türkiye	1	2	2024	2024-07-02	ROUND_OF_16	38305
+2036203	Romania	Netherlands	0	3	2024	2024-07-02	ROUND_OF_16	65012
+2036201	Portugal	Slovenia	0	0	2024	2024-07-01	ROUND_OF_16	46576
+2036202	France	Belgium	1	0	2024	2024-07-01	ROUND_OF_16	46810
+2036199	Spain	Georgia	4	1	2024	2024-06-30	ROUND_OF_16	42233
+2036200	England	Slovakia	1	1	2024	2024-06-30	ROUND_OF_16	47244
+2036197	Germany	Denmark	2	0	2024	2024-06-29	ROUND_OF_16	61612
+2036198	Switzerland	Italy	2	0	2024	2024-06-29	ROUND_OF_16	68172
+2036195	Czechia	Türkiye	1	2	2024	2024-06-26	GROUP_STANDINGS	47683
+2036196	Georgia	Portugal	2	0	2024	2024-06-26	GROUP_STANDINGS	49616
+2036193	Ukraine	Belgium	0	0	2024	2024-06-26	GROUP_STANDINGS	54000
+2036194	Slovakia	Romania	1	1	2024	2024-06-26	GROUP_STANDINGS	45033
+2036190	Denmark	Serbia	0	0	2024	2024-06-25	GROUP_STANDINGS	64288
+2036189	England	Slovenia	0	0	2024	2024-06-25	GROUP_STANDINGS	41536
+2036191	France	Poland	1	1	2024	2024-06-25	GROUP_STANDINGS	59728
+2036192	Netherlands	Austria	2	3	2024	2024-06-25	GROUP_STANDINGS	68363
+2036188	Croatia	Italy	1	1	2024	2024-06-24	GROUP_STANDINGS	38322
+2036187	Albania	Spain	0	1	2024	2024-06-24	GROUP_STANDINGS	46586
+2036186	Scotland	Hungary	0	1	2024	2024-06-23	GROUP_STANDINGS	54000
+2036185	Switzerland	Germany	1	1	2024	2024-06-23	GROUP_STANDINGS	46685
+2036181	Belgium	Romania	2	0	2024	2024-06-22	GROUP_STANDINGS	42535
+2036183	Türkiye	Portugal	0	3	2024	2024-06-22	GROUP_STANDINGS	61047
+2036184	Georgia	Czechia	1	1	2024	2024-06-22	GROUP_STANDINGS	46524
+2036180	Netherlands	France	0	0	2024	2024-06-21	GROUP_STANDINGS	38531
+2036179	Poland	Austria	1	3	2024	2024-06-21	GROUP_STANDINGS	69455
+2036182	Slovakia	Ukraine	1	2	2024	2024-06-21	GROUP_STANDINGS	43910
+2036175	Spain	Italy	1	0	2024	2024-06-20	GROUP_STANDINGS	49528
+2036178	Denmark	England	1	1	2024	2024-06-20	GROUP_STANDINGS	46177
+2036177	Slovenia	Serbia	1	1	2024	2024-06-20	GROUP_STANDINGS	63028
+2036174	Scotland	Switzerland	1	1	2024	2024-06-19	GROUP_STANDINGS	42711
+2036173	Germany	Hungary	2	0	2024	2024-06-19	GROUP_STANDINGS	54000
+2036176	Croatia	Albania	2	2	2024	2024-06-19	GROUP_STANDINGS	46784
+2036172	Portugal	Czechia	2	1	2024	2024-06-18	GROUP_STANDINGS	38421
+2036171	Türkiye	Georgia	3	1	2024	2024-06-18	GROUP_STANDINGS	59127
+2036168	Austria	France	0	1	2024	2024-06-17	GROUP_STANDINGS	46425
+2036169	Belgium	Slovakia	0	1	2024	2024-06-17	GROUP_STANDINGS	45181
+2036170	Romania	Ukraine	3	0	2024	2024-06-17	GROUP_STANDINGS	61591
+2036166	Serbia	England	0	1	2024	2024-06-16	GROUP_STANDINGS	48953
+2036165	Slovenia	Denmark	1	1	2024	2024-06-16	GROUP_STANDINGS	54000
+2036167	Poland	Netherlands	1	2	2024	2024-06-16	GROUP_STANDINGS	48117
+2036164	Italy	Albania	2	1	2024	2024-06-15	GROUP_STANDINGS	60512
+2036163	Spain	Croatia	3	0	2024	2024-06-15	GROUP_STANDINGS	68844
+2036162	Hungary	Switzerland	1	3	2024	2024-06-15	GROUP_STANDINGS	41676
+2036161	Germany	Scotland	5	1	2024	2024-06-14	GROUP_STANDINGS	65052
+\.
+
+
+--
+-- TOC entry 4903 (class 0 OID 19929)
 -- Dependencies: 227
 -- Data for Name: world_cup_high_level; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -62984,7 +63402,7 @@ COPY soccerbirth_staging.world_cup_high_level (year, host, teams, champion, runn
 
 
 --
--- TOC entry 4894 (class 0 OID 20113)
+-- TOC entry 4906 (class 0 OID 20113)
 -- Dependencies: 230
 -- Data for Name: world_cup_matches; Type: TABLE DATA; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -63145,7 +63563,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 153	Costa Rica	England	0	0	57823	Group stage	2014-06-24	Brazil	2014
 154	Italy	Uruguay	0	1	39706	Group stage	2014-06-24	Brazil	2014
 155	Japan	Colombia	1	4	40340	Group stage	2014-06-24	Brazil	2014
-156	Greece	Côte d'Ivoire	2	1	59095	Group stage	2014-06-24	Brazil	2014
+156	Greece	Côte d Ivoire	2	1	59095	Group stage	2014-06-24	Brazil	2014
 157	Australia	Spain	0	3	39375	Group stage	2014-06-23	Brazil	2014
 158	Netherlands	Chile	2	0	62996	Group stage	2014-06-23	Brazil	2014
 159	Croatia	Mexico	1	3	41212	Group stage	2014-06-23	Brazil	2014
@@ -63159,7 +63577,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 167	Italy	Costa Rica	0	1	40285	Group stage	2014-06-20	Brazil	2014
 168	Switzerland	France	2	5	51003	Group stage	2014-06-20	Brazil	2014
 169	Honduras	Ecuador	1	2	39224	Group stage	2014-06-20	Brazil	2014
-170	Colombia	Côte d'Ivoire	2	1	68748	Group stage	2014-06-19	Brazil	2014
+170	Colombia	Côte d Ivoire	2	1	68748	Group stage	2014-06-19	Brazil	2014
 171	Uruguay	England	2	1	62575	Group stage	2014-06-19	Brazil	2014
 172	Japan	Greece	0	0	39485	Group stage	2014-06-19	Brazil	2014
 173	Australia	Netherlands	2	3	42877	Group stage	2014-06-18	Brazil	2014
@@ -63177,7 +63595,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 185	Colombia	Greece	3	0	57174	Group stage	2014-06-14	Brazil	2014
 186	Uruguay	Costa Rica	1	3	58679	Group stage	2014-06-14	Brazil	2014
 187	England	Italy	1	2	39800	Group stage	2014-06-14	Brazil	2014
-188	Côte d'Ivoire	Japan	2	1	40267	Group stage	2014-06-14	Brazil	2014
+188	Côte d Ivoire	Japan	2	1	40267	Group stage	2014-06-14	Brazil	2014
 189	Mexico	Cameroon	1	0	39216	Group stage	2014-06-13	Brazil	2014
 190	Spain	Netherlands	1	5	48173	Group stage	2014-06-13	Brazil	2014
 191	Chile	Australia	3	1	40275	Group stage	2014-06-13	Brazil	2014
@@ -63199,7 +63617,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 207	Uruguay	Korea Republic	2	1	30597	Round of 16	2010-06-26	South Africa	2010
 208	United States	Ghana	1	2	34976	Round of 16	2010-06-26	South Africa	2010
 209	Portugal	Brazil	0	0	62712	Group stage	2010-06-25	South Africa	2010
-210	Korea DPR	Côte d'Ivoire	0	3	34763	Group stage	2010-06-25	South Africa	2010
+210	Korea DPR	Côte d Ivoire	0	3	34763	Group stage	2010-06-25	South Africa	2010
 211	Chile	Spain	1	2	41958	Group stage	2010-06-25	South Africa	2010
 212	Switzerland	Honduras	0	0	28042	Group stage	2010-06-25	South Africa	2010
 213	Paraguay	New Zealand	0	0	34850	Group stage	2010-06-24	South Africa	2010
@@ -63219,7 +63637,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 227	Spain	Honduras	2	0	54386	Group stage	2010-06-21	South Africa	2010
 228	Slovakia	Paraguay	0	2	26643	Group stage	2010-06-20	South Africa	2010
 229	Italy	New Zealand	1	1	38229	Group stage	2010-06-20	South Africa	2010
-230	Brazil	Côte d'Ivoire	3	1	84455	Group stage	2010-06-20	South Africa	2010
+230	Brazil	Côte d Ivoire	3	1	84455	Group stage	2010-06-20	South Africa	2010
 231	Netherlands	Japan	1	0	62010	Group stage	2010-06-19	South Africa	2010
 232	Ghana	Australia	1	1	34812	Group stage	2010-06-19	South Africa	2010
 233	Cameroon	Denmark	1	2	38074	Group stage	2010-06-19	South Africa	2010
@@ -63233,7 +63651,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 241	Spain	Switzerland	0	1	62453	Group stage	2010-06-16	South Africa	2010
 242	South Africa	Uruguay	0	3	42658	Group stage	2010-06-16	South Africa	2010
 243	New Zealand	Slovakia	1	1	23871	Group stage	2010-06-15	South Africa	2010
-244	Côte d'Ivoire	Portugal	0	0	37034	Group stage	2010-06-15	South Africa	2010
+244	Côte d Ivoire	Portugal	0	0	37034	Group stage	2010-06-15	South Africa	2010
 245	Brazil	Korea DPR	2	1	54331	Group stage	2010-06-15	South Africa	2010
 246	Netherlands	Denmark	2	0	83465	Group stage	2010-06-14	South Africa	2010
 247	Japan	Cameroon	1	0	30620	Group stage	2010-06-14	South Africa	2010
@@ -63272,7 +63690,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 280	Croatia	Australia	2	2	52000	Group stage	2006-06-22	Germany	2006
 281	Portugal	Mexico	2	1	52000	Group stage	2006-06-21	Germany	2006
 282	IR Iran	Angola	1	1	38000	Group stage	2006-06-21	Germany	2006
-283	Côte d'Ivoire	Serbia and Montenegro	3	2	66000	Group stage	2006-06-21	Germany	2006
+283	Côte d Ivoire	Serbia and Montenegro	3	2	66000	Group stage	2006-06-21	Germany	2006
 284	Netherlands	Argentina	0	0	48000	Group stage	2006-06-21	Germany	2006
 285	Costa Rica	Poland	1	2	43000	Group stage	2006-06-20	Germany	2006
 286	Ecuador	Germany	0	3	72000	Group stage	2006-06-20	Germany	2006
@@ -63288,7 +63706,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 296	Czech Republic	Ghana	0	2	45000	Group stage	2006-06-17	Germany	2006
 297	Italy	United States	1	1	46000	Group stage	2006-06-17	Germany	2006
 298	Argentina	Serbia and Montenegro	6	0	52000	Group stage	2006-06-16	Germany	2006
-299	Netherlands	Côte d'Ivoire	2	1	52000	Group stage	2006-06-16	Germany	2006
+299	Netherlands	Côte d Ivoire	2	1	52000	Group stage	2006-06-16	Germany	2006
 300	Mexico	Angola	0	0	43000	Group stage	2006-06-16	Germany	2006
 301	Ecuador	Costa Rica	3	0	50000	Group stage	2006-06-15	Germany	2006
 302	England	Trinidad and Tobago	2	0	41000	Group stage	2006-06-15	Germany	2006
@@ -63307,7 +63725,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 315	Angola	Portugal	0	1	45000	Group stage	2006-06-11	Germany	2006
 316	England	Paraguay	1	0	48000	Group stage	2006-06-10	Germany	2006
 317	Trinidad and Tobago	Sweden	0	0	62959	Group stage	2006-06-10	Germany	2006
-318	Argentina	Côte d'Ivoire	2	1	49480	Group stage	2006-06-10	Germany	2006
+318	Argentina	Côte d Ivoire	2	1	49480	Group stage	2006-06-10	Germany	2006
 319	Germany	Costa Rica	4	2	64950	Group stage	2006-06-09	Germany	2006
 320	Poland	Ecuador	0	2	52000	Group stage	2006-06-09	Germany	2006
 321	Germany	Brazil	0	2	69029	Final	2002-06-30	Korea Republic, Japan	2002
@@ -63958,7 +64376,7 @@ COPY soccerbirth_staging.world_cup_matches (id, home_team, away_team, home_score
 
 
 --
--- TOC entry 4903 (class 0 OID 0)
+-- TOC entry 4916 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: world_cup_matches_id_seq; Type: SEQUENCE SET; Schema: soccerbirth_staging; Owner: postgres
 --
@@ -63967,7 +64385,7 @@ SELECT pg_catalog.setval('soccerbirth_staging.world_cup_matches_id_seq', 964, tr
 
 
 --
--- TOC entry 4737 (class 2606 OID 19877)
+-- TOC entry 4747 (class 2606 OID 19877)
 -- Name: dim_country dim_country_country_name_key; Type: CONSTRAINT; Schema: soccerbirth_dwh; Owner: postgres
 --
 
@@ -63976,7 +64394,7 @@ ALTER TABLE ONLY soccerbirth_dwh.dim_country
 
 
 --
--- TOC entry 4739 (class 2606 OID 19875)
+-- TOC entry 4749 (class 2606 OID 19875)
 -- Name: dim_country dim_country_pkey; Type: CONSTRAINT; Schema: soccerbirth_dwh; Owner: postgres
 --
 
@@ -63985,7 +64403,7 @@ ALTER TABLE ONLY soccerbirth_dwh.dim_country
 
 
 --
--- TOC entry 4733 (class 2606 OID 19862)
+-- TOC entry 4743 (class 2606 OID 19862)
 -- Name: births_per_year births_per_year_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -63994,7 +64412,7 @@ ALTER TABLE ONLY soccerbirth_staging.births_per_year
 
 
 --
--- TOC entry 4735 (class 2606 OID 19868)
+-- TOC entry 4745 (class 2606 OID 19868)
 -- Name: country_codes country_codes_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -64003,7 +64421,16 @@ ALTER TABLE ONLY soccerbirth_staging.country_codes
 
 
 --
--- TOC entry 4741 (class 2606 OID 20118)
+-- TOC entry 4753 (class 2606 OID 20133)
+-- Name: euro_matches euro_matches_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
+--
+
+ALTER TABLE ONLY soccerbirth_staging.euro_matches
+    ADD CONSTRAINT euro_matches_pkey PRIMARY KEY (id_match);
+
+
+--
+-- TOC entry 4751 (class 2606 OID 20118)
 -- Name: world_cup_matches world_cup_matches_pkey; Type: CONSTRAINT; Schema: soccerbirth_staging; Owner: postgres
 --
 
@@ -64011,7 +64438,7 @@ ALTER TABLE ONLY soccerbirth_staging.world_cup_matches
     ADD CONSTRAINT world_cup_matches_pkey PRIMARY KEY (id);
 
 
--- Completed on 2025-05-16 15:54:36
+-- Completed on 2025-05-17 12:07:47
 
 --
 -- PostgreSQL database dump complete

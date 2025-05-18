@@ -3,12 +3,7 @@ from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
-#test_env:
-from Backend.country_test_data import Country
-#from Backend.tourament_test_data import Tournament
-
-##real_env
-# from Backend.country import Country
+from Backend.country import Country
 from Backend.tournament import Tournament
 
 
@@ -87,7 +82,7 @@ def server(inputs, outputs, session):
         elif country.has_yearly_data():
             yearly_data, tournament_marker, target_marker = country.get_yearly_data()
             return draw_chart(yearly_data, "Yearly", "Year",
-                              "years",tournament_marker, target_marker, show_warning_text=True)
+                              "year",tournament_marker, target_marker, show_warning_text=True)
 
         else:
             return no_data_chart()
@@ -138,8 +133,13 @@ def server(inputs, outputs, session):
                 font=dict(size=14, color="black"),
                 xanchor="center"
             )
-
-
+        #follwing is because the yearly graph wasnt displayed in the right format
+        if pd.api.types.is_numeric_dtype(data[x_col]):
+            fig.update_layout(
+                xaxis=dict(
+                    range=[(data[x_col].min())-1, (data[x_col].max()) + 1]
+                )
+            )
         fig.update_layout(
             title=dict(
                 text=(

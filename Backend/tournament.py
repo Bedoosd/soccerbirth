@@ -1,6 +1,4 @@
 from datetime import datetime, timedelta
-import pandas as pd
-from psycopg2.extras import wait_select
 
 from Backend.database.database_methods import Database
 

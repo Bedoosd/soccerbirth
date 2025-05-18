@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 
-from Backend.tournament import Tournament, get_dataframe
+from Backend.database.database_methods import Database
+from Backend.tournament import Tournament
 
 
 def get_bool(query):
@@ -11,18 +12,20 @@ def get_bool(query):
 
 class Country:
     def __init__(self, name, tournament : Tournament):
+        self.db = Database()
         self.tournament = tournament
         self.country = name
 
-
     def has_monthly_data(self):
+        print("check")
         self.tournament.set_tournament_date_and_target()
         selected_country = self.country
         target = self.tournament.target_date
-        query = """ """ # query om te kijken of er maandelijkse data is voor het land rond de target
-        result = get_bool(query)
-        check = bool #niet zeker hoe dit moet gebeuren met resultaat van query
-        return check
+        query = f"""select exists (select 1 from births_per_yearmonth 
+                    where country = '{selected_country}' 
+                    and year = '{self.tournament.target_year}' 
+                    and month = '{self.tournament.target_month}')"""
+        return self.db.get_bool(query)
 
     def has_yearly_data(self):
         selected_country = self.country

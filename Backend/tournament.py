@@ -13,6 +13,7 @@ class Tournament:
         self.target_date = None
         self.tournament_month = None
         self.target_month = None
+        self.target_year = None   #target year is not necessarily the same as tournament_year
         self.db = Database()
 
     def set_tournament_date_and_target(self):
@@ -35,6 +36,7 @@ class Tournament:
         self.target_date = date + timedelta(days=266)
         self.tournament_month = self.tournament_date.strftime('%B') #geeft meteen de benaming van de maand door
         self.target_month = self.target_date.strftime('%B')
+        self.target_year = self.target_date.strftime('%Y')
         return
 
     def get_available_years(self):

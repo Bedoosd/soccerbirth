@@ -26,7 +26,7 @@ app_ui = ui.page_sidebar(
 
         bg="#f8f8f8"
     ),
-ui.input_action_button("generate_chart", "Show new graph"),
+ui.input_action_button("generate_chart", "Show graph from selection"),
     output_widget("birth_chart"),
     custom_style
 )

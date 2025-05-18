@@ -6,4 +6,9 @@ output_path = csv_files_map / "output" / "merged_ek.csv"
 #If output directory doesn't exist --> create
 output_path.parent.mkdir(exist_ok=True)
 
-print(output_path)
+columns_needed = [
+    "id_match", "home_team", "away_team", "home_score", "away_score",
+    "year", "date", "round", "match_attendance"
+]
+
+print(columns_needed)

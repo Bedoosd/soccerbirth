@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 csv_files_map = Path.cwd().parent / "data" / "Euro" / "All_matches"
-output_path = csv_files_map / "output" / "merged_ek.csv"
+output_path = csv_files_map.parent / "merged_euro_matches.csv"
 #If output directory doesn't exist --> create
 output_path.parent.mkdir(exist_ok=True)
 
@@ -23,4 +23,5 @@ for f in csv_files_map.glob("*.csv"):
     else:
         print(f"file skipped (invalid filename): {f.name} – not a 4-digit year")
 
-print(columns_needed)
+pd.concat(valid_csv, ignore_index=True).to_csv(output_path, index=False)
+print(f"merged csv saved in: {output_path}")

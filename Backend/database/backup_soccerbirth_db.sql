@@ -64752,4 +64752,3 @@ ALTER TABLE ONLY soccerbirth_staging.world_cup_matches
 --
 -- PostgreSQL database dump complete
 --
-

@@ -105,16 +105,16 @@ def server(inputs, outputs, session):
             line=dict(dash="dash", color="red")
 
         ))
-        #tournament zelf komt eigenlijk niet voor op de grafiek, start +/- 3 maanden erna pas
-
-        # fig.add_vline(
-        #     x=tournament_marker,
-        #     line_dash="dot",
-        #     line_color="green",
-        #     annotation_text="Tournament",
-        #     annotation_position="top right",
-        #     annotation_font=dict(size=12, color="green")
-        # )
+        #tournament marker zichtbaar afhankelijk van hoe ver de grafiek gaat
+        if tournament_marker is not None:
+            fig.add_vline(
+                x=tournament_marker,
+                line_dash="dot",
+                line_color="green",
+                annotation_text="Tournament",
+                annotation_position="top right",
+                annotation_font=dict(size=12, color="green")
+            )
         if target_marker is not None:
             fig.add_vline(
                 x=target_marker,

@@ -34,9 +34,11 @@ class Country:
         tournament_month = self.tournament.tournament_month
         selected_country = self.country
         target = self.tournament.target_date
-        start_date = target - relativedelta(months=6)
-        end_date = target + relativedelta(months=6)
+        start_date = target - relativedelta(months=12)
+        end_date = target + relativedelta(months=12)
         target_month = self.tournament.target_month
+        target_month_year = f"{target_month} {self.tournament.target_year}"
+        tournament_month_year = f"{tournament_month} {self.tournament.tournament_year}"
         query = """select distinct year, month, value as births,
         to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
         concat(month, ' ', year) as month_year
@@ -54,12 +56,12 @@ class Country:
 
         #index in df needed in shiny, doesnt work wel with strings
         try:
-            tournament_marker = df[df["month"] == tournament_month].index[0]
+            tournament_marker = df[df["month_year"] == tournament_month_year].index[0]
         except IndexError:
             tournament_marker = None
 
         try:
-            target_marker = df[df["month"] == target_month].index[0]
+            target_marker = df[df["month_year"] == target_month_year].index[0]
         except IndexError:
             target_marker = None
 
@@ -80,4 +82,4 @@ class Country:
         parameters = [start_date.year, end_date.year, selected_country]
         df = self.db.get_df(query, parameters)
 
-        return df, tournament_year, target_year
+        return df, int(tournament_year), target_year

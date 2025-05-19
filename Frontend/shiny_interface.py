@@ -25,7 +25,7 @@ ui.input_action_button("generate_chart", "Show graph from selection"),
     output_widget("birth_chart"),
 
     ui.tags.div(
-        ui.output_text("caption_box"),
+        ui.output_ui("caption_box"),
         style="""
             border: 1px solid #ccc;
             background-color: #f9f9f9;
@@ -101,20 +101,26 @@ def server(inputs, outputs, session):
             return no_data_chart()
 
     def draw_chart(data, title_prefix, x_title, x_col,tournament_marker, target_marker, show_warning_text=False):
-        average = data["births"].mean()
-        target_average = data["births"][int(target_marker)-2 : int(target_marker) + 2].mean()
 
-        @render.text
+        average = data["births"].mean()
+        target_average = data["births"][int(target_marker) - 2: int(target_marker) + 2].mean()
+        avg_text = f"{average:.0f}"
+        target_avg_text = f"{target_average:.0f}"
+
+        @render.ui
         def caption_box():
             if show_warning_text:
-                return (
-                    f"The average birth numbers over the displayed years = {average}"
+                return ui.HTML(
+                    f"The average birth numbers over the displayed years = {avg_text}"
                 )
             else:
-                return (
-                    f"The average birth number over the displayed months = {average}<br>"
-                    f"The average birth number 4 months around the target = {target_average}"
+                return ui.HTML(
+                    f"""
+                    The average birth number over the displayed months = {avg_text}<br>
+                    The average birth number 4 months around the target = {target_avg_text}
+                    """
                 )
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=data[x_col],

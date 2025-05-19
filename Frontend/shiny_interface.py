@@ -88,7 +88,6 @@ def server(inputs, outputs, session):
             return no_data_chart()
 
     def draw_chart(data, title_prefix, x_title, x_col,tournament_marker, target_marker, show_warning_text=False):
-        print (data)
         average = data["births"].mean()
 
         fig = go.Figure()

@@ -5,7 +5,7 @@ import pandas as pd
 import os
 import psycopg2
 import warnings
-import pandas as pd
+
 
 class Database:
     def __init__(self):
@@ -31,10 +31,10 @@ class Database:
         cursor = conn.cursor()
         return conn,cursor
 
-    def get_bool(self, query):
+    def get_bool(self, query, parameters = None):
         conn, cursor = self.set_cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(query, parameters)
             result = cursor.fetchone()[0] #fetchone geeft steeds een tuple terug, steeds eerste resultaat er uit halen
             if isinstance(result, bool): return result
             else: raise TypeError (f"expected a boolean, got result: {result} : {type(result)}")
@@ -45,7 +45,7 @@ class Database:
             cursor.close()
             conn.close()
 
-    def get_df(self, query):
+    def get_df(self, query, parameters = None):
         conn = self.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
         try:
             #ignores following warning from pandas:
@@ -53,15 +53,15 @@ class Database:
             # Other DBAPI2 objects are not tested. Please consider using SQLAlchemy
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                df = pd.read_sql_query(query, conn)
+                df = pd.read_sql_query(query, conn, params=parameters)
             return df
         finally:
             conn.close()
 
-    def get_date(self, query):
+    def get_date(self, query, parameters = None):
         conn, cursor = self.set_cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(query, parameters)
             result = cursor.fetchone()[0]
             if isinstance(result, (datetime, date)):
                     return result.date() if isinstance(result, datetime) else result

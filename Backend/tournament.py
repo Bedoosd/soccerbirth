@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from Backend.database.database_methods import Database
+from Backend.database_methods import Database
 
 
 class Tournament:
@@ -19,11 +19,11 @@ class Tournament:
         tournament_year = int(self.tournament_year)
 
         if tournament_name == "European Championship":
-            #data van finale nog niet beschikbaar in databank
-            date = datetime(tournament_year, 6, 15)
+            query = f"select date from euro_matches where year = {tournament_year} and round = 'FINAL'"
+            date = self.db.get_date(query)
 
         elif tournament_name == "World Championship":
-            query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
+            query = f"select date from world_cup_matches where year = {tournament_year} and round = 'Final'"
             date = self.db.get_date(query)
 
         else:

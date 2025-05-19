@@ -4,6 +4,8 @@ from datetime import datetime, date
 import pandas as pd
 import os
 import psycopg2
+import warnings
+import pandas as pd
 
 class Database:
     def __init__(self):
@@ -46,7 +48,12 @@ class Database:
     def get_df(self, query):
         conn = self.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
         try:
-            df = pd.read_sql_query(query, conn)
+            #ignores following warning from pandas:
+            #pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection.
+            # Other DBAPI2 objects are not tested. Please consider using SQLAlchemy
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                df = pd.read_sql_query(query, conn)
             return df
         finally:
             conn.close()

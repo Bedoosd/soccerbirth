@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 
-from Backend.database.database_methods import Database
+from Backend.database_methods import Database
 from Backend.tournament import Tournament
 
 class Country:
@@ -14,8 +14,9 @@ class Country:
         selected_country = self.country
         query = f"""select exists (select 1 from births_per_yearmonth 
                     where country = '{selected_country}' 
-                    and year = '{self.tournament.target_year}' 
-                    and month = '{self.tournament.target_month}')"""
+                    and year = '{self.tournament.target_year}' and month = '{self.tournament.target_month}'
+                    and value is not Null)
+                     """
         return self.db.get_bool(query)
 
     def has_yearly_data(self):
@@ -23,7 +24,7 @@ class Country:
         target_year = self.tournament.target_year
         query = f"""select exists (
                     select 1 from births_per_year 
-                    where country = '{selected_country}' and year = '{target_year}')"""
+                    where country = '{selected_country}' and year = '{target_year}' and total is not Null)"""
         return self.db.get_bool(query)
 
     def get_monthly_data(self):
@@ -34,18 +35,20 @@ class Country:
         end_date = target + relativedelta(months=6)
         target_month = self.tournament.target_month
         query = f"""select distinct year, month, value as births,
-                    to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum
-                    from births_per_yearmonth
-                    where country = '{selected_country}'
-                    and month in ('January', 'February', 'March', 'April', 'May', 'June',
-                                'July', 'August', 'September', 'October', 'November', 'December')
-                    and to_date(concat(year, '-', month), 'YYYY-Month')
-                    between '{start_date}' and '{end_date}'
-                    and value is not Null
-                    order by sort_datum;
+        to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
+        concat(month, ' ', year) as month_year
+        from births_per_yearmonth
+        where country = '{selected_country}'
+        and month in ('January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December')
+        and to_date(concat(year, '-', month), 'YYYY-Month')
+        between '{start_date}' and '{end_date}'
+        and value is not Null
+        order by sort_datum;
                     """
         df = self.db.get_df(query)
 
+        #index in df needed in shiny, doesnt work wel with strings
         try:
             tournament_marker = df[df["month"] == tournament_month].index[0]
         except IndexError:
@@ -55,6 +58,7 @@ class Country:
             target_marker = df[df["month"] == target_month].index[0]
         except IndexError:
             target_marker = None
+        print (f"tournament_marker: {tournament_marker}, target_marker: {target_marker}")
 
         return df, tournament_marker, target_marker
 
@@ -70,6 +74,7 @@ class Country:
                     where year between '{start_date.year}' and '{end_date.year}'
                     and country = '{selected_country}'
                     order by year"""
+        print (f"tournament_year: {tournament_year}, target_year: {target_year}, start_date: {start_date}, end_date: {end_date}")
         df = self.db.get_df(query)
 
         return df, tournament_year, target_year

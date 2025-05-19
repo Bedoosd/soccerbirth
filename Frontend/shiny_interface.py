@@ -77,7 +77,7 @@ def server(inputs, outputs, session):
 
         if country.has_monthly_data():
             monthly_data, tournament_marker, target_marker = country.get_monthly_data()
-            return draw_chart(monthly_data, "Monthly", "Month","month", tournament_marker, target_marker)
+            return draw_chart(monthly_data, "Monthly", "Month","month_year", tournament_marker, target_marker)
 
         elif country.has_yearly_data():
             yearly_data, tournament_marker, target_marker = country.get_yearly_data()
@@ -88,6 +88,7 @@ def server(inputs, outputs, session):
             return no_data_chart()
 
     def draw_chart(data, title_prefix, x_title, x_col,tournament_marker, target_marker, show_warning_text=False):
+        print (data)
         average = data["births"].mean()
 
         fig = go.Figure()

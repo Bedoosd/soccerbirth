@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from Backend.database.database_methods import Database
+from Backend.database_methods import Database
 
 
 class Tournament:
@@ -19,12 +19,14 @@ class Tournament:
         tournament_year = int(self.tournament_year)
 
         if tournament_name == "European Championship":
-            #data van finale nog niet beschikbaar in databank
-            date = datetime(tournament_year, 6, 15)
+            query = "select date from euro_matches where year = %s and round = %s"
+            parameters = [tournament_year, 'FINAL']
+            date = self.db.get_date(query, parameters)
 
         elif tournament_name == "World Championship":
-            query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
-            date = self.db.get_date(query)
+            query = "select date from world_cup_matches where year = %s and round = %s"
+            parameters = [tournament_year, 'Final']
+            date = self.db.get_date(query, parameters)
 
         else:
             raise ValueError(f"Unsupported tournament: {tournament_name}")
@@ -45,28 +47,23 @@ class Tournament:
             query = "select year, host from world_cup_high_level"
         else:
             raise ValueError(f"Unsupported tournament: {selected_tournament}")
-        df = self.db.get_df(query)
-        return df
+        return self.db.get_df(query)
 
     def get_available_countries(self):
 
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
         if selected_tournament == "European Championship":
-            query = f"""SELECT home_team AS country
-                        FROM euro_matches WHERE year = '{selected_year}'
+            query = """SELECT home_team AS country FROM euro_matches WHERE year = %s
                         UNION
-                        SELECT away_team AS country
-                        FROM euro_matches WHERE year = '{selected_year}';
-                        """
+                        SELECT away_team AS country FROM euro_matches WHERE year = %s"""
+
         elif selected_tournament == "World Championship":
-            query = f"""SELECT home_team AS country
-                        FROM world_cup_matches WHERE year = '{selected_year}'
+            query = """SELECT home_team AS country FROM world_cup_matches WHERE year = %s
                         UNION
-                        SELECT away_team AS country
-                        FROM world_cup_matches WHERE year = '{selected_year}';
-                        """
+                        SELECT away_team AS country FROM world_cup_matches WHERE year = %s"""
+
         else:
             raise ValueError(f"Unsupported tournament: {selected_tournament}")
-
-        return self.db.get_df(query)
+        parameters = [selected_year, selected_year]
+        return self.db.get_df(query, parameters)

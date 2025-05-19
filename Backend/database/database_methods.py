@@ -33,10 +33,12 @@ class Database:
         conn, cursor = self.set_cursor()
         try:
             cursor.execute(query)
-            result = cursor.fetchone()
-            if result is None:
-                return False
-            return bool(result[0])
+            result = cursor.fetchone()[0] #fetchone geeft steeds een tuple terug, steeds eerste resultaat er uit halen
+            if isinstance(result, bool): return result
+            else: raise TypeError (f"expected a boolean, got result: {result} : {type(result)}")
+
+        except TypeError as e:
+            print(f"Error trying to get a boolean from get_bool: {e}, : check query!")
         finally:
             cursor.close()
             conn.close()
@@ -53,13 +55,12 @@ class Database:
         conn, cursor = self.set_cursor()
         try:
             cursor.execute(query)
-            result = cursor.fetchone()
-            if result is None or result[0] is None:
-                raise ValueError (f"expected a date, got: {type(result)}")
-            value = result[0]
-            if isinstance(value, (datetime, date)):
-                return value.date() if isinstance(value, datetime) else value
-            raise ValueError(f"expected a date, got: {type(value)}")
+            result = cursor.fetchone()[0]
+            if isinstance(result, (datetime, date)):
+                    return result.date() if isinstance(result, datetime) else result
+            else: raise TypeError (f"expected a datetime, got result: {result} : {type(result)}")
+        except TypeError as e:
+            print(f"Error trying to get a date from get_date: {e}, : check query!")
         finally:
             cursor.close()
             conn.close()

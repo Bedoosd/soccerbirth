@@ -3,13 +3,8 @@ from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
-#test_env:
-from Backend.country_test_data import Country
-from Backend.tourament_test_data import Tournament
-
-##real_env
-# from Backend.country import Country
-# from Backend.tournament import Tournament
+from Backend.country import Country
+from Backend.tournament import Tournament
 
 
 tournaments = ["World Championship","European Championship"]
@@ -23,8 +18,10 @@ app_ui = ui.page_sidebar(
         ui.input_radio_buttons("tournament_selection", "Select a tournament:", tournaments),
         ui.output_ui("available_years_selection"),
         ui.output_ui("available_countries_selection"),
+
         bg="#f8f8f8"
     ),
+ui.input_action_button("generate_chart", "Show graph from selection"),
     output_widget("birth_chart"),
     custom_style
 )
@@ -40,26 +37,42 @@ def server(inputs, outputs, session):
     def available_years_selection():
         tournament = selected_tournament()
         available_years_df = tournament.get_available_years()
-        available_years = available_years_df["year"].tolist()
+        available_years = sorted(available_years_df["year"].tolist())
+
+        if not available_years:
+            return ui.div("No available years")
+
         return ui.input_select("available_years_selection", "Select year:", available_years)
+
 
     @render.ui
     def available_countries_selection():
         tournament = selected_tournament()
         selected_year = inputs["available_years_selection"]()
+        if not selected_year:
+            return ui.div("Select a year first")
         tournament.tournament_year = selected_year
-
         available_countries_df = tournament.get_available_countries()
-        available_countries = available_countries_df["country"].tolist() # kan uitgebreid worden om bv iso codes bij te nemen
+        available_countries = available_countries_df["country"].tolist()
+
+        if not available_countries:
+            return ui.div("No countries available")
 
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
 
     @render_widget
+    @reactive.event(inputs.generate_chart)
     def birth_chart():
-        tournament = selected_tournament()
         country_selected = inputs["available_countries_selection"]()
+        year = inputs["available_years_selection"]()
+        country_name = inputs["available_countries_selection"]()
 
+        if not year or not country_name:
+            return go.Figure()
+
+        tournament = selected_tournament()
+        tournament.tournament_year = year
         country = Country(country_selected, tournament)
 
         if country.has_monthly_data():
@@ -69,7 +82,7 @@ def server(inputs, outputs, session):
         elif country.has_yearly_data():
             yearly_data, tournament_marker, target_marker = country.get_yearly_data()
             return draw_chart(yearly_data, "Yearly", "Year",
-                              "years",tournament_marker, target_marker, show_warning_text=True)
+                              "year",tournament_marker, target_marker, show_warning_text=True)
 
         else:
             return no_data_chart()
@@ -120,8 +133,13 @@ def server(inputs, outputs, session):
                 font=dict(size=14, color="black"),
                 xanchor="center"
             )
-
-
+        #follwing is because the yearly graph wasnt displayed in the right format
+        if pd.api.types.is_numeric_dtype(data[x_col]):
+            fig.update_layout(
+                xaxis=dict(
+                    range=[(data[x_col].min())-1, (data[x_col].max()) + 1]
+                )
+            )
         fig.update_layout(
             title=dict(
                 text=(

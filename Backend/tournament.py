@@ -1,12 +1,7 @@
 from datetime import datetime, timedelta
-import pandas as pd
 
-def get_dataframe(query):
-    #even toegevoegd om rode lijn weg te krijgen
-    pass
-def get_date(query):
-    #same
-    pass
+from Backend.database.database_methods import Database
+
 
 class Tournament:
     def __init__(self, tournament_name, tournament_year=None):
@@ -16,27 +11,62 @@ class Tournament:
         self.target_date = None
         self.tournament_month = None
         self.target_month = None
+        self.target_year = None   #target year is not necessarily the same as tournament_year
+        self.db = Database()
 
     def set_tournament_date_and_target(self):
         tournament_name = self.tournament_name
-        tournament_year = self.tournament_year
-        query = """ """ #finale datum
-        date = get_date(query)  # get_data stelt de geinporteerde functie (uit backend/database) voor
-        self.tournament_date = datetime.strptime(date, '%m/%d/%Y')
-        self.target_date = datetime.strptime(date, '%m/%d/%Y') + timedelta(days=266)
+        tournament_year = int(self.tournament_year)
+
+        if tournament_name == "European Championship":
+            #data van finale nog niet beschikbaar in databank
+            date = datetime(tournament_year, 6, 15)
+
+        elif tournament_name == "World Championship":
+            query = f"select date from soccerbirth_staging.world_cup_matches where year = {tournament_year} and round = 'Final'"
+            date = self.db.get_date(query)
+
+        else:
+            raise ValueError(f"Unsupported tournament: {tournament_name}")
+
+
+        self.tournament_date = date
+        self.target_date = date + timedelta(days=266)
         self.tournament_month = self.tournament_date.strftime('%B') #geeft meteen de benaming van de maand door
         self.target_month = self.target_date.strftime('%B')
+        self.target_year = self.target_date.strftime('%Y')
         return
 
     def get_available_years(self):
         selected_tournament = self.tournament_name
-        query = """ """ #query om juiste jaren binnen te halen (jaar, organiserend land?)
-        df = get_dataframe(query) #get_data stelt de geinporteerde functie (uit backend/database) voor die een df teruggeeft
+        if selected_tournament == "European Championship":
+            query = "select year from euro_high_level"
+        elif selected_tournament == "World Championship":
+            query = "select year, host from world_cup_high_level"
+        else:
+            raise ValueError(f"Unsupported tournament: {selected_tournament}")
+        df = self.db.get_df(query)
         return df
 
     def get_available_countries(self):
+
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
-        query = """ """ #query om landen binnen te halen  (land, iso, ronde gehaald)
-        df = get_dataframe(query)
-        return df
+        if selected_tournament == "European Championship":
+            query = f"""SELECT home_team AS country
+                        FROM euro_matches WHERE year = '{selected_year}'
+                        UNION
+                        SELECT away_team AS country
+                        FROM euro_matches WHERE year = '{selected_year}';
+                        """
+        elif selected_tournament == "World Championship":
+            query = f"""SELECT home_team AS country
+                        FROM world_cup_matches WHERE year = '{selected_year}'
+                        UNION
+                        SELECT away_team AS country
+                        FROM world_cup_matches WHERE year = '{selected_year}';
+                        """
+        else:
+            raise ValueError(f"Unsupported tournament: {selected_tournament}")
+
+        return self.db.get_df(query)

@@ -24,8 +24,9 @@ class Tournament:
             date = self.db.get_date(query, parameters)
 
         elif tournament_name == "World Championship":
-            query = "select date from world_cup_matches where year = %s and round = %s"
-            parameters = [tournament_year, 'Final']
+            #added like to query because for example 1950 had Final round in stead of final
+            query = "select date from world_cup_matches where year = %s and round like %s"
+            parameters = [tournament_year, 'Final%']
             date = self.db.get_date(query, parameters)
 
         else:

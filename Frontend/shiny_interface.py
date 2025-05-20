@@ -1,13 +1,9 @@
 import math
 
-from parso.python.tree import Number
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
-from sqlalchemy import Numeric
-from sqlalchemy.dialects.mysql import NUMERIC
-from unicodedata import numeric
 
 from Backend.country import Country
 from Backend.tournament import Tournament
@@ -46,7 +42,7 @@ app_ui = ui.page_sidebar(
 )
 
 def server(inputs, outputs, session):
-    reactive_data = reactive.Value(None)
+    reactive_data = reactive.Value()
 
     @reactive.Calc
     def selected_tournament():
@@ -199,7 +195,6 @@ def server(inputs, outputs, session):
         avg_text = f"{average:.0f}"
         if target_marker is not None:
             target_average = data["births"][int(target_marker) - 2: int(target_marker) + 2].mean()
-            print (type(target_average), target_average)
             target_avg_text = f"{target_average:.0f}"
             births_compared = ((target_average / average) - 1) * 100
         else:

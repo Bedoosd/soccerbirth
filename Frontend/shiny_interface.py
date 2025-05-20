@@ -1,8 +1,13 @@
+import math
 
+from parso.python.tree import Number
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
+from sqlalchemy import Numeric
+from sqlalchemy.dialects.mysql import NUMERIC
+from unicodedata import numeric
 
 from Backend.country import Country
 from Backend.tournament import Tournament
@@ -194,16 +199,28 @@ def server(inputs, outputs, session):
         avg_text = f"{average:.0f}"
         if target_marker is not None:
             target_average = data["births"][int(target_marker) - 2: int(target_marker) + 2].mean()
+            print (type(target_average), target_average)
             target_avg_text = f"{target_average:.0f}"
+            births_compared = ((target_average / average) - 1) * 100
         else:
             target_avg_text = "N/A"
-
+        if births_compared < 0:
+            births_compared_text = f"There are {abs(births_compared):.2f}% less births around the target."
+        else: births_compared_text = f"There are {births_compared:.2f}% more births around the target."
         if show_warning_text:
             return ui.HTML(f"The average birth numbers over the displayed years = {avg_text}")
+
+        elif math.isnan(target_average):
+            #captures when target_average tries to get data out of range
+            #tried and does not return, index out of range error
+            return ui.HTML(f"""The average birth numbers over the displayed years = {avg_text}<br>
+                            Not enough data to calculate the average around the target""")
+
         else:
             return ui.HTML(f"""
                 The average birth number over the displayed months = {avg_text}<br>
-                The average birth number 4 months around the target = {target_avg_text}
+                The average birth number 4 months around the target = {target_avg_text}<br>
+                {births_compared_text} 
             """)
 
 app = App(app_ui, server)

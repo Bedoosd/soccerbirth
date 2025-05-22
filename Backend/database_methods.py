@@ -8,11 +8,9 @@ import warnings
 
 
 class Database:
-    def __init__(self):
-
-        load_dotenv()
     @staticmethod
     def get_connection():
+        load_dotenv()
 
         try:
             return psycopg2.connect(

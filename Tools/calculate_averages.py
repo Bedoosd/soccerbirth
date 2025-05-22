@@ -1,17 +1,20 @@
 import math
 
 from Backend.country import Country
+from Backend.tournament import Tournament
 from Backend.database_methods import Database
 
 
-#de queries in country en tournament zijn nu wel nog afgestemd op de oude staging tabellen.
+#de queries in country en tournament zijn nu wel nog afgestemd op de oude staging tabellen, met de nieuwe staging zal er niets werken.
 #deze zullen eerst moeten aangepast worden naar de nieuwe tabellen om volgende functie te laten werken
+#even getest met de data uit de staging en het werkt met een print :)
+#resultaten zijn verassend voor de winnaars in dit geval maar ze kloppen wel
 
 def calculate_averages(tournament_to_analyse):
     if tournament_to_analyse == "European Championship":
-        query = "select table with country and tournament year - Euro"
+        query = "select year, winner as country from soccerbirth_staging.euro_high_level"
     elif tournament_to_analyse == "World Championship":
-        query = "select table with country and tournament year - World"
+        query = "select year, champion as country from soccerbirth_staging.world_cup_high_level"
     else: raise ValueError("Invalid tournament name")
 
     df = Database.get_df(query)
@@ -20,8 +23,9 @@ def calculate_averages(tournament_to_analyse):
         #niet zeker of hier nog iets als 'if row' of dergelijke nodig gaat zijn voor lege lijnen
         country_to_analyse = row["country"]
         year_to_analyse = row["year"]
-        test = Country(country_to_analyse, tournament_to_analyse)
-        test.tournament_year = year_to_analyse
+        tournament_ini = Tournament(tournament_to_analyse, year_to_analyse)
+        test = Country(country_to_analyse, tournament_ini)
+
         if test.has_monthly_data():
             #normaalgezien zou has_monthly_data en get_monthly_data alles in gang moeten zetten om alle parameters in te vullen
             #als er iets zou ontbreken, eventueel hierboven nog de juiste test.? bijvoegen als mogelijk
@@ -41,9 +45,10 @@ def calculate_averages(tournament_to_analyse):
             #aantal maanden voor en na target in df_births worden bepaald in country.get_monthly_data lijn 36-37
             #Ik had er nog aan gedacht om dit dynamisch te maken, om ook in shiny te kunnen kiezen, misschien als er nog tijd over is.
             percentage = ((target_average / df_average) -1) * 100
-            query_write = "query om date naar de db terug te schrijven, index zou kunnen gebruikt worden"
-            parameters = "parameters hier meegeven ipv mee in de query te steken"
-            Database.write_value(query_write, parameters)
+            print (country_to_analyse, year_to_analyse, percentage)
+            # query_write = "query om date naar de db terug te schrijven, index zou kunnen gebruikt worden"
+            # parameters = "parameters hier meegeven ipv mee in de query te steken"
+            # Database.write_value(query_write, parameters)
         else: continue
 
 #momenteel niets voorzien om naar de database te schrijven indien er geen gegevens zijn
@@ -56,3 +61,54 @@ if __name__ == "__main__":
         calculate_averages("World Championship")
     except ValueError as e:
         print(e)
+
+#ter info: resultaat van de code:
+
+# France 1984 -5.756919079445466
+# Denmark 1992 -1.364874467077204
+# Germany 1996 -3.2265439603824775
+# France 2000 -5.443524704798186
+# Spain 2008 -5.307752094589146
+# Spain 2012 -7.912774737132889
+# Portugal 2016 -2.670396302795486
+# Italy 2020 -13.743751038064623
+# France 1984 -5.756919079445466
+# Denmark 1992 -1.364874467077204
+# Germany 1996 -3.2265439603824775
+# France 2000 -5.443524704798186
+# Spain 2008 -5.307752094589146
+# Spain 2012 -7.912774737132889
+# Portugal 2016 -2.670396302795486
+# Italy 2020 -13.743751038064623
+# France 1984 -5.756919079445466
+# Denmark 1992 -1.364874467077204
+# Germany 1996 -3.2265439603824775
+# France 2000 -5.443524704798186
+# Spain 2008 -5.307752094589146
+# Spain 2012 -7.912774737132889
+# Portugal 2016 -2.670396302795486
+# Italy 2020 -13.743751038064623
+# France 1984 -5.756919079445466
+# Denmark 1992 -1.364874467077204
+# Germany 1996 -3.2265439603824775
+# France 2000 -5.443524704798186
+# Spain 2008 -5.307752094589146
+# Spain 2012 -7.912774737132889
+# Portugal 2016 -2.670396302795486
+# Italy 2020 -13.743751038064623
+# Germany 2014 -6.3353403989636075
+# Spain 2010 -2.272317802088042
+# Italy 2006 -8.098980703205072
+# France 1998 -1.2100076058769171
+# Italy 1982 -3.936594687181316
+# Germany 2014 -6.3353403989636075
+# Spain 2010 -2.272317802088042
+# Italy 2006 -8.098980703205072
+# France 1998 -1.2100076058769171
+# Italy 1982 -3.936594687181316
+# Germany 2014 -6.3353403989636075
+# Spain 2010 -2.272317802088042
+# Italy 2006 -8.098980703205072
+# France 1998 -1.2100076058769171
+# Italy 1982 -3.936594687181316
+

@@ -6,7 +6,6 @@ import os
 import psycopg2
 import warnings
 
-
 class Database:
     @staticmethod
     def get_connection():
@@ -29,6 +28,7 @@ class Database:
         conn = Database.get_connection()
         cursor = conn.cursor()
         return conn,cursor
+
     @staticmethod
     def get_bool(query, parameters = None):
         conn, cursor = Database.set_cursor()
@@ -43,6 +43,7 @@ class Database:
         finally:
             cursor.close()
             conn.close()
+
     @staticmethod
     def get_df(query, parameters = None):
         conn = Database.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
@@ -56,6 +57,7 @@ class Database:
             return df
         finally:
             conn.close()
+
     @staticmethod
     def get_date(query, parameters = None):
         conn, cursor = Database.set_cursor()
@@ -67,6 +69,20 @@ class Database:
             else: raise TypeError (f"expected a datetime, got result: {result} : {type(result)}")
         except TypeError as e:
             print(f"Error trying to get a date from get_date: {e}, : check query!")
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def write_value(query, parameters=None):
+        conn = Database.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, parameters)
+            conn.commit()  # zorg dat wijzigingen worden opgeslagen
+        except Exception as e:
+            print(f"Error while writing to database: {e}")
+            conn.rollback()
         finally:
             cursor.close()
             conn.close()

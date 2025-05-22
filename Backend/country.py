@@ -5,7 +5,6 @@ from Backend.tournament import Tournament
 
 class Country:
     def __init__(self, name, tournament : Tournament):
-        self.db = Database()
         self.tournament = tournament
         self.country = name
 
@@ -14,13 +13,13 @@ class Country:
         selected_country = self.country
         target_year = self.tournament.target_year
         target_month = self.tournament.target_month
-        query = """select exists (select 1 from births_per_yearmonth 
+        query = """select exists (select 1 from soccerbirth_staging.births_per_yearmonth 
                     where country = %s 
                     and year = %s and month = %s
                     and value is not Null)
                      """
         parameters = [selected_country, target_year, target_month]
-        return self.db.get_bool(query, parameters)
+        return Database.get_bool(query, parameters)
 
     def has_yearly_data(self):
         selected_country = self.country
@@ -28,7 +27,7 @@ class Country:
         query = """select exists (select 1 from births_per_year 
                         where country = %s and year = %s and total is not Null)"""
         parameters = [selected_country, target_year]
-        return self.db.get_bool(query, parameters)
+        return Database.get_bool(query, parameters)
 
     def get_monthly_data(self):
         tournament_month = self.tournament.tournament_month
@@ -52,9 +51,9 @@ class Country:
         order by sort_datum;
                     """
         parameters = [selected_country, start_date, end_date]
-        df = self.db.get_df(query, parameters)
+        df = Database.get_df(query, parameters)
 
-        #index in df needed in shiny, doesnt work wel with strings
+        #index in df needed in shiny, doesn't work well with strings
         try:
             tournament_marker = df[df["month_year"] == tournament_month_year].index[0]
         except IndexError:
@@ -80,6 +79,6 @@ class Country:
                     and country = %s
                     order by year"""
         parameters = [start_date.year, end_date.year, selected_country]
-        df = self.db.get_df(query, parameters)
+        df = Database.get_df(query, parameters)
 
         return df, int(tournament_year), target_year

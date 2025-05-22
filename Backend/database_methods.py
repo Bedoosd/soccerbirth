@@ -11,8 +11,8 @@ class Database:
     def __init__(self):
 
         load_dotenv()
-
-    def get_connection(self):
+    @staticmethod
+    def get_connection():
 
         try:
             return psycopg2.connect(
@@ -26,13 +26,14 @@ class Database:
         except KeyError as e:
             raise RuntimeError(f"Omgevingsvariabele ontbreekt: {e}")
 
-    def set_cursor(self):
-        conn = self.get_connection()
+    @staticmethod
+    def set_cursor():
+        conn = Database.get_connection()
         cursor = conn.cursor()
         return conn,cursor
-
-    def get_bool(self, query, parameters = None):
-        conn, cursor = self.set_cursor()
+    @staticmethod
+    def get_bool(query, parameters = None):
+        conn, cursor = Database.set_cursor()
         try:
             cursor.execute(query, parameters)
             result = cursor.fetchone()[0] #fetchone geeft steeds een tuple terug, steeds eerste resultaat er uit halen
@@ -44,9 +45,9 @@ class Database:
         finally:
             cursor.close()
             conn.close()
-
-    def get_df(self, query, parameters = None):
-        conn = self.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
+    @staticmethod
+    def get_df(query, parameters = None):
+        conn = Database.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
         try:
             #ignores following warning from pandas:
             #pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection.
@@ -57,9 +58,9 @@ class Database:
             return df
         finally:
             conn.close()
-
-    def get_date(self, query, parameters = None):
-        conn, cursor = self.set_cursor()
+    @staticmethod
+    def get_date(query, parameters = None):
+        conn, cursor = Database.set_cursor()
         try:
             cursor.execute(query, parameters)
             result = cursor.fetchone()[0]

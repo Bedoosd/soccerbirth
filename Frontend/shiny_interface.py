@@ -42,7 +42,9 @@ app_ui = ui.page_sidebar(
 )
 
 def server(inputs, outputs, session):
+    _session = session
     reactive_data = reactive.Value()
+    target_avg_months = reactive.Value()
 
     @reactive.Calc
     def selected_tournament():
@@ -89,6 +91,7 @@ def server(inputs, outputs, session):
         if country.has_monthly_data():
             monthly_data, tournament_marker, target_marker = country.get_monthly_data()
             reactive_data.set((monthly_data, tournament_marker, target_marker, False)) #to send to statistics_box, tuple (dubbele haakjes)
+            target_avg_months.set([monthly_data["month_year"][int(target_marker) -1], monthly_data["month_year"][int(target_marker) + 1]])
             return draw_chart(monthly_data, "Monthly", "Month", "month_year", tournament_marker, target_marker, False)
 
         elif country.has_yearly_data():
@@ -123,7 +126,7 @@ def server(inputs, outputs, session):
                 line_dash="dot",
                 line_color="green",
                 annotation_text="Tournament",
-                annotation_position="top right",
+                annotation_position="top left",
                 annotation_font=dict(size=12, color="green")
             )
 
@@ -145,7 +148,7 @@ def server(inputs, outputs, session):
                 font=dict(size=14, color="black"),
                 xanchor="center"
             )
-        #yearly graph doesnt automatically display in the right scale
+        #yearly graph doesn't automatically display in the right scale
         if pd.api.types.is_numeric_dtype(data[x_col]):
             fig.update_layout(
                 xaxis=dict(range=[data[x_col].min() - 1, data[x_col].max() + 1])
@@ -193,28 +196,31 @@ def server(inputs, outputs, session):
         data, tournament_marker, target_marker, show_warning_text = value
         average = data["births"].mean()
         avg_text = f"{average:.0f}"
+        target_average = None
+        births_compared = 0
         if target_marker is not None:
-            target_average = data["births"][int(target_marker) - 2: int(target_marker) + 2].mean()
+            target_average = data["births"][int(target_marker) - 1: int(target_marker) + 1].mean()
             target_avg_text = f"{target_average:.0f}"
             births_compared = ((target_average / average) - 1) * 100
         else:
             target_avg_text = "N/A"
         if births_compared < 0:
-            births_compared_text = f"There are {abs(births_compared):.2f}% less births around the target."
-        else: births_compared_text = f"There are {births_compared:.2f}% more births around the target."
+            births_compared_text = f"There are {abs(births_compared):.2f}% less births around this target."
+        else: births_compared_text = f"There are {births_compared:.2f}% more births around this target."
         if show_warning_text:
-            return ui.HTML(f"The average birth numbers over the displayed years = {avg_text}")
+            return ui.HTML(f"The average birth numbers over the displayed years is: {avg_text}.")
 
         elif math.isnan(target_average):
-            #captures when target_average tries to get data out of range
+            #captures when target_average tries to get data out of range, will probably never happen
             #tried and does not return, index out of range error
-            return ui.HTML(f"""The average birth numbers over the displayed years = {avg_text}<br>
+            return ui.HTML(f"""The average birth numbers over the displayed years is: {avg_text}.<br>
                             Not enough data to calculate the average around the target""")
 
         else:
+            dates_to_display = target_avg_months.get()
             return ui.HTML(f"""
-                The average birth number over the displayed months = {avg_text}<br>
-                The average birth number 4 months around the target = {target_avg_text}<br>
+                The average birth number over the displayed months is: {avg_text}.<br>
+                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text}.<br>
                 {births_compared_text} 
             """)
 

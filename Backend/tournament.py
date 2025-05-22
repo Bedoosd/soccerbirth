@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from Backend.database_methods import Database
 
@@ -24,7 +24,7 @@ class Tournament:
             date = self.db.get_date(query, parameters)
 
         elif tournament_name == "World Championship":
-            #added like to query because for example 1950 had Final round in stead of final
+            #added like to query because for example 1950 had Final round instead of final
             query = "select date from world_cup_matches where year = %s and round like %s"
             parameters = [tournament_year, 'Final%']
             date = self.db.get_date(query, parameters)
@@ -35,7 +35,7 @@ class Tournament:
 
         self.tournament_date = date
         self.target_date = date + timedelta(days=266)
-        self.tournament_month = self.tournament_date.strftime('%B') #geeft meteen de benaming van de maand door
+        self.tournament_month = self.tournament_date.strftime('%B') #Gives the name of the month
         self.target_month = self.target_date.strftime('%B')
         self.target_year = self.target_date.strftime('%Y')
         return

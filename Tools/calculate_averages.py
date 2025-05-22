@@ -28,14 +28,15 @@ def calculate_averages(tournament_to_analyse):
             df_births, tournament_marker, target_marker = test.get_monthly_data()
             # tournament_marker en target_marker geven de index positie van beiden terug in de df_births
             # zie country +/- lijn 56 - 67
-            if target_marker is not None: #normaal is deze nooit None als er monthly_data is, maar ja..
-                target_average = df_births["births"][int(target_marker) - 1: int(target_marker) + 1].mean()
-                if math.isnan(target_average):
-                    #kan voorkomen als target net de eerste of laatste in de lijst zou zijn, heel onwaarschijnlijk
-                    continue
-                    # captures when target_average tries to get data out of range, will probably never happen
-                    # tried and does not return, index out of range error
-            else: continue
+            if target_marker is None:
+                continue #normaal is deze nooit None als er monthly_data is, maar ja..
+
+            target_average = df_births["births"][int(target_marker) - 1: int(target_marker) + 1].mean()
+
+            if math.isnan(target_average):
+                #kan voorkomen als target net de eerste of laatste in de lijst zou zijn, heel onwaarschijnlijk
+                continue
+
             df_average = df_births["births"].mean()
             #aantal maanden voor en na target in df_births worden bepaald in country.get_monthly_data lijn 36-37
             #Ik had er nog aan gedacht om dit dynamisch te maken, om ook in shiny te kunnen kiezen, misschien als er nog tijd over is.
@@ -55,4 +56,3 @@ if __name__ == "__main__":
         calculate_averages("World Championship")
     except ValueError as e:
         print(e)
-

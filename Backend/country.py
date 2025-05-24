@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from Backend.database_methods import Database
 from Backend.tournament import Tournament
+from datetime import date, timedelta
 
 class Country:
     def __init__(self, name, tournament : Tournament):
@@ -65,6 +66,73 @@ class Country:
             target_marker = None
 
         return df, tournament_marker, target_marker
+
+    def get_data_same_months(self):
+        tournament_month = self.tournament.tournament_month
+        selected_country = self.country
+        target = self.tournament.target_date
+
+        target_month_start = date(self.tournament.target_date.year, self.tournament.target_date.month, 1)
+        start_date = target_month_start - relativedelta(months=1)
+        end_date = target_month_start + relativedelta(months=2) - timedelta(days=1)
+
+        target1_month_start = target_month_start - relativedelta(years=1)
+        start_date_1 = target1_month_start - relativedelta(months=1)
+        end_date_1 = target1_month_start + relativedelta(months=2) - timedelta(days=1)
+
+        target2_month_start = target_month_start + relativedelta(years=1)
+        start_date_2 = target2_month_start - relativedelta(months=1)
+        end_date_2 = target2_month_start + relativedelta(months=2) - timedelta(days=1)
+
+        target_month = self.tournament.target_month
+        target_month_year = f"{target_month} {self.tournament.target_year}"
+        target_month_year1 = f"{target_month} {int(self.tournament.target_year) -1}"
+        target_month_year2 = f"{target_month} {int(self.tournament.target_year) +1}"
+
+        query = """select distinct year, month, value as births,
+                to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
+                concat(month, ' ', year) as month_year
+                from births_per_yearmonth
+                where country = %s
+                and month in ('January', 'February', 'March', 'April', 'May', 'June',
+                            'July', 'August', 'September', 'October', 'November', 'December')
+                and to_date(concat(year, '-', month), 'YYYY-Month')
+                between %s and %s
+                and value is not Null
+                order by sort_datum;
+                            """
+        parameters = [selected_country, start_date, end_date]
+        parameters1 = [selected_country, start_date_1, end_date_1]
+        parameters2 = [selected_country, start_date_2, end_date_2]
+        df = Database.get_df(query, parameters)
+        df1 = Database.get_df(query, parameters1)
+        df2 = Database.get_df(query, parameters2)
+
+        # index in df needed in shiny, doesn't work well with strings
+        try:
+            print (df)
+            print( target_month_year)
+            target_marker = df[df["month_year"] == target_month_year].index[0]
+        except IndexError:
+            target_marker = None
+
+        try:
+            target_marker1 = df1[df1["month_year"] == target_month_year1].index[0]
+            print (df1)
+            print (target_month_year1)
+        except IndexError:
+            target_marker1 = None
+
+        try:
+            target_marker2 = df2[df2["month_year"] == target_month_year2].index[0]
+            print(df2)
+            print (target_month_year2)
+        except IndexError:
+            target_marker2 = None
+
+
+        return df, df1, df2, target_marker, target_marker1, target_marker2
+
 
     def get_yearly_data(self):
         selected_country = self.country

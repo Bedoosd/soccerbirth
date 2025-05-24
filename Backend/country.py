@@ -68,26 +68,21 @@ class Country:
         return df, tournament_marker, target_marker
 
     def get_data_same_months(self):
-        tournament_month = self.tournament.tournament_month
+        #this returns 3 dataframes. Months + births from: target, target plus 1year, target minus 1year
+        #each dataframe contains 3months (target +/- 1 month)
         selected_country = self.country
-        target = self.tournament.target_date
 
-        target_month_start = date(self.tournament.target_date.year, self.tournament.target_date.month, 1)
-        start_date = target_month_start - relativedelta(months=1)
-        end_date = target_month_start + relativedelta(months=2) - timedelta(days=1)
+        target_month_base = date(self.tournament.target_date.year, self.tournament.target_date.month, 1)
+        start_date = target_month_base - relativedelta(months=1)
+        end_date = target_month_base + relativedelta(months=1)
 
-        target1_month_start = target_month_start - relativedelta(years=1)
-        start_date_1 = target1_month_start - relativedelta(months=1)
-        end_date_1 = target1_month_start + relativedelta(months=2) - timedelta(days=1)
+        target_month_minus1year_base = target_month_base - relativedelta(years=1)
+        start_date_minus_1 = target_month_minus1year_base - relativedelta(months=1)
+        end_date_minus_1 = target_month_minus1year_base + relativedelta(months=1)
 
-        target2_month_start = target_month_start + relativedelta(years=1)
-        start_date_2 = target2_month_start - relativedelta(months=1)
-        end_date_2 = target2_month_start + relativedelta(months=2) - timedelta(days=1)
-
-        target_month = self.tournament.target_month
-        target_month_year = f"{target_month} {self.tournament.target_year}"
-        target_month_year1 = f"{target_month} {int(self.tournament.target_year) -1}"
-        target_month_year2 = f"{target_month} {int(self.tournament.target_year) +1}"
+        target_month_plus1year_base = target_month_base + relativedelta(years=1)
+        start_date_plus_1 = target_month_plus1year_base - relativedelta(months=1)
+        end_date_plus_1 = target_month_plus1year_base + relativedelta(months=1)
 
         query = """select distinct year, month, value as births,
                 to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
@@ -102,36 +97,13 @@ class Country:
                 order by sort_datum;
                             """
         parameters = [selected_country, start_date, end_date]
-        parameters1 = [selected_country, start_date_1, end_date_1]
-        parameters2 = [selected_country, start_date_2, end_date_2]
+        parameters1 = [selected_country, start_date_minus_1, end_date_minus_1]
+        parameters2 = [selected_country, start_date_plus_1, end_date_plus_1]
         df = Database.get_df(query, parameters)
-        df1 = Database.get_df(query, parameters1)
-        df2 = Database.get_df(query, parameters2)
+        df_minus1 = Database.get_df(query, parameters1)
+        df_plus1 = Database.get_df(query, parameters2)
 
-        # index in df needed in shiny, doesn't work well with strings
-        try:
-            print (df)
-            print( target_month_year)
-            target_marker = df[df["month_year"] == target_month_year].index[0]
-        except IndexError:
-            target_marker = None
-
-        try:
-            target_marker1 = df1[df1["month_year"] == target_month_year1].index[0]
-            print (df1)
-            print (target_month_year1)
-        except IndexError:
-            target_marker1 = None
-
-        try:
-            target_marker2 = df2[df2["month_year"] == target_month_year2].index[0]
-            print(df2)
-            print (target_month_year2)
-        except IndexError:
-            target_marker2 = None
-
-
-        return df, df1, df2, target_marker, target_marker1, target_marker2
+        return df, df_minus1, df_plus1
 
 
     def get_yearly_data(self):

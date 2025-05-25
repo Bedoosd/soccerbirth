@@ -86,3 +86,17 @@ class Database:
         finally:
             cursor.close()
             conn.close()
+
+    @staticmethod
+    def write_many(query, parameters_list):
+        conn = Database.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.executemany(query, parameters_list)
+            conn.commit()
+        except Exception as e:
+            print(f"Error while performing batch write: {e}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()

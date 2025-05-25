@@ -12,7 +12,7 @@ def calculate_averages_same_months(tournament_to_analyse):
     else: raise ValueError("Invalid tournament name")
 
     df = Database.get_df(query)
-
+    results = []
     for index, row in df.iterrows():
         country_to_analyse = row["country"]
         year_to_analyse = row["year"]
@@ -26,16 +26,22 @@ def calculate_averages_same_months(tournament_to_analyse):
                 #if there is no monthly data available for the previous or next year, target should be oke
                 print(f"Not enough data available for {country_to_analyse} {year_to_analyse}, one of the dataframes contains less then 3 values.\n "
                       f"target: {len(df_target)}months, target plus 1 year: {len(df_minus1)}months, target minus 1 year: {len(df_plus1)}months\n ")
+                results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": None})
                 continue
 
             df_average = df_target["births"].mean()
             percentage = ((target_average / df_average) -1) * 100
-            print (f"{country_to_analyse}, {year_to_analyse}: {percentage} %")
-            # query_write = "query om date naar de db terug te schrijven, index zou kunnen gebruikt worden"
-            # parameters = "parameters hier meegeven ipv mee in de query te steken"
-            # Database.write_value(query_write, parameters)
+            results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": percentage})
 
-        else: continue
+        else:
+            results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": None})
+            continue
+    # voorbeeld van query:
+    query_w = """ UPDATE birth_stats SET percentage_monthly = %s
+                    WHERE country = %s AND year = %s
+                """
+    data = [(row["percentage"], row["country"], row["year"]) for row in results]
+    Database.write_many(query_w, data)
 
 if __name__ == "__main__":
     try:

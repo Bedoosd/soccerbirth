@@ -249,6 +249,7 @@ def server(inputs, outputs, session):
     @reactive.Effect
     @reactive.event(inputs.go_back)
     def go_back():
+        reactive_data.set(None) #else it keeps showing the previous data in the statistics_box on return
         current_page.set("main")
 
 

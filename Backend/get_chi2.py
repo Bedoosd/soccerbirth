@@ -3,6 +3,7 @@ import numpy as np
 from scipy.stats import chi2_contingency
 
 from Backend.database_methods import Database
+
 def get_chi2(compare_method, highest_round):
     if compare_method not in ["full year", "same_months"]:
         raise ValueError("compare_method must be either full year or same_months")

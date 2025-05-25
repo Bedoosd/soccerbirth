@@ -27,9 +27,7 @@ def calculate_averages(tournament_to_analyse):
         test = Country(country_to_analyse, tournament_ini)
 
         if test.has_monthly_data():
-            #normaalgezien zou has_monthly_data en get_monthly_data alles in gang moeten zetten om alle parameters in te vullen
-            #als er iets zou ontbreken, eventueel hierboven nog de juiste test.? bijvoegen als mogelijk
-            df_births, tournament_marker, target_marker = test.get_monthly_data()
+            df_births, tournament_marker, target_marker = test.get_monthly_data(months_margin=12)
             # tournament_marker en target_marker geven de index positie van beiden terug in de df_births
             # zie country +/- lijn 56 - 67
             if target_marker is None:
@@ -42,8 +40,6 @@ def calculate_averages(tournament_to_analyse):
                 continue
 
             df_average = df_births["births"].mean()
-            #aantal maanden voor en na target in df_births worden bepaald in country.get_monthly_data lijn 36-37
-            #Ik had er nog aan gedacht om dit dynamisch te maken, om ook in shiny te kunnen kiezen, misschien als er nog tijd over is.
             percentage = ((target_average / df_average) -1) * 100
             print (country_to_analyse, year_to_analyse, percentage)
             # query_write = "query om date naar de db terug te schrijven, index zou kunnen gebruikt worden"

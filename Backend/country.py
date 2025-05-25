@@ -30,12 +30,12 @@ class Country:
         parameters = [selected_country, target_year]
         return Database.get_bool(query, parameters)
 
-    def get_monthly_data(self):
+    def get_monthly_data(self, months_margin):
         tournament_month = self.tournament.tournament_month
         selected_country = self.country
         target = self.tournament.target_date
-        start_date = target - relativedelta(months=12)
-        end_date = target + relativedelta(months=12)
+        start_date = target - relativedelta(months=months_margin)
+        end_date = target + relativedelta(months=months_margin)
         target_month = self.tournament.target_month
         target_month_year = f"{target_month} {self.tournament.target_year}"
         tournament_month_year = f"{tournament_month} {self.tournament.tournament_year}"
@@ -106,11 +106,11 @@ class Country:
         return df, df_minus1, df_plus1
 
 
-    def get_yearly_data(self):
+    def get_yearly_data(self, years_margin):
         selected_country = self.country
         target_date = self.tournament.target_date
-        start_date = target_date - relativedelta(years=4)
-        end_date = target_date + relativedelta(years=4)
+        start_date = target_date - relativedelta(years=years_margin)
+        end_date = target_date + relativedelta(years=years_margin)
         tournament_year = self.tournament.tournament_year
         target_year = int(tournament_year) + 1
         query = """select country, year, total as births

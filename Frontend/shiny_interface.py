@@ -89,13 +89,13 @@ def server(inputs, outputs, session):
         country = Country(country_selected, tournament)
 
         if country.has_monthly_data():
-            monthly_data, tournament_marker, target_marker = country.get_monthly_data()
+            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
             reactive_data.set((monthly_data, tournament_marker, target_marker, False)) #to send to statistics_box, tuple (dubbele haakjes)
             target_avg_months.set([monthly_data["month_year"][int(target_marker) -1], monthly_data["month_year"][int(target_marker) + 1]])
             return draw_chart(monthly_data, "Monthly", "Month", "month_year", tournament_marker, target_marker, False)
 
         elif country.has_yearly_data():
-            yearly_data, tournament_marker, target_marker = country.get_yearly_data()
+            yearly_data, tournament_marker, target_marker = country.get_yearly_data(years_margin=4)
             reactive_data.set((yearly_data, tournament_marker, target_marker, True))
             return draw_chart(yearly_data, "Yearly", "Year", "year", tournament_marker, target_marker, True)
 

@@ -18,7 +18,6 @@ def calculate_averages(tournament_to_analyse):
     else: raise ValueError("Invalid tournament name")
 
     df = Database.get_df(query)
-
     for index, row in df.iterrows():
         #niet zeker of hier nog iets als 'if row' of dergelijke nodig gaat zijn voor lege lijnen
         country_to_analyse = row["country"]
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)
 
-#ter info: resultaat van de code:
+#ter info: resultaat van de code, oude tabel veel dubbels:
 
 # France 1984 -5.756919079445466
 # Denmark 1992 -1.364874467077204

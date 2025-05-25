@@ -47,7 +47,7 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)
 
-#hier is al meer resultaat te zien, wel nog geen idee waarom zoveel dubbels:
+#hier is al meer resultaat te zien, veel dubbels:
 # France, 1984: 0.6516680434301536 %
 # Denmark, 1992: 0.7727380388441452 %
 # France, 2000: -0.21288135593220403 %

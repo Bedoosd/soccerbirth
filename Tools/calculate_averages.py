@@ -51,7 +51,7 @@ def calculate_averages(tournament_to_analyse):
             # Database.write_value(query_write, parameters)
         else: continue
 
-#momenteel niets voorzien om naar de database te schrijven indien er geen gegevens zijn
+#momenteel niets voorzien om naar de database te schrijven indien er geen gegevens zijn, in de chi² gebruik ik wel Null
 if __name__ == "__main__":
     try:
         calculate_averages("European Championship")

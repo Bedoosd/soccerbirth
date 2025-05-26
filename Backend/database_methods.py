@@ -6,13 +6,10 @@ import os
 import psycopg2
 import warnings
 
-
 class Database:
-    def __init__(self):
-
+    @staticmethod
+    def get_connection():
         load_dotenv()
-
-    def get_connection(self):
 
         try:
             return psycopg2.connect(
@@ -26,13 +23,15 @@ class Database:
         except KeyError as e:
             raise RuntimeError(f"Omgevingsvariabele ontbreekt: {e}")
 
-    def set_cursor(self):
-        conn = self.get_connection()
+    @staticmethod
+    def set_cursor():
+        conn = Database.get_connection()
         cursor = conn.cursor()
         return conn,cursor
 
-    def get_bool(self, query, parameters = None):
-        conn, cursor = self.set_cursor()
+    @staticmethod
+    def get_bool(query, parameters = None):
+        conn, cursor = Database.set_cursor()
         try:
             cursor.execute(query, parameters)
             result = cursor.fetchone()[0] #fetchone geeft steeds een tuple terug, steeds eerste resultaat er uit halen
@@ -45,8 +44,9 @@ class Database:
             cursor.close()
             conn.close()
 
-    def get_df(self, query, parameters = None):
-        conn = self.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
+    @staticmethod
+    def get_df(query, parameters = None):
+        conn = Database.get_connection()  #cursor wordt hier zelf aangemaakt door pd; set_cursor niet nodig
         try:
             #ignores following warning from pandas:
             #pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection.
@@ -58,8 +58,9 @@ class Database:
         finally:
             conn.close()
 
-    def get_date(self, query, parameters = None):
-        conn, cursor = self.set_cursor()
+    @staticmethod
+    def get_date(query, parameters = None):
+        conn, cursor = Database.set_cursor()
         try:
             cursor.execute(query, parameters)
             result = cursor.fetchone()[0]
@@ -68,6 +69,34 @@ class Database:
             else: raise TypeError (f"expected a datetime, got result: {result} : {type(result)}")
         except TypeError as e:
             print(f"Error trying to get a date from get_date: {e}, : check query!")
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def write_value(query, parameters=None):
+        conn = Database.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, parameters)
+            conn.commit()  # zorg dat wijzigingen worden opgeslagen
+        except Exception as e:
+            print(f"Error while writing to database: {e}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def write_many(query, parameters_list):
+        conn = Database.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.executemany(query, parameters_list)
+            conn.commit()
+        except Exception as e:
+            print(f"Error while performing batch write: {e}")
+            conn.rollback()
         finally:
             cursor.close()
             conn.close()

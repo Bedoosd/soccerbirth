@@ -1,3 +1,5 @@
+
+import math
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
@@ -6,60 +8,75 @@ import plotly.graph_objects as go
 from Backend.country import Country
 from Backend.tournament import Tournament
 
-
-tournaments = ["World Championship","European Championship"]
-
+tournaments = ["World Championship", "European Championship"]
 custom_style = ui.tags.style(
-    """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
+     """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
 
-# UI layout
-app_ui = ui.page_sidebar(
-    ui.sidebar(
-        ui.input_radio_buttons("tournament_selection", "Select a tournament:", tournaments),
-        ui.output_ui("available_years_selection"),
-        ui.output_ui("available_countries_selection"),
-
-        bg="#f8f8f8"
-    ),
-ui.input_action_button("generate_chart", "Show graph from selection"),
-    output_widget("birth_chart"),
-
-    ui.tags.div(
-        ui.output_ui("caption_box"),
-        style="""
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            padding: 12px;
-            margin-top: 20px;
-            border-radius: 6px;
-            text-align: left;
-            color: #444;
-        """
-),
-    custom_style
+app_ui = ui.page_fluid(
+    ui.output_ui("page_content")
 )
 
-# Server logic
 def server(inputs, outputs, session):
+    current_page = reactive.Value("main")
+    reactive_data = reactive.Value()
+    target_avg_months = reactive.Value()
+
+    @outputs
+    @render.ui
+    def page_content():
+        if current_page.get() == "main":
+            return ui.page_sidebar(
+            ui.sidebar(
+                ui.input_radio_buttons("tournament_selection", "Select a tournament:", tournaments),
+                ui.output_ui("available_years_ui"),
+                ui.output_ui("available_countries_ui"),
+                bg="#f8f8f8"
+            ),
+            ui.input_action_button("generate_chart", "Show graph from selection"),
+            ui.input_action_button("open_stats", "Go to statistic page"),
+            output_widget("birth_chart"),
+
+            ui.tags.div(
+                ui.output_ui("statistics_box"),
+                style="""
+                    border: 1px solid #ccc;
+                    background-color: #f9f9f9;
+                    padding: 12px;
+                    margin-top: 20px;
+                    border-radius: 6px;
+                    text-align: left;
+                    color: #444;
+                """
+            ),
+
+            custom_style
+        )
+        else:
+            return ui.page_fluid(
+                ui.h3("Statistic_page"),
+                ui.input_action_button("go_back", "← Back to graph page"),
+                ui.p("Place for stats"),
+
+                ui.output_text_verbatim("stats_info"),
+            )
+
     @reactive.Calc
     def selected_tournament():
         return Tournament(inputs["tournament_selection"]())
 
     @outputs
     @render.ui
-    def available_years_selection():
+    def available_years_ui():
         tournament = selected_tournament()
         available_years_df = tournament.get_available_years()
         available_years = sorted(available_years_df["year"].tolist())
-
         if not available_years:
             return ui.div("No available years")
-
         return ui.input_select("available_years_selection", "Select year:", available_years)
 
-
+    @outputs
     @render.ui
-    def available_countries_selection():
+    def available_countries_ui():
         tournament = selected_tournament()
         selected_year = inputs["available_years_selection"]()
         if not selected_year:
@@ -67,21 +84,18 @@ def server(inputs, outputs, session):
         tournament.tournament_year = selected_year
         available_countries_df = tournament.get_available_countries()
         available_countries = available_countries_df["country"].tolist()
-
         if not available_countries:
             return ui.div("No countries available")
-
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
-
+    @outputs
     @render_widget
     @reactive.event(inputs.generate_chart)
     def birth_chart():
         country_selected = inputs["available_countries_selection"]()
         year = inputs["available_years_selection"]()
-        country_name = inputs["available_countries_selection"]()
-
-        if not year or not country_name:
+        if not year or not country_selected:
+            reactive_data.set(None)
             return go.Figure()
 
         tournament = selected_tournament()
@@ -89,44 +103,28 @@ def server(inputs, outputs, session):
         country = Country(country_selected, tournament)
 
         if country.has_monthly_data():
-            monthly_data, tournament_marker, target_marker = country.get_monthly_data()
-            return draw_chart(monthly_data, "Monthly", "Month","month_year", tournament_marker, target_marker)
+            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
+            reactive_data.set((monthly_data, tournament_marker, target_marker, False))
+            target_avg_months.set([monthly_data["month_year"][int(target_marker) -1], monthly_data["month_year"][int(target_marker) + 1]])
+            return draw_chart(monthly_data, "Monthly", "Month", "month_year", tournament_marker, target_marker, False)
 
         elif country.has_yearly_data():
-            yearly_data, tournament_marker, target_marker = country.get_yearly_data()
-            return draw_chart(yearly_data, "Yearly", "Year",
-                              "year",tournament_marker, target_marker, show_warning_text=True)
+            yearly_data, tournament_marker, target_marker = country.get_yearly_data(years_margin=4)
+            reactive_data.set((yearly_data, tournament_marker, target_marker, True))
+            return draw_chart(yearly_data, "Yearly", "Year", "year", tournament_marker, target_marker, True)
 
         else:
+            reactive_data.set(None)
             return no_data_chart()
 
-    def draw_chart(data, title_prefix, x_title, x_col,tournament_marker, target_marker, show_warning_text=False):
-
+    def draw_chart(data, title_prefix, x_title, x_col, tournament_marker, target_marker, show_warning_text=False):
         average = data["births"].mean()
-        target_average = data["births"][int(target_marker) - 2: int(target_marker) + 2].mean()
-        avg_text = f"{average:.0f}"
-        target_avg_text = f"{target_average:.0f}"
-
-        @render.ui
-        def caption_box():
-            if show_warning_text:
-                return ui.HTML(
-                    f"The average birth numbers over the displayed years = {avg_text}"
-                )
-            else:
-                return ui.HTML(
-                    f"""
-                    The average birth number over the displayed months = {avg_text}<br>
-                    The average birth number 4 months around the target = {target_avg_text}
-                    """
-                )
-
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=data[x_col],
             y=data["births"],
             mode="lines+markers",
-            name="Births",
+            name="Births"
         ))
         fig.add_trace(go.Scatter(
             x=data[x_col],
@@ -134,18 +132,18 @@ def server(inputs, outputs, session):
             mode="lines",
             name=f"Average ({int(average)})",
             line=dict(dash="dash", color="red")
-
         ))
-        #tournament marker zichtbaar afhankelijk van hoe ver de grafiek gaat
+
         if tournament_marker is not None:
             fig.add_vline(
                 x=tournament_marker,
                 line_dash="dot",
                 line_color="green",
                 annotation_text="Tournament",
-                annotation_position="top right",
+                annotation_position="top left",
                 annotation_font=dict(size=12, color="green")
             )
+
         if target_marker is not None:
             fig.add_vline(
                 x=target_marker,
@@ -164,14 +162,11 @@ def server(inputs, outputs, session):
                 font=dict(size=14, color="black"),
                 xanchor="center"
             )
-
-        #follwing is because the yearly graph wasnt displayed in the right format
         if pd.api.types.is_numeric_dtype(data[x_col]):
             fig.update_layout(
-                xaxis=dict(
-                    range=[(data[x_col].min())-1, (data[x_col].max()) + 1]
-                )
+                xaxis=dict(range=[data[x_col].min() - 1, data[x_col].max() + 1])
             )
+
         fig.update_layout(
             title=dict(
                 text=(
@@ -189,27 +184,74 @@ def server(inputs, outputs, session):
         return fig
 
     def no_data_chart():
-        @render.text
-        def caption_box():
-                return f"Nothing to show"
         fig = go.Figure()
-
         fig.update_layout(
             xaxis=dict(visible=False),
             yaxis=dict(visible=False),
             annotations=[
                 dict(
-                    text=f"No birth rates available for following selection:<br>"
+                    text=f"No birth rates available for the selection:<br>"
                          f"{inputs['available_countries_selection']()} at "
                          f"{inputs['tournament_selection']()}, {inputs['available_years_selection']()}",
-                    xref="paper",
-                    yref="paper",
-                    showarrow=False,
-                    font=dict(size=20)
+                    xref="paper", yref="paper", showarrow=False, font=dict(size=20)
                 )
             ]
         )
         return fig
+
+    @outputs
+    @render.ui
+    def statistics_box():
+        value = reactive_data.get()
+        if not value:
+            return ui.HTML("No data to display.")
+
+        data, tournament_marker, target_marker, show_warning_text = value
+        average = data["births"].mean()
+        avg_text = f"{average:.0f}"
+        target_average = None
+        births_compared = 0
+        if target_marker is not None:
+            target_average = data["births"][int(target_marker) - 1: int(target_marker) + 1].mean()
+            target_avg_text = f"{target_average:.0f}"
+            births_compared = ((target_average / average) - 1) * 100
+        else:
+            target_avg_text = "N/A"
+        if births_compared < 0:
+            births_compared_text = f"There are {abs(births_compared):.2f}% less births around this target."
+        else:
+            births_compared_text = f"There are {births_compared:.2f}% more births around this target."
+        if show_warning_text:
+            return ui.HTML(f"The average birth numbers over the displayed years is: {avg_text}.")
+
+        elif math.isnan(target_average):
+            return ui.HTML(f"""The average birth numbers over the displayed years is: {avg_text}.<br>
+                            Not enough data to calculate the average around the target""")
+
+        else:
+            dates_to_display = target_avg_months.get()
+            return ui.HTML(f"""
+                The average birth number over the displayed months is: {avg_text}.<br>
+                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text}.<br>
+                {births_compared_text} 
+            """)
+
+    @outputs
+    @render.text
+    def stats_info():
+        return "This is the place for stats and info"
+
+    @reactive.Effect
+    @reactive.event(inputs.open_stats)
+    def go_to_stats():
+        current_page.set("stats")
+
+    @reactive.Effect
+    @reactive.event(inputs.go_back)
+    def go_back():
+        reactive_data.set(None) #else it keeps showing the previous data in the statistics_box on return
+        current_page.set("main")
+
 
 app = App(app_ui, server)
 

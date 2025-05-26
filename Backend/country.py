@@ -2,10 +2,10 @@ from dateutil.relativedelta import relativedelta
 
 from Backend.database_methods import Database
 from Backend.tournament import Tournament
+from datetime import date, timedelta
 
 class Country:
     def __init__(self, name, tournament : Tournament):
-        self.db = Database()
         self.tournament = tournament
         self.country = name
 
@@ -14,13 +14,13 @@ class Country:
         selected_country = self.country
         target_year = self.tournament.target_year
         target_month = self.tournament.target_month
-        query = """select exists (select 1 from births_per_yearmonth 
+        query = """select exists (select 1 from soccerbirth_staging.births_per_yearmonth 
                     where country = %s 
                     and year = %s and month = %s
                     and value is not Null)
                      """
         parameters = [selected_country, target_year, target_month]
-        return self.db.get_bool(query, parameters)
+        return Database.get_bool(query, parameters)
 
     def has_yearly_data(self):
         selected_country = self.country
@@ -28,14 +28,14 @@ class Country:
         query = """select exists (select 1 from births_per_year 
                         where country = %s and year = %s and total is not Null)"""
         parameters = [selected_country, target_year]
-        return self.db.get_bool(query, parameters)
+        return Database.get_bool(query, parameters)
 
-    def get_monthly_data(self):
+    def get_monthly_data(self, months_margin):
         tournament_month = self.tournament.tournament_month
         selected_country = self.country
         target = self.tournament.target_date
-        start_date = target - relativedelta(months=12)
-        end_date = target + relativedelta(months=12)
+        start_date = target - relativedelta(months=months_margin)
+        end_date = target + relativedelta(months=months_margin)
         target_month = self.tournament.target_month
         target_month_year = f"{target_month} {self.tournament.target_year}"
         tournament_month_year = f"{tournament_month} {self.tournament.tournament_year}"
@@ -52,9 +52,9 @@ class Country:
         order by sort_datum;
                     """
         parameters = [selected_country, start_date, end_date]
-        df = self.db.get_df(query, parameters)
+        df = Database.get_df(query, parameters)
 
-        #index in df needed in shiny, doesnt work wel with strings
+        #index in df needed in shiny, doesn't work well with strings
         try:
             tournament_marker = df[df["month_year"] == tournament_month_year].index[0]
         except IndexError:
@@ -67,11 +67,50 @@ class Country:
 
         return df, tournament_marker, target_marker
 
-    def get_yearly_data(self):
+    def get_data_same_months(self):
+        #this returns 3 dataframes. Months + births from: target, target plus 1year, target minus 1year
+        #each dataframe contains 3months (target +/- 1 month)
+        selected_country = self.country
+
+        target_month_base = date(self.tournament.target_date.year, self.tournament.target_date.month, 1)
+        start_date = target_month_base - relativedelta(months=1)
+        end_date = target_month_base + relativedelta(months=1)
+
+        target_month_minus1year_base = target_month_base - relativedelta(years=1)
+        start_date_minus_1 = target_month_minus1year_base - relativedelta(months=1)
+        end_date_minus_1 = target_month_minus1year_base + relativedelta(months=1)
+
+        target_month_plus1year_base = target_month_base + relativedelta(years=1)
+        start_date_plus_1 = target_month_plus1year_base - relativedelta(months=1)
+        end_date_plus_1 = target_month_plus1year_base + relativedelta(months=1)
+
+        query = """select distinct year, month, value as births,
+                to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
+                concat(month, ' ', year) as month_year
+                from births_per_yearmonth
+                where country = %s
+                and month in ('January', 'February', 'March', 'April', 'May', 'June',
+                            'July', 'August', 'September', 'October', 'November', 'December')
+                and to_date(concat(year, '-', month), 'YYYY-Month')
+                between %s and %s
+                and value is not Null
+                order by sort_datum;
+                            """
+        parameters = [selected_country, start_date, end_date]
+        parameters1 = [selected_country, start_date_minus_1, end_date_minus_1]
+        parameters2 = [selected_country, start_date_plus_1, end_date_plus_1]
+        df = Database.get_df(query, parameters)
+        df_minus1 = Database.get_df(query, parameters1)
+        df_plus1 = Database.get_df(query, parameters2)
+
+        return df, df_minus1, df_plus1
+
+
+    def get_yearly_data(self, years_margin):
         selected_country = self.country
         target_date = self.tournament.target_date
-        start_date = target_date - relativedelta(years=4)
-        end_date = target_date + relativedelta(years=4)
+        start_date = target_date - relativedelta(years=years_margin)
+        end_date = target_date + relativedelta(years=years_margin)
         tournament_year = self.tournament.tournament_year
         target_year = int(tournament_year) + 1
         query = """select country, year, total as births
@@ -80,6 +119,6 @@ class Country:
                     and country = %s
                     order by year"""
         parameters = [start_date.year, end_date.year, selected_country]
-        df = self.db.get_df(query, parameters)
+        df = Database.get_df(query, parameters)
 
         return df, int(tournament_year), target_year

@@ -107,7 +107,7 @@ def server(inputs, outputs, session):
             monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
             reactive_data.set((monthly_data, tournament_marker, target_marker, False))
             target_avg_months.set([monthly_data["year_month_txt"][int(target_marker) -1], monthly_data["year_month_txt"][int(target_marker) + 1]])
-            return draw_chart(monthly_data, "Monthly", "Month", "month_year", tournament_marker, target_marker, False)
+            return draw_chart(monthly_data, "Monthly", "Month", "year_month_txt", tournament_marker, target_marker, False)
 
         elif country.has_yearly_data():
             print ("has yearly data")

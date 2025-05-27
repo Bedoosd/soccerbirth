@@ -5,24 +5,15 @@ from Backend.country import Country
 from Backend.tournament import Tournament
 from Backend.database_methods import Database
 
-
-#de queries in country en tournament zijn nu wel nog afgestemd op de oude staging tabellen, met de nieuwe staging zal er niets werken.
-#deze zullen eerst moeten aangepast worden naar de nieuwe tabellen om volgende functie te laten werken
-#even getest met de data uit de staging en het werkt met een print :)
-#resultaten zijn verassend voor de winnaars in dit geval maar ze kloppen wel
-
 def calculate_averages(tournament_to_analyse):
-    if tournament_to_analyse == "European Championship":
-        query = "select year, winner as country from soccerbirth_staging.euro_high_level"
-    elif tournament_to_analyse == "World Championship":
-        query = "select year, champion as country from soccerbirth_staging.world_cup_high_level"
-    else: raise ValueError("Invalid tournament name")
-
-    df = Database.get_df(query)
+    print (tournament_to_analyse)
+    query = (f"select year, country_name from soccerbirth_dataproducts.dp_stats_round where tournament = '{tournament_to_analyse}'")
+    parameters = (tournament_to_analyse)
+    df = Database.get_df(query, parameters)
     results = []
     for index, row in df.iterrows():
         #niet zeker of hier nog iets als 'if row' of dergelijke nodig gaat zijn voor lege lijnen
-        country_to_analyse = row["country"]
+        country_to_analyse = row["country_name"]
         year_to_analyse = row["year"]
         tournament_ini = Tournament(tournament_to_analyse, year_to_analyse)
         test = Country(country_to_analyse, tournament_ini)
@@ -49,21 +40,21 @@ def calculate_averages(tournament_to_analyse):
         else:
             results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": None})
             continue
-
+    print (results)
     # voorbeeld van query:
-    query_w = """ UPDATE birth_stats SET percentage_full_year = %s
-                    WHERE country = %s AND year = %s
-                """
-    data = [(row["percentage"], row["country"], row["year"]) for row in results]
-    Database.write_many(query_w, data)
+    # query_w = """ UPDATE birth_stats SET percentage_full_year = %s
+    #                 WHERE country = %s AND year = %s
+    #             """
+    # data = [(row["percentage"], row["country"], row["year"]) for row in results]
+    # Database.write_many(query_w, data)
 
 if __name__ == "__main__":
     try:
-        calculate_averages("European Championship")
+        calculate_averages('European Championship')
     except ValueError as e:
         print(e)
     try:
-        calculate_averages("World Championship")
+        calculate_averages('World Championship')
     except ValueError as e:
         print(e)
 

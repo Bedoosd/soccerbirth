@@ -83,7 +83,7 @@ def server(inputs, outputs, session):
             return ui.div("Select a year first")
         tournament.tournament_year = selected_year
         available_countries_df = tournament.get_available_countries()
-        available_countries = available_countries_df["country"].tolist()
+        available_countries = available_countries_df["country_name"].tolist()
         if not available_countries:
             return ui.div("No countries available")
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
@@ -101,19 +101,22 @@ def server(inputs, outputs, session):
         tournament = selected_tournament()
         tournament.tournament_year = year
         country = Country(country_selected, tournament)
-
+        print ("voor has_monthly")
         if country.has_monthly_data():
+            print("has monthly data")
             monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
             reactive_data.set((monthly_data, tournament_marker, target_marker, False))
-            target_avg_months.set([monthly_data["month_year"][int(target_marker) -1], monthly_data["month_year"][int(target_marker) + 1]])
+            target_avg_months.set([monthly_data["year_month_txt"][int(target_marker) -1], monthly_data["year_month_txt"][int(target_marker) + 1]])
             return draw_chart(monthly_data, "Monthly", "Month", "month_year", tournament_marker, target_marker, False)
 
         elif country.has_yearly_data():
+            print ("has yearly data")
             yearly_data, tournament_marker, target_marker = country.get_yearly_data(years_margin=4)
             reactive_data.set((yearly_data, tournament_marker, target_marker, True))
             return draw_chart(yearly_data, "Yearly", "Year", "year", tournament_marker, target_marker, True)
 
         else:
+            print ("no data")
             reactive_data.set(None)
             return no_data_chart()
 

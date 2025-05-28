@@ -17,8 +17,6 @@ class Database:
                 database=os.environ["DB_NAME"],
                 user=os.environ["DB_USER"],
                 password=os.environ["DB_PASSWORD"],
-                options = '-c search_path=soccerbirth_staging'
-
             )
         except KeyError as e:
             raise RuntimeError(f"Omgevingsvariabele ontbreekt: {e}")

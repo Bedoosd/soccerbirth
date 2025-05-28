@@ -85,7 +85,6 @@ def percentage_to_db_tool():
 
     #chat gpt stelde volgende voor om waardes mee te geven
     #geeft een waarschuwing omdat de dict waarden nog niet gekend zijn denk ik
-    #alle parameters moeten ook wel zo herhaald worden in volgorde
     data = [(row.year, row.country, row.percentage_monthly, row.percentage_yearly)
             for row in df.itertuples(index=False)]
 

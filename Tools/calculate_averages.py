@@ -6,17 +6,19 @@ from Backend.tournament import Tournament
 from Backend.database_methods import Database
 
 def calculate_averages(tournament_to_analyse):
-    print (tournament_to_analyse)
-    query = (f"select year, country_name from soccerbirth_dataproducts.dp_stats_round where tournament = '{tournament_to_analyse}'")
-    parameters = (tournament_to_analyse)
+    query = (f"select year, country_name from soccerbirth_dataproducts.dp_stats_round where tournament = %s")
+    parameters = (tournament_to_analyse,)
     df = Database.get_df(query, parameters)
     results = []
     for index, row in df.iterrows():
+        print (f"progress: {index}/{df.shape[0]}")
+
         #niet zeker of hier nog iets als 'if row' of dergelijke nodig gaat zijn voor lege lijnen
         country_to_analyse = row["country_name"]
         year_to_analyse = row["year"]
         tournament_ini = Tournament(tournament_to_analyse, year_to_analyse)
         test = Country(country_to_analyse, tournament_ini)
+
 
         if test.has_monthly_data():
             df_births, tournament_marker, target_marker = test.get_monthly_data(months_margin=12)
@@ -34,12 +36,20 @@ def calculate_averages(tournament_to_analyse):
                 continue
 
             df_average = df_births["births"].mean()
-            percentage = ((target_average / df_average) -1) * 100
+            percentage = round(((target_average / df_average) - 1) * 100, 2)
             results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": percentage})
 
         else:
             results.append({"country": country_to_analyse, "year": year_to_analyse, "percentage": None})
             continue
+
+    # with open (f"percentage{tournament_to_analyse}.csv", "w") as f:
+    #     for line in results:
+    #         f.write(f"{line['country']},{line['year']},{line['percentage']}")
+    #         f.write("\n")
+
+
+
     print (results)
     # voorbeeld van query:
     # query_w = """ UPDATE birth_stats SET percentage_full_year = %s
@@ -57,54 +67,3 @@ if __name__ == "__main__":
         calculate_averages('World Championship')
     except ValueError as e:
         print(e)
-
-#ter info: resultaat van de code, oude tabel veel dubbels:
-
-# France 1984 -5.756919079445466
-# Denmark 1992 -1.364874467077204
-# Germany 1996 -3.2265439603824775
-# France 2000 -5.443524704798186
-# Spain 2008 -5.307752094589146
-# Spain 2012 -7.912774737132889
-# Portugal 2016 -2.670396302795486
-# Italy 2020 -13.743751038064623
-# France 1984 -5.756919079445466
-# Denmark 1992 -1.364874467077204
-# Germany 1996 -3.2265439603824775
-# France 2000 -5.443524704798186
-# Spain 2008 -5.307752094589146
-# Spain 2012 -7.912774737132889
-# Portugal 2016 -2.670396302795486
-# Italy 2020 -13.743751038064623
-# France 1984 -5.756919079445466
-# Denmark 1992 -1.364874467077204
-# Germany 1996 -3.2265439603824775
-# France 2000 -5.443524704798186
-# Spain 2008 -5.307752094589146
-# Spain 2012 -7.912774737132889
-# Portugal 2016 -2.670396302795486
-# Italy 2020 -13.743751038064623
-# France 1984 -5.756919079445466
-# Denmark 1992 -1.364874467077204
-# Germany 1996 -3.2265439603824775
-# France 2000 -5.443524704798186
-# Spain 2008 -5.307752094589146
-# Spain 2012 -7.912774737132889
-# Portugal 2016 -2.670396302795486
-# Italy 2020 -13.743751038064623
-# Germany 2014 -6.3353403989636075
-# Spain 2010 -2.272317802088042
-# Italy 2006 -8.098980703205072
-# France 1998 -1.2100076058769171
-# Italy 1982 -3.936594687181316
-# Germany 2014 -6.3353403989636075
-# Spain 2010 -2.272317802088042
-# Italy 2006 -8.098980703205072
-# France 1998 -1.2100076058769171
-# Italy 1982 -3.936594687181316
-# Germany 2014 -6.3353403989636075
-# Spain 2010 -2.272317802088042
-# Italy 2006 -8.098980703205072
-# France 1998 -1.2100076058769171
-# Italy 1982 -3.936594687181316
-

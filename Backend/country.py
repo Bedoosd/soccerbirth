@@ -15,12 +15,10 @@ class Country:
         self.tournament.set_tournament_date_and_target(selected_country)
         target_year = self.tournament.target_year
         target_month = self.tournament.target_month
-        print (selected_country, target_year, target_month)
         query = ("select exists (select 1 from soccerbirth_dataproducts.dp_births_figures "
                  "where country = %s and month = %s and year = %s)")
 
         parameters = [selected_country, target_month, target_year]
-        print (Database.get_bool(query, parameters))
         return Database.get_bool(query, parameters)
 
     def has_yearly_data(self):

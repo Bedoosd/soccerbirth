@@ -17,7 +17,6 @@ class Tournament:
     def set_tournament_date_and_target(self, country):
         tournament_name = self.tournament_name
         tournament_year = int(self.tournament_year)
-        print(tournament_name, tournament_year, country)
         query = ("select date_match from soccerbirth_dataproducts.dp_stats_round "
                  "where tournament = %s and year = %s and country_name = %s")
         parameters = (tournament_name, tournament_year, country)

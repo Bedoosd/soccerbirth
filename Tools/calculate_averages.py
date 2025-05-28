@@ -11,7 +11,7 @@ def calculate_averages(tournament_to_analyse):
     df = Database.get_df(query, parameters)
     results = []
     for index, row in df.iterrows():
-        print (f"progress: {index}/{df.shape[0]}")
+        print (f"progress: {index}/{df.shape[0]}") if index % 10 == 0 else None
 
         #niet zeker of hier nog iets als 'if row' of dergelijke nodig gaat zijn voor lege lijnen
         country_to_analyse = row["country_name"]

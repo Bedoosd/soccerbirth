@@ -75,18 +75,9 @@ class Country:
         start_date_plus_1 = target_month_plus1year_base - relativedelta(months=1)
         end_date_plus_1 = target_month_plus1year_base + relativedelta(months=1)
 
-        query = """select distinct year, month, value as births,
-                to_date(concat(year, '-', month), 'YYYY-Month') as sort_datum,
-                concat(month, ' ', year) as month_year
-                from births_per_yearmonth
-                where country = %s
-                and month in ('January', 'February', 'March', 'April', 'May', 'June',
-                            'July', 'August', 'September', 'October', 'November', 'December')
-                and to_date(concat(year, '-', month), 'YYYY-Month')
-                between %s and %s
-                and value is not Null
-                order by sort_datum;
-                            """
+        query = ("select year, month, value as births from soccerbirth_dataproducts.dp_births_figures "
+                 "where country = %s and source = 'births_year_month'"
+                 "and date_month between %s and %s")
         parameters = [selected_country, start_date, end_date]
         parameters1 = [selected_country, start_date_minus_1, end_date_minus_1]
         parameters2 = [selected_country, start_date_plus_1, end_date_plus_1]

@@ -92,8 +92,6 @@ def percentage_to_db_tool():
                         INSERT (year, country, Percentage_monthly, Percentage_yearly, insert_date)
                         VALUES (source.year, source.country, source.Percentage_monthly, source.Percentage_yearly, source.insert_date)"""
 
-    #chat gpt stelde volgende voor om waardes mee te geven
-    #geeft een waarschuwing omdat de dict waarden nog niet gekend zijn denk ik
     data = [(row.year, row.country, row.percentage_monthly, row.percentage_yearly)
             for row in df.itertuples(index=False)]
 

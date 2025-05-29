@@ -52,11 +52,25 @@ def server(inputs, outputs, session):
             custom_style
         )
         else:
-            return ui.page_fluid(
-                ui.h3("Statistic_page"),
-                ui.input_action_button("go_back", "← Back to graph page"),
-                ui.p("Place for stats"),
+            compare_methods = {"Compare same month versus previous and next year" : "percentage_monthly",
+                               "Compare over 2 full years": "percentage_yearly"}
+            rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
+            compare_methods = {
+                "Compare same month versus previous and next year": "percentage_monthly",
+                "Compare over 2 full years": "percentage_yearly"
+            }
 
+            rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
+
+            return ui.page_sidebar(
+                ui.sidebar(
+                    ui.input_radio_buttons("method_Selection", "Select a comparison method",
+                                           list(compare_methods.keys())),
+                    ui.input_radio_buttons("round_reached", "Compare countries that reached:", rounds),
+                    bg="#f8f8f8"
+                ),
+                ui.input_action_button("generate_result", "Show the result from selection"),
+                ui.input_action_button("go_back", "Back to graph page"),
                 ui.output_text_verbatim("stats_info"),
             )
 
@@ -88,6 +102,16 @@ def server(inputs, outputs, session):
             return ui.div("No countries available")
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
+    @outputs
+    @render.text
+    @reactive.event(inputs.generate_result)
+    def generate_result():
+        print ("hallo")
+
+        selected_method = inputs["method_selection"]()
+        selected_phase = inputs["round_reached"]()
+
+        return write_another_function_to_do_something (selected_method, selected_phase)
     @outputs
     @render_widget
     @reactive.event(inputs.generate_chart)

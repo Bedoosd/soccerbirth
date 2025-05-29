@@ -80,8 +80,17 @@ def percentage_to_db_tool():
         results = calculate_averages(tournament, df, results)
 
     df = pd.DataFrame(results.values())
-
-    query_write = "Hier komt de querie om naar de db terug te schrijven"
+    query_write = """MERGE INTO soccerbirth_dataproducts.birth_stats_percentage AS target
+                    USING (VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)) AS source (year, country, Percentage_monthly, Percentage_yearly, insert_date)
+                    ON target.year = source.year AND target.country = source.country
+                    WHEN MATCHED THEN
+                        UPDATE SET 
+                            Percentage_monthly = source.Percentage_monthly,
+                            Percentage_yearly = source.Percentage_yearly,
+                            insert_date = source.insert_date
+                    WHEN NOT MATCHED THEN
+                        INSERT (year, country, Percentage_monthly, Percentage_yearly, insert_date)
+                        VALUES (source.year, source.country, source.Percentage_monthly, source.Percentage_yearly, source.insert_date)"""
 
     #chat gpt stelde volgende voor om waardes mee te geven
     #geeft een waarschuwing omdat de dict waarden nog niet gekend zijn denk ik

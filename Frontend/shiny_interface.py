@@ -6,9 +6,13 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from Backend.country import Country
+from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 
 tournaments = ["World Championship", "European Championship"]
+compare_methods = {"Compare same month versus previous and next year": "same months",
+                "Compare over 2 full years": "full year"}
+rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
      """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
 
@@ -20,6 +24,7 @@ def server(inputs, outputs, session):
     current_page = reactive.Value("main")
     reactive_data = reactive.Value()
     target_avg_months = reactive.Value()
+    reactive_chi2 = reactive.Value()
 
     @outputs
     @render.ui
@@ -52,26 +57,29 @@ def server(inputs, outputs, session):
             custom_style
         )
         else:
-            compare_methods = {"Compare same month versus previous and next year" : "percentage_monthly",
-                               "Compare over 2 full years": "percentage_yearly"}
-            rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
-            compare_methods = {
-                "Compare same month versus previous and next year": "percentage_monthly",
-                "Compare over 2 full years": "percentage_yearly"
-            }
-
-            rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
-
             return ui.page_sidebar(
                 ui.sidebar(
-                    ui.input_radio_buttons("method_Selection", "Select a comparison method",
+                    ui.input_radio_buttons("method_selection", "Select a comparison method",
                                            list(compare_methods.keys())),
                     ui.input_radio_buttons("round_reached", "Compare countries that reached:", rounds),
                     bg="#f8f8f8"
                 ),
                 ui.input_action_button("generate_result", "Show the result from selection"),
                 ui.input_action_button("go_back", "Back to graph page"),
-                ui.output_text_verbatim("stats_info"),
+                output_widget("show_result_chart"),
+                ui.tags.div(
+                    ui.output_ui("statistics_box_chi2"),
+                    style="""
+                                border: 1px solid #ccc;
+                                background-color: #f9f9f9;
+                                padding: 12px;
+                                margin-top: 20px;
+                                border-radius: 6px;
+                                text-align: left;
+                                color: #444;
+                            """
+                ),
+                custom_style
             )
 
     @reactive.Calc
@@ -102,16 +110,7 @@ def server(inputs, outputs, session):
             return ui.div("No countries available")
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
-    @outputs
-    @render.text
-    @reactive.event(inputs.generate_result)
-    def generate_result():
-        print ("hallo")
 
-        selected_method = inputs["method_selection"]()
-        selected_phase = inputs["round_reached"]()
-
-        return write_another_function_to_do_something (selected_method, selected_phase)
     @outputs
     @render_widget
     @reactive.event(inputs.generate_chart)
@@ -263,6 +262,62 @@ def server(inputs, outputs, session):
                 The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text}.<br>
                 {births_compared_text} 
             """)
+
+    @outputs
+    @render_widget
+    @reactive.event(inputs.generate_result)
+    def show_result_chart():
+
+        selected_method = compare_methods.get(inputs["method_selection"]())
+        selected_round = inputs["round_reached"]()
+        chi2, probability, significant, df_graph = get_chi2(selected_method, selected_round)
+        reactive_chi2.set((chi2, probability, significant, df_graph))
+        x_labels = df_graph["did reach " + selected_round + "?"]
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Bar(
+            x=x_labels,
+            y=df_graph["less births"],
+            name="Less births",
+            marker_color="indianred",
+            text=df_graph["less births"].round(1).astype(str) + "%",
+            textposition="outside"
+        ))
+
+        fig.add_trace(go.Bar(
+            x=x_labels,
+            y=df_graph["more births"],
+            name="More births",
+            marker_color="lightblue",
+            text=df_graph["more births"].round(1).astype(str) + "%",
+            textposition="outside"
+        ))
+
+        fig.update_layout(
+            barmode="group",
+            title=dict(
+                text=f"Birth deviation by reaching {selected_round}",
+                x=0.5,
+                xanchor="center",
+                font=dict(size=24)
+            ),
+            xaxis_title= f"Reached {selected_round}",
+            yaxis_title="Percentage",
+            legend_title="Birth Deviation",
+            yaxis=dict(range=[0, 100]),
+            xaxis = dict(tickfont=dict(size=15)),
+        )
+
+        return fig
+
+    @outputs
+    @render.ui
+    def statistics_box_chi2():
+        chi2, probability, significant, df_graph = reactive_chi2.get()
+
+        return ui.HTML(f"{chi2}, {probability}, {significant}")
+
 
     @outputs
     @render.text

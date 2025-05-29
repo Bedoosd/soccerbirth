@@ -80,11 +80,6 @@ def percentage_to_db_tool():
         results = calculate_averages(tournament, df, results)
 
     df = pd.DataFrame(results.values())
-
-    #year = 2024
-    #country = 'England'
-    #percentage_monthly = 12.5
-    #percentage_yearly = 805.0
     query_write = """MERGE INTO soccerbirth_dataproducts.birth_stats_percentage AS target
                     USING (VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)) AS source (year, country, Percentage_monthly, Percentage_yearly, insert_date)
                     ON target.year = source.year AND target.country = source.country
@@ -101,7 +96,6 @@ def percentage_to_db_tool():
     #geeft een waarschuwing omdat de dict waarden nog niet gekend zijn denk ik
     data = [(row.year, row.country, row.percentage_monthly, row.percentage_yearly)
             for row in df.itertuples(index=False)]
-    #data = [[year, country, percentage_monthly, percentage_yearly]]
 
     Database.write_many(query_write, data)
 

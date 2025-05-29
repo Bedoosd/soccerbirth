@@ -30,19 +30,23 @@ def get_chi2(compare_method, lowest_round):
     df_graph = round(pd.crosstab(index=df[round_text], columns=df["BirthDeviation"], normalize="index") * 100, 1)
     df_graph.reset_index(inplace=True)
 
-    df_chi2 = df.copy()
-    df_chi2 = pd.crosstab(index=df_chi2[round_text], columns=df_chi2["BirthDeviation"])
-    df_chi2.reset_index(inplace=True)
+    df_chi2 = pd.crosstab(index=df[round_text], columns=df["BirthDeviation"])
+    chi2, probability, _, _ = chi2_contingency(df_chi2)
 
     observed = np.array([df_chi2["less births"], df_chi2["more births"]])
     chi2, probability, _, _ = chi2_contingency(observed)
     significant = True if probability < 0.05 else False
-    return chi2, probability, significant, df_graph
+
+    counts = df[round_text].value_counts()
+    countries_yes = counts.get("yes", 0)
+    countries_no = counts.get("no", 0)
+
+    return chi2, probability, significant, df_graph, countries_yes, countries_no
 
 
 if __name__ == '__main__':
     try:
-        print (get_chi2("full year", "Final_P2"))
-        get_chi2("same months", "Final_P2")
+        print (get_chi2("full year", "Final_P1"))
+        print (get_chi2("same months", "Final_P1"))
     except ValueError as e:
         print (e)

@@ -270,14 +270,14 @@ def server(inputs, outputs, session):
 
         selected_method = compare_methods.get(inputs["method_selection"]())
         selected_round = inputs["round_reached"]()
-        chi2, probability, significant, df_graph = get_chi2(selected_method, selected_round)
-        reactive_chi2.set((chi2, probability, significant, df_graph))
+        chi2, probability, significant, df_graph, count_yes, count_no = get_chi2(selected_method, selected_round)
+        reactive_chi2.set((chi2, probability, significant, df_graph, count_yes, count_no))
         x_labels = df_graph["did reach " + selected_round + "?"]
-
+        x_labels_with_counts = x_labels.map(lambda x: f"{x} ({count_yes} countries)" if x == "yes" else f"{x} ({count_no} countries)")
         fig = go.Figure()
 
         fig.add_trace(go.Bar(
-            x=x_labels,
+            x=x_labels_with_counts,
             y=df_graph["less births"],
             name="Less births",
             marker_color="indianred",
@@ -286,7 +286,7 @@ def server(inputs, outputs, session):
         ))
 
         fig.add_trace(go.Bar(
-            x=x_labels,
+            x=x_labels_with_counts,
             y=df_graph["more births"],
             name="More births",
             marker_color="lightblue",
@@ -314,7 +314,7 @@ def server(inputs, outputs, session):
     @outputs
     @render.ui
     def statistics_box_chi2():
-        chi2, probability, significant, df_graph = reactive_chi2.get()
+        chi2, probability, significant, df_graph, count_yes, count_no = reactive_chi2.get()
 
         return ui.HTML(f"{chi2}, {probability}, {significant}")
 

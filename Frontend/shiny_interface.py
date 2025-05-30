@@ -307,6 +307,8 @@ def server(inputs, outputs, session):
             legend_title="Birth Deviation",
             yaxis=dict(range=[0, 100]),
             xaxis = dict(tickfont=dict(size=15)),
+            margin=dict(t=90),
+
         )
 
         return fig
@@ -314,19 +316,21 @@ def server(inputs, outputs, session):
     @outputs
     @render.ui
     def statistics_box_chi2():
+
         chi2, probability, significant, df_graph, count_yes, count_no = reactive_chi2.get()
+        if not chi2:
+            return ui.HTML("Make a selection and generate to get your results.")
 
-        return ui.HTML(f"{chi2}, {probability}, {significant}")
+        return ui.HTML(f"For the selected method and reached round:<br>"
+                       f"The chi² value is: {chi2}.<br>"
+                       f"The probability is: {probability}. This is {"less" if significant else "more"} than 0.05.<br>"
+                       f"And therefore the reached round has {"a" if significant else "no"} influence on birth numbers.")
 
-
-    @outputs
-    @render.text
-    def stats_info():
-        return "This is the place for stats and info"
 
     @reactive.Effect
     @reactive.event(inputs.open_stats)
     def go_to_stats():
+        reactive_chi2.set((None, None, None, None, None, None)) #was needed to clear chi2_box
         current_page.set("stats")
 
     @reactive.Effect

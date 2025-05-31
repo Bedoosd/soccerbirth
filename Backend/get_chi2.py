@@ -35,6 +35,7 @@ def get_chi2_full_tournament():
 def get_chi2(compare_method, lowest_round):
     # function returns the chi² value and probability
     # can also return a df with usefully data to display in frontend
+    if lowest_round == "Final": lowest_round = "Final_P2" #easiest way to get shiny to display Final when selecting P1+P2
     if compare_method not in ["full year", "same months"]:
         raise ValueError("compare_method must be either 'full year' or 'same months'")
 

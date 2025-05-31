@@ -12,7 +12,7 @@ from Backend.tournament import Tournament
 tournaments = ["World Championship", "European Championship"]
 compare_methods = {"Compare same month versus previous and next year": "same months",
                 "Compare over 2 full years": "full year"}
-rounds = ["Final_P1", "Final_P2", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
+rounds = ["Final_P1", "Final", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
      """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
 
@@ -275,6 +275,11 @@ def server(inputs, outputs, session):
         selected_round = inputs["round_reached"]()
         chi2, probability, significant, df_graph, count_yes, count_no = get_chi2(selected_method, selected_round)
         reactive_chi2.set((chi2, probability, significant, df_graph, count_yes, count_no))
+
+        #following was to get to display Final instead of Final_P2 without changing a lot of code
+        selected_round = "Final_P2" if selected_round == "Final" else selected_round
+        displayed_round = "Final" if selected_round == "Final_P2" else selected_round
+
         x_labels = df_graph["did reach " + selected_round + "?"]
         x_labels_with_counts = x_labels.map(lambda x: f"{x} ({count_yes} countries)" if x == "yes" else f"{x} ({count_no} countries)")
         fig = go.Figure()
@@ -300,12 +305,12 @@ def server(inputs, outputs, session):
         fig.update_layout(
             barmode="group",
             title=dict(
-                text=f"Birth deviation by reaching {selected_round}",
+                text=f"Birth deviation by reaching {displayed_round}",
                 x=0.5,
                 xanchor="center",
                 font=dict(size=24)
             ),
-            xaxis_title= f"Reached {selected_round}",
+            xaxis_title= f"Reached {displayed_round}",
             yaxis_title="Percentage",
             legend_title="Birth Deviation",
             yaxis=dict(range=[0, 100]),

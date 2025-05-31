@@ -10,8 +10,8 @@ from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 
 tournaments = ["World Championship", "European Championship"]
-compare_methods = {"Compare same month versus previous and next year": "same months",
-                "Compare over 2 full years": "full year"}
+compare_methods = {"Target month vs same month in previous and next year": "same months",
+                "Target month vs 2 full years": "full year"}
 rounds = ["Final_P1", "Final", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
      """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
@@ -59,7 +59,7 @@ def server(inputs, outputs, session):
         else:
             return ui.page_sidebar(
                 ui.sidebar(
-                    ui.input_radio_buttons("method_selection", "Select a comparison method",
+                    ui.input_radio_buttons("method_selection", "Select a comparison method:",
                                            list(compare_methods.keys())),
                     ui.input_radio_buttons("round_reached", "Compare countries that reached:", rounds),
                     bg="#f8f8f8"
@@ -281,7 +281,7 @@ def server(inputs, outputs, session):
         displayed_round = "Final" if selected_round == "Final_P2" else selected_round
 
         x_labels = df_graph["did reach " + selected_round + "?"]
-        x_labels_with_counts = x_labels.map(lambda x: f"{x} ({count_yes} countries)" if x == "yes" else f"{x} ({count_no} countries)")
+        x_labels_with_counts = x_labels.map(lambda x: f"{x} ({count_yes} cases)" if x == "yes" else f"{x} ({count_no} cases)")
         fig = go.Figure()
 
         fig.add_trace(go.Bar(
@@ -313,7 +313,7 @@ def server(inputs, outputs, session):
             xaxis_title= f"Reached {displayed_round}",
             yaxis_title="Percentage",
             legend_title="Birth Deviation",
-            yaxis=dict(range=[0, 100]),
+            yaxis=dict(range=[0, 110]),
             xaxis = dict(tickfont=dict(size=15)),
             margin=dict(t=90),
         )

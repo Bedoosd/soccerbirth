@@ -125,7 +125,7 @@ def server(inputs, outputs, session):
         tournament.tournament_year = year
         country = Country(country_selected, tournament)
         if country.has_monthly_data():
-            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
+            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=14)
             if len (monthly_data) > 10:
                 reactive_data.set((monthly_data, tournament_marker, target_marker, False))
                 target_avg_months.set([monthly_data["year_month_txt"][int(target_marker) -1],
@@ -139,6 +139,9 @@ def server(inputs, outputs, session):
                 reactive_data.set((yearly_data, tournament_marker, target_marker, True))
                 return draw_chart(yearly_data, "Yearly", "Year", "year",
                                   tournament_marker, target_marker, True)
+            else:
+                reactive_data.set(None)
+                return no_data_chart()
 
         else:
             reactive_data.set(None)
@@ -316,10 +319,10 @@ def server(inputs, outputs, session):
     @outputs
     @render.ui
     def statistics_box_chi2():
-
-        chi2, probability, significant, df_graph, count_yes, count_no = reactive_chi2.get()
-        if not chi2:
+        results = reactive_chi2.get()
+        if not results:
             return ui.HTML("Make a selection and generate to get your results.")
+        chi2, probability, significant, df_graph, count_yes, count_no = results
 
         return ui.HTML(f"For the selected method and reached round:<br>"
                        f"The chi² value is: {chi2}.<br>"
@@ -330,7 +333,7 @@ def server(inputs, outputs, session):
     @reactive.Effect
     @reactive.event(inputs.open_stats)
     def go_to_stats():
-        reactive_chi2.set((None, None, None, None, None, None)) #was needed to clear chi2_box
+        reactive_chi2.set(None) #was needed to clear chi2_box
         current_page.set("stats")
 
     @reactive.Effect

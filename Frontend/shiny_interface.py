@@ -311,7 +311,6 @@ def server(inputs, outputs, session):
             yaxis=dict(range=[0, 100]),
             xaxis = dict(tickfont=dict(size=15)),
             margin=dict(t=90),
-
         )
 
         return fig

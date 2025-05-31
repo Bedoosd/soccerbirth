@@ -24,10 +24,13 @@ def calculate_averages_same_months(tournament, df, results):
             if len(df_minus1) < 3 or len(df_plus1) < 3 or len(df_target) < 3:
                 results[key]["percentage_yearly"] = None
                 continue
-            target_average = (df_minus1["births"].mean() + df_plus1["births"].mean()) / 2
+            plus_minus_avg = (df_minus1["births"].mean() + df_plus1["births"].mean()) / 2
             df_average = df_target["births"].mean()
-            percentage = round(((target_average / df_average) -1) * 100,2)
+            percentage = round(((df_average / plus_minus_avg) -1) * 100,2)
             results[key]["percentage_yearly"] = percentage
+            #check
+            #print (f"base: {df_average}, minus1 : {df_minus1["births"].mean()}, plus1: {df_plus1["births"].mean()}")
+            #print (f"percentage: {percentage}\n")
 
         else:
             results[key]["percentage_yearly"] = None
@@ -80,19 +83,26 @@ def percentage_to_db_tool():
         results = calculate_averages(tournament, df, results)
 
     df = pd.DataFrame(results.values())
-    query_write = """MERGE INTO soccerbirth_dataproducts.birth_stats_percentage AS target
-                    USING (VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)) AS source (year, country, Percentage_monthly, Percentage_yearly, insert_date)
-                    ON target.year = source.year AND target.country = source.country
-                    WHEN MATCHED THEN
-                        UPDATE SET 
-                            Percentage_monthly = source.Percentage_monthly,
-                            Percentage_yearly = source.Percentage_yearly,
-                            insert_date = source.insert_date
-                    WHEN NOT MATCHED THEN
-                        INSERT (year, country, Percentage_monthly, Percentage_yearly, insert_date)
-                        VALUES (source.year, source.country, source.Percentage_monthly, source.Percentage_yearly, source.insert_date)"""
+    # query_write = """MERGE INTO soccerbirth_dataproducts.birth_stats_percentage AS target
+    #                 USING (VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)) AS source (year, country, Percentage_monthly, Percentage_yearly, insert_date)
+    #                 ON target.year = source.year AND target.country = source.country
+    #                 WHEN MATCHED THEN
+    #                     UPDATE SET
+    #                         Percentage_monthly = source.Percentage_monthly,
+    #                         Percentage_yearly = source.Percentage_yearly,
+    #                         insert_date = source.insert_date
+    #                 WHEN NOT MATCHED THEN
+    #                     INSERT (year, country, Percentage_monthly, Percentage_yearly, insert_date)
+    #                     VALUES (source.year, source.country, source.Percentage_monthly, source.Percentage_yearly, source.insert_date)"""
+    query_write =  """ UPDATE soccerbirth_dataproducts.dp_stats_round
+                        SET 
+                            Percentage_monthly = %s,
+                            Percentage_yearly = %s,
+                            insert_date = CURRENT_TIMESTAMP
+                        WHERE year = %s AND country_name = %s
+                    """
 
-    data = [(row.year, row.country, row.percentage_monthly, row.percentage_yearly)
+    data = [(row.percentage_monthly, row.percentage_yearly, row.year, row.country)
             for row in df.itertuples(index=False)]
 
     Database.write_many(query_write, data)

@@ -43,7 +43,7 @@ def get_chi2(compare_method, lowest_round):
     if lowest_round not in supported_rounds: raise ValueError("round is not supported")
 
     column_name = "percentage_monthly" if compare_method == "full year" else "percentage_yearly"
-    query = (f"select country, year, round_descr, {column_name} from soccerbirth_dataproducts.birth_stats_percentage "
+    query = (f"select country_name, year, round_descr, {column_name} from soccerbirth_dataproducts.dp_stats_round "
              f"where {column_name} != 'NaN'")
     df = Database.get_df(query)
 

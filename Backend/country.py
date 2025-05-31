@@ -66,14 +66,20 @@ class Country:
         target_month_base = date(self.tournament.target_date.year, self.tournament.target_date.month, 1)
         start_date = target_month_base - relativedelta(months=1)
         end_date = target_month_base + relativedelta(months=1)
+        #check
+        #print (f"target: {target_month_base}, start_date: {start_date}, end_date: {end_date} ")
 
         target_month_minus1year_base = target_month_base - relativedelta(years=1)
         start_date_minus_1 = target_month_minus1year_base - relativedelta(months=1)
         end_date_minus_1 = target_month_minus1year_base + relativedelta(months=1)
+        #check
+        #print (f"target_minus1: {target_month_minus1year_base}, start_date: {start_date_minus_1}, end_date: {end_date_minus_1}")
 
         target_month_plus1year_base = target_month_base + relativedelta(years=1)
         start_date_plus_1 = target_month_plus1year_base - relativedelta(months=1)
         end_date_plus_1 = target_month_plus1year_base + relativedelta(months=1)
+        #check
+        #print (f"target_plus1: {target_month_plus1year_base}, start_date: {start_date_plus_1}, end_date: {end_date_plus_1}")
 
         query = ("select year, month, value as births from soccerbirth_dataproducts.dp_births_figures "
                  "where country = %s and source = 'births_year_month'"

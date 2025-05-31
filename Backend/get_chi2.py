@@ -4,34 +4,6 @@ from scipy.stats import chi2_contingency
 
 from Backend.database_methods import Database
 
-def get_chi2_full_tournament():
-    pass
-    #get a chi2 to figure out if there is an overall rise in birth numbers around the target for all tournaments
-    #compared with the previous and next year
-    #volgende is een voorstel van gpt omdat chi2 niet gaat om dit te bewijzen:
-
-    # from scipy.stats import binom_test
-    #
-    # # Aantal landen totaal (voorbeeld)
-    # n = 30
-    #
-    # # Aantal landen met 'meer geboortes' (66.7% van 30)
-    # successes = int(round(0.667 * n))
-    #
-    # # Binomiale test: H0: p=0.5
-    # p_value = binom_test(successes, n, p=0.5, alternative='two-sided')
-    #
-    # print(f"Aantal landen: {n}")
-    # print(f"Meer geboortes: {successes}")
-    # print(f"P-waarde binomiale test: {p_value:.4f}")
-    #
-    # if p_value < 0.05:
-    #     print("Resultaat is statistisch significant (afwijking van 50%).")
-    # else:
-    #     print("Resultaat is niet statistisch significant (geen afwijking van 50%).")
-
-
-
 def get_chi2(compare_method, lowest_round):
     # function returns the chi² value and probability
     # can also return a df with usefully data to display in frontend

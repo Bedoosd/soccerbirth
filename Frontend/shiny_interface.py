@@ -1,11 +1,14 @@
 
 import math
+
+from numpy.random import binomial
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
 from Backend.country import Country
+from Backend.database.get_binomial import get_binomial
 from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 
@@ -343,15 +346,19 @@ def server(inputs, outputs, session):
     @render.ui
     def statistics_box_chi2():
         if show_conclusion_flag():
-            #display conclusion
+            binomial_result, p_value = get_binomial()
 
             return ui.HTML(f"The study focused on the myth that there would be an increase of births in a country <br>"
                            f"about 9 months after that country did well in a European or World Championship of soccer. <br><br>"
                            f"The graphs are already showing a different story.<br>"
                            f"There was enough data collected to run a chi² test on it, and this confirms that the myth is busted. <br><br>"
-                           f"The study even shows that there is a decrease of births in 67,1% of all cases 9 months after the tournaments <br>"
+                           f"The study even shows that there is a decrease of births of 67,1% in all cases 9 months after the tournaments <br>"
                            f"where there was data from the same month, one year before and one year after the target date.<br><br>"
-                           f"To check if this is significant, there is a binomial test"
+                           f"To check if this is significant, there is a binomial test: <br>"
+                           f"The result of this test is a p_value, with is: {p_value:.10f}. <br>"
+                           f"When this is less than 0.05 the test is significant. <br>"
+                           f"So this study shows that there is {"a" if binomial_result else "no"} significant drop in births <br>"
+                           f"9 months after a tournament over all participating countries. <br>"
                            )
         results = reactive_chi2.get()
         if not results:

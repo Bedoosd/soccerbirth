@@ -1,14 +1,13 @@
 
 import math
 
-from numpy.random import binomial
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
 from Backend.country import Country
-from Backend.database.get_binomial import get_binomial
+from Backend.get_binomial import get_binomial
 from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 

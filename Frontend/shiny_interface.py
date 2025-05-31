@@ -25,6 +25,7 @@ def server(inputs, outputs, session):
     reactive_data = reactive.Value()
     target_avg_months = reactive.Value()
     reactive_chi2 = reactive.Value()
+    show_conclusion_flag = reactive.Value(False)
 
     @outputs
     @render.ui
@@ -65,7 +66,9 @@ def server(inputs, outputs, session):
                     bg="#f8f8f8"
                 ),
                 ui.input_action_button("generate_result", "Show the result from selection"),
+                ui.input_action_button("conclusion", "Show conclusion"),
                 ui.input_action_button("go_back", "Back to graph page"),
+
                 output_widget("show_result_chart"),
                 ui.tags.div(
                     ui.output_ui("statistics_box_chi2"),
@@ -266,11 +269,9 @@ def server(inputs, outputs, session):
                 {births_compared_text} 
             """)
 
-    @outputs
-    @render_widget
+    @reactive.Calc
     @reactive.event(inputs.generate_result)
-    def show_result_chart():
-
+    def result_figure():
         selected_method = compare_methods.get(inputs["method_selection"]())
         selected_round = inputs["round_reached"]()
         chi2, probability, significant, df_graph, count_yes, count_no = get_chi2(selected_method, selected_round)
@@ -320,9 +321,38 @@ def server(inputs, outputs, session):
 
         return fig
 
+    @reactive.Effect
+    @reactive.event(inputs.conclusion)
+    def handle_conclusion():
+        show_conclusion_flag.set(True)
+
+    @reactive.Effect
+    @reactive.event(inputs.generate_result)
+    def reset_conclusion():
+        show_conclusion_flag.set(False)
+
+    @outputs
+    @render_widget
+    def show_result_chart():
+        if show_conclusion_flag.get():
+            return None
+        fig = result_figure()
+        return fig
+
     @outputs
     @render.ui
     def statistics_box_chi2():
+        if show_conclusion_flag():
+            #display conclusion
+
+            return ui.HTML(f"The study focused on the myth that there would be an increase of births in a country <br>"
+                           f"about 9 months after that country did well in a European or World Championship of soccer. <br><br>"
+                           f"The graphs are already showing a different story.<br>"
+                           f"There was enough data collected to run a chi² test on it, and this confirms that the myth is busted. <br><br>"
+                           f"The study even shows that there is a decrease of births in 67,1% of all cases 9 months after the tournaments <br>"
+                           f"where there was data from the same month, one year before and one year after the target date.<br><br>"
+                           f"To check if this is significant, there is a binomial test"
+                           )
         results = reactive_chi2.get()
         if not results:
             return ui.HTML("Make a selection and generate to get your results.")

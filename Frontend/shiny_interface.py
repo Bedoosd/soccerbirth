@@ -1,14 +1,20 @@
 
 import math
+
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
 import plotly.graph_objects as go
 
 from Backend.country import Country
+from Backend.get_binomial import get_binomial
+from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 
 tournaments = ["World Championship", "European Championship"]
+compare_methods = {"Target month vs same month in previous and next year": "same months",
+                "Target month vs 2 full years": "full year"}
+rounds = ["Final_P1", "Final", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
      """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
 
@@ -20,6 +26,8 @@ def server(inputs, outputs, session):
     current_page = reactive.Value("main")
     reactive_data = reactive.Value()
     target_avg_months = reactive.Value()
+    reactive_chi2 = reactive.Value()
+    show_conclusion_flag = reactive.Value(False)
 
     @outputs
     @render.ui
@@ -52,12 +60,31 @@ def server(inputs, outputs, session):
             custom_style
         )
         else:
-            return ui.page_fluid(
-                ui.h3("Statistic_page"),
-                ui.input_action_button("go_back", "← Back to graph page"),
-                ui.p("Place for stats"),
+            return ui.page_sidebar(
+                ui.sidebar(
+                    ui.input_radio_buttons("method_selection", "Select a comparison method:",
+                                           list(compare_methods.keys())),
+                    ui.input_radio_buttons("round_reached", "Compare countries that reached:", rounds),
+                    bg="#f8f8f8"
+                ),
+                ui.input_action_button("generate_result", "Show the result from selection"),
+                ui.input_action_button("conclusion", "Show conclusion"),
+                ui.input_action_button("go_back", "Back to graph page"),
 
-                ui.output_text_verbatim("stats_info"),
+                output_widget("show_result_chart"),
+                ui.tags.div(
+                    ui.output_ui("statistics_box_chi2"),
+                    style="""
+                                border: 1px solid #ccc;
+                                background-color: #f9f9f9;
+                                padding: 12px;
+                                margin-top: 20px;
+                                border-radius: 6px;
+                                text-align: left;
+                                color: #444;
+                            """
+                ),
+                custom_style
             )
 
     @reactive.Calc
@@ -88,6 +115,7 @@ def server(inputs, outputs, session):
             return ui.div("No countries available")
         return ui.input_radio_buttons("available_countries_selection", "Select countries:", available_countries)
 
+
     @outputs
     @render_widget
     @reactive.event(inputs.generate_chart)
@@ -102,7 +130,7 @@ def server(inputs, outputs, session):
         tournament.tournament_year = year
         country = Country(country_selected, tournament)
         if country.has_monthly_data():
-            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=12)
+            monthly_data, tournament_marker, target_marker = country.get_monthly_data(months_margin=14)
             if len (monthly_data) > 10:
                 reactive_data.set((monthly_data, tournament_marker, target_marker, False))
                 target_avg_months.set([monthly_data["year_month_txt"][int(target_marker) -1],
@@ -116,6 +144,9 @@ def server(inputs, outputs, session):
                 reactive_data.set((yearly_data, tournament_marker, target_marker, True))
                 return draw_chart(yearly_data, "Yearly", "Year", "year",
                                   tournament_marker, target_marker, True)
+            else:
+                reactive_data.set(None)
+                return no_data_chart()
 
         else:
             reactive_data.set(None)
@@ -240,14 +271,109 @@ def server(inputs, outputs, session):
                 {births_compared_text} 
             """)
 
+    @reactive.Calc
+    @reactive.event(inputs.generate_result)
+    def result_figure():
+        selected_method = compare_methods.get(inputs["method_selection"]())
+        selected_round = inputs["round_reached"]()
+        chi2, probability, significant, df_graph, count_yes, count_no = get_chi2(selected_method, selected_round)
+        reactive_chi2.set((chi2, probability, significant, df_graph, count_yes, count_no))
+
+        #following was to get to display Final instead of Final_P2 without changing a lot of code
+        selected_round = "Final_P2" if selected_round == "Final" else selected_round
+        displayed_round = "Final" if selected_round == "Final_P2" else selected_round
+
+        x_labels = df_graph["did reach " + selected_round + "?"]
+        x_labels_with_counts = x_labels.map(lambda x: f"{x} ({count_yes} cases)" if x == "yes" else f"{x} ({count_no} cases)")
+        fig = go.Figure()
+
+        fig.add_trace(go.Bar(
+            x=x_labels_with_counts,
+            y=df_graph["less births"],
+            name="Less births",
+            marker_color="indianred",
+            text=df_graph["less births"].round(1).astype(str) + "%",
+            textposition="outside"
+        ))
+
+        fig.add_trace(go.Bar(
+            x=x_labels_with_counts,
+            y=df_graph["more births"],
+            name="More births",
+            marker_color="lightblue",
+            text=df_graph["more births"].round(1).astype(str) + "%",
+            textposition="outside"
+        ))
+
+        fig.update_layout(
+            barmode="group",
+            title=dict(
+                text=f"Birth deviation by reaching {displayed_round}",
+                x=0.5,
+                xanchor="center",
+                font=dict(size=24)
+            ),
+            xaxis_title= f"Reached {displayed_round}",
+            yaxis_title="Percentage",
+            legend_title="Birth Deviation",
+            yaxis=dict(range=[0, 110]),
+            xaxis = dict(tickfont=dict(size=15)),
+            margin=dict(t=90),
+        )
+
+        return fig
+
+    @reactive.Effect
+    @reactive.event(inputs.conclusion)
+    def handle_conclusion():
+        show_conclusion_flag.set(True)
+
+    @reactive.Effect
+    @reactive.event(inputs.generate_result)
+    def reset_conclusion():
+        show_conclusion_flag.set(False)
+
     @outputs
-    @render.text
-    def stats_info():
-        return "This is the place for stats and info"
+    @render_widget
+    def show_result_chart():
+        if show_conclusion_flag.get():
+            return None
+        fig = result_figure()
+        return fig
+
+    @outputs
+    @render.ui
+    def statistics_box_chi2():
+        if show_conclusion_flag():
+            binomial_result, p_value = get_binomial()
+
+            return ui.HTML(f"The study focused on the myth that there would be an increase of births in a country <br>"
+                           f"about 9 months after that country did well in a European or World Championship of soccer. <br><br>"
+                           f"The graphs are already showing a different story.<br>"
+                           f"There was enough data collected to run a chi² test on it, and this confirms that the myth is busted. <br><br>"
+                           f"The study even shows that there is a decrease of births of 67,1% in all cases 9 months after the tournaments <br>"
+                           f"where there was data from the same month, one year before and one year after the target date.<br><br>"
+                           f"To check if this is significant, there is a binomial test: <br>"
+                           f"The result of this test is a p_value, with is: {p_value:.10f}. <br>"
+                           f"When this is less than 0.05 the test is significant. <br>"
+                           f"So this study shows that there is {"a" if binomial_result else "no"} significant drop in births <br>"
+                           f"9 months after a tournament over all participating countries. <br>"
+                           )
+        results = reactive_chi2.get()
+        if not results:
+            return ui.HTML("Make a selection and generate to get your results.")
+        chi2, probability, significant, df_graph, count_yes, count_no = results
+
+        return ui.HTML(f"For the selected method and reached round:<br>"
+                       f"The chi² value is: {chi2}.<br>"
+                       f"The probability is: {probability}. This is {"less" if significant else "more"} than 0.05.<br>"
+                       f"And therefore the reached round has {"a" if significant else "no"} influence on birth numbers.")
+
 
     @reactive.Effect
     @reactive.event(inputs.open_stats)
     def go_to_stats():
+        reactive_chi2.set(None) #was needed to clear chi2_box
         current_page.set("stats")
 
     @reactive.Effect

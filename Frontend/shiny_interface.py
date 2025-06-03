@@ -355,7 +355,7 @@ def server(inputs, outputs, session):
                 f"approximately nine months after a country performs well in a European or World Cup football tournament.<br><br>"
                 f"However, the visual data already suggests a different story.<br>"
                 f"Using the collected data, a chi-squared test was performed, which supports the conclusion that the myth is false.<br><br>"
-                f"In fact, the analysis shows a **67.1% decrease** in births nine months after the tournaments, <br>"
+                f"In fact, the analysis shows a <strong>67.1% decrease</strong> in births nine months after the tournaments, <br>"
                 f"based on data from the same month one year before and one year after the event.<br><br>"
                 f"To test the significance of this result, a binomial test was conducted.<br>"
                 f"The p-value obtained from this test is: <strong>{p_value:.10f}</strong>.<br>"

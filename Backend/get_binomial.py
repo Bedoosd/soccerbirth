@@ -17,7 +17,6 @@ def get_binomial():
         alternative='two-sided'
     )
     p_value = result.pvalue
-    print (f"{p_value:.10f}")
 
     if result.pvalue < 0.05:
         return (True, p_value)

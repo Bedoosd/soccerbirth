@@ -270,7 +270,7 @@ def server(inputs, outputs, session):
             dates_to_display = target_avg_months.get()
             return ui.HTML(f"""
                 The average birth number over the displayed months is: {avg_text} births.<br>
-                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text}.<br>
+                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text} births.<br>
                 {births_compared_text} 
             """)
 

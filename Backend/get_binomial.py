@@ -2,7 +2,6 @@ from scipy.stats import binomtest
 
 from Backend.database_methods import Database
 
-
 def get_binomial():
     query = ("select country_name, percentage_yearly from soccerbirth_dataproducts.dp_stats_round where percentage_yearly != 'NaN'")
     df = Database.get_df(query)
@@ -22,4 +21,3 @@ def get_binomial():
         return (True, p_value)
     else:
         return (False, p_value)
-

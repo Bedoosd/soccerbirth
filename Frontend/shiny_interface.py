@@ -12,8 +12,11 @@ from Backend.get_chi2 import get_chi2
 from Backend.tournament import Tournament
 
 tournaments = ["World Championship", "European Championship"]
-compare_methods = {"Target month vs same month in previous and next year": "same months",
-                "Target month vs 2 full years": "full year"}
+compare_methods = {
+    "Same month in previous/next year": "same months",
+    "Average of surrounding two years": "full year"
+}
+
 rounds = ["Final_P1", "Final", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
      """aside.sidebar {width: 200px !important; min-width: 200px !important;}""")
@@ -257,17 +260,17 @@ def server(inputs, outputs, session):
         else:
             births_compared_text = f"There are {births_compared:.2f}% more births around this target."
         if show_warning_text:
-            return ui.HTML(f"The average birth numbers over the displayed years is: {avg_text}.")
+            return ui.HTML(f"The average birth number over the displayed years is: {avg_text} births.")
 
         elif math.isnan(target_average):
-            return ui.HTML(f"""The average birth numbers over the displayed years is: {avg_text}.<br>
-                            Not enough data to calculate the average around the target""")
+            return ui.HTML(f"""The average birth number over the displayed years is: {avg_text} births.<br>
+                            Not enough data to calculate the average around the target.""")
 
         else:
             dates_to_display = target_avg_months.get()
             return ui.HTML(f"""
-                The average birth number over the displayed months is: {avg_text}.<br>
-                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text}.<br>
+                The average birth number over the displayed months is: {avg_text} births.<br>
+                The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text} births.<br>
                 {births_compared_text} 
             """)
 
@@ -347,28 +350,32 @@ def server(inputs, outputs, session):
         if show_conclusion_flag():
             binomial_result, p_value = get_binomial()
 
-            return ui.HTML(f"The study focused on the myth that there would be an increase of births in a country <br>"
-                           f"about 9 months after that country did well in a European or World Championship of soccer. <br><br>"
-                           f"The graphs are already showing a different story.<br>"
-                           f"There was enough data collected to run a chi² test on it, and this confirms that the myth is busted. <br><br>"
-                           f"The study even shows that there is a decrease of births of 67,1% in all cases 9 months after the tournaments <br>"
-                           f"where there was data from the same month, one year before and one year after the target date.<br><br>"
-                           f"To check if this is significant, there is a binomial test: <br>"
-                           f"The result of this test is a p_value, with is: {p_value:.10f}. <br>"
-                           f"When this is less than 0.05 the test is significant. <br>"
-                           f"So this study shows that there is {"a" if binomial_result else "no"} significant drop in births <br>"
-                           f"9 months after a tournament over all participating countries. <br>"
-                           )
+            return ui.HTML(
+                f"The study investigated the popular myth that there is an increase in births <br>"
+                f"approximately nine months after a country performs well in a European or World Cup football tournament.<br><br>"
+                f"However, the visual data already suggests a different story.<br>"
+                f"Using the collected data, a chi-squared test was performed, which supports the conclusion that the myth is false.<br><br>"
+                f"In fact, the analysis shows a <strong>67.1% decrease</strong> in births nine months after the tournaments, <br>"
+                f"based on data from the same month one year before and one year after the event.<br><br>"
+                f"To test the significance of this result, a binomial test was conducted.<br>"
+                f"The p-value obtained from this test is: <strong>{p_value:.10f}</strong>.<br>"
+                f"Since a p-value below 0.05 indicates statistical significance, <br>"
+                f"this study finds that there is <strong>{'a' if binomial_result else 'no'}</strong> significant decline in births <br>"
+                f"nine months after a major football tournament across the observed countries."
+            )
         results = reactive_chi2.get()
         if not results:
             return ui.HTML("Make a selection and generate to get your results.")
         chi2, probability, significant, df_graph, count_yes, count_no = results
 
-        return ui.HTML(f"For the selected method and reached round:<br>"
-                       f"The chi² value is: {chi2}.<br>"
-                       f"The probability is: {probability}. This is {"less" if significant else "more"} than 0.05.<br>"
-                       f"And therefore the reached round has {"a" if significant else "no"} influence on birth numbers.")
-
+        return ui.HTML(
+            f"For the selected method and the reached round:<br>"
+            f"The chi² value is: <strong>{chi2}</strong>.<br>"
+            f"The probability is: <strong>{probability}</strong>, which is "
+            f"{'less' if significant else 'greater'} than 0.05.<br>"
+            f"Therefore, the reached round has "
+            f"{'a' if significant else 'no'} statistically significant influence on birth numbers."
+        )
 
     @reactive.Effect
     @reactive.event(inputs.open_stats)

@@ -1,6 +1,4 @@
-
 import math
-
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 import pandas as pd
@@ -14,8 +12,7 @@ from Backend.tournament import Tournament
 tournaments = ["World Championship", "European Championship"]
 compare_methods = {
     "Same month in previous/next year": "same months",
-    "Average of surrounding two years": "full year"
-}
+    "Average of surrounding two years": "full year"}
 
 rounds = ["Final_P1", "Final", "Semi_final", "Quarter_final", "Round_of_16", "Group_phase"]
 custom_style = ui.tags.style(
@@ -246,7 +243,6 @@ def server(inputs, outputs, session):
 
         data, tournament_marker, target_marker, show_warning_text = value
         average = data["births"].mean()
-        avg_text = f"{average:.0f}"
         target_average = None
         births_compared = 0
         if target_marker is not None:
@@ -260,16 +256,16 @@ def server(inputs, outputs, session):
         else:
             births_compared_text = f"There are {births_compared:.2f}% more births around this target."
         if show_warning_text:
-            return ui.HTML(f"The average birth number over the displayed years is: {avg_text} births.")
+            return ui.HTML(f"The average birth number over the displayed years is: {int(average)} births.")
 
         elif math.isnan(target_average):
-            return ui.HTML(f"""The average birth number over the displayed years is: {avg_text} births.<br>
+            return ui.HTML(f"""The average birth number over the displayed years is: {int(average)} births.<br>
                             Not enough data to calculate the average around the target.""")
 
         else:
             dates_to_display = target_avg_months.get()
             return ui.HTML(f"""
-                The average birth number over the displayed months is: {avg_text} births.<br>
+                The average birth number over the displayed months is: {int(average)} births.<br>
                 The average number of births from {dates_to_display[0]} until {dates_to_display[1]} is : {target_avg_text} births.<br>
                 {births_compared_text} 
             """)

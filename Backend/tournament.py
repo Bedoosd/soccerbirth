@@ -1,12 +1,6 @@
-from datetime import datetime, timedelta
-import pandas as pd
+from datetime import timedelta
 
-def get_dataframe(query):
-    #even toegevoegd om rode lijn weg te krijgen
-    pass
-def get_date(query):
-    #same
-    pass
+from Backend.database_methods import Database
 
 class Tournament:
     def __init__(self, tournament_name, tournament_year=None):
@@ -16,27 +10,35 @@ class Tournament:
         self.target_date = None
         self.tournament_month = None
         self.target_month = None
+        self.target_year = None   #target year is not necessarily the same as tournament_year
 
-    def set_tournament_date_and_target(self):
+    def set_tournament_date_and_target(self, country):
         tournament_name = self.tournament_name
-        tournament_year = self.tournament_year
-        query = """ """ #finale datum
-        date = get_date(query)  # get_data stelt de geinporteerde functie (uit backend/database) voor
-        self.tournament_date = datetime.strptime(date, '%m/%d/%Y')
-        self.target_date = datetime.strptime(date, '%m/%d/%Y') + timedelta(days=266)
-        self.tournament_month = self.tournament_date.strftime('%B') #geeft meteen de benaming van de maand door
+        tournament_year = int(self.tournament_year)
+        query = ("select date_match from soccerbirth_dataproducts.dp_stats_round "
+                 "where tournament = %s and year = %s and country_name = %s")
+        parameters = (tournament_name, tournament_year, country)
+        date = Database.get_date(query, parameters)
+
+        self.tournament_date = date
+        self.target_date = date + timedelta(days=266)
+        self.tournament_month = self.tournament_date.strftime('%B') #Gives the name of the month
         self.target_month = self.target_date.strftime('%B')
+        self.target_year = self.target_date.strftime('%Y')
         return
 
     def get_available_years(self):
         selected_tournament = self.tournament_name
-        query = """ """ #query om juiste jaren binnen te halen (jaar, organiserend land?)
-        df = get_dataframe(query) #get_data stelt de geinporteerde functie (uit backend/database) voor die een df teruggeeft
-        return df
+        query = "select year, host from soccerbirth_dwh.fact_tournaments_high_level where tournament = %s "
+        parameters = [selected_tournament]
+        return Database.get_df(query, parameters)
 
     def get_available_countries(self):
+
         selected_tournament = self.tournament_name
         selected_year = self.tournament_year
-        query = """ """ #query om landen binnen te halen  (land, iso, ronde gehaald)
-        df = get_dataframe(query)
-        return df
+
+        query = ("select country_name, iso_code  from soccerbirth_dataproducts.dp_stats_round "
+                 "where tournament = %s and year = %s")
+        parameters = [selected_tournament, selected_year]
+        return Database.get_df(query, parameters)

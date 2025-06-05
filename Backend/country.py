@@ -90,6 +90,10 @@ class Country:
         df = Database.get_df(query, parameters)
         df_minus1 = Database.get_df(query, parameters1)
         df_plus1 = Database.get_df(query, parameters2)
+        #double_check
+        # print (f"df_base, {selected_country}: {df}")
+        # print (f"df_minus1, {selected_country}: {df_minus1}")
+        # print (f"df_plus1, {selected_country}: {df_plus1}")
 
         return df, df_minus1, df_plus1
 
